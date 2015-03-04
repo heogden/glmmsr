@@ -1,8 +1,12 @@
 Package: glmmsr
-Title: What the Package Does (one line, title case)
+Title: Fit a Generalized Linear Mixed Model with Sequential Reduction
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph)
+Authors@R: person("Helen", "Ogden", , "heogden12@gmail.com", role = c("aut", "cre"))
+Description: Fit a generalized linear mixed model with the sequential reduction
+    approximation to the likelihood. The sequential reduction method provides a
+    more accurate approximation to the likelihood than the Laplace approximation
+    (used in lme4). The interface is an extension to lme4, to allow some models
+    (for examle pairwise comparison models) not easily specified with lme4.
 Depends: R (>= 3.1.2)
-License: What license is it under?
+License: GPL (>=2)
 LazyData: true
