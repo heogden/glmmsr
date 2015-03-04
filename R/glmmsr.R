@@ -21,5 +21,6 @@
 #'   Statistics 9: 135-152. doi:
 #'   \href{http://dx.doi.org/10.1214/15-EJS991}{10.1214/15-EJS991}
 #' @docType package
+#' @import lme4
 #' @name glmmsr
 NULL
