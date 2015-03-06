@@ -23,3 +23,13 @@ test_that("passes to glFormula if no Sub() terms", {
     modfr2 <- lme4::glFormula(form, data = data, family = binomial)
     expect_equal(modfr1, modfr2)
 })
+
+test_that("splits up formula correctly", {
+  form0 <- formula(y ~ 0 + x)
+  form1 <- formula(y ~ 0 + x + Sub(ability[player1] - ability[player2]))
+  form2 <- formula(y ~ 0 + x + Sub(ability[player1] - ability[player2])
+                  + Sub(stuff[other1] - stuff[other2]))
+  expect_equal(length(splitFormula(form0)$subforms), 0)
+  expect_equal(length(splitFormula(form1)$subforms), 1)
+  expect_equal(length(splitFormula(form2)$subforms), 2)
+})
