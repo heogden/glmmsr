@@ -29,7 +29,9 @@ test_that("splits up formula correctly", {
   form1 <- formula(y ~ 0 + x + Sub(ability[player1] - ability[player2]))
   form2 <- formula(y ~ 0 + x + Sub(ability[player1] - ability[player2])
                   + Sub(stuff[other1] - stuff[other2]))
-  expect_equal(length(splitFormula(form0)$subforms), 0)
-  expect_equal(length(splitFormula(form1)$subforms), 1)
-  expect_equal(length(splitFormula(form2)$subforms), 2)
+  expect_equal(length(split_formula(form0)$replace_exprs), 0)
+  expect_equal(length(split_formula(form1)$replace_exprs), 1)
+  expect_equal(length(split_formula(form2)$replace_exprs), 2)
 })
+
+
