@@ -25,12 +25,16 @@ split_formula <- function(formula) {
 
 
 
-parse_replace_expr <- function(subform, data = NULL, family = gaussian, subset,
-                               weights, na.action, offset, contrasts = NULL,
-                               mustart, etastart, control = glmerControl(), ...)
+parse_replace_expr <- function(replace_expr, data = NULL, family = gaussian,
+                               subset, weights, na.action, offset,
+                               contrasts = NULL, mustart, etastart,
+                               control = glmerControl(), ...)
 {
 
   dots <- list(...)
+
+
+
 
 
 }

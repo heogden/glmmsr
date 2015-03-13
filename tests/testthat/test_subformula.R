@@ -14,7 +14,7 @@ p0 <- pnorm(ability0[player1] - ability0[player2])
 y <- rbinom(length(p0), 1, p0)
 
 formula <- y ~ 0 + Sub(ability[player1] - ability[player2])
-subform <- ability ~ 0 + x + (1 | player)
+subform <- ability[player] ~ 0 + x[player] + (1 | player)
 data <- list(x=x, player1 = player1, player2 = player2, player = player)
 
 test_that("passes to glFormula if no Sub() terms", {
