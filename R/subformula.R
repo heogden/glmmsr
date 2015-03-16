@@ -56,7 +56,7 @@ extract_subform <- function(...) {
   lapply(subformulas, find_subvar)
 }
 
-add_subexpr <- function(subform, subexpr_list) {
+add_subexpr <- function(subform, subexprs) {
   subvar <- name(subform)
   # find those subexpr involving (only) subvar
   which_subexpr <- which(vapply(which_subvars, all.equal, TRUE, y = subvar))
@@ -66,15 +66,15 @@ add_subexpr <- function(subform, subexpr_list) {
   } else if(length(which_subexpr) > 1L) {
     stop(paste0("Multiple subexpressions involving ", subvar))
   }
-  subexpr <- subexpr_list[which_subexpr]
+  subexpr <- subexprs[which_subexpr]
   return(list(subvar = subvar, subexpr = subexpr))
 }
 
-match_subform_subexpr <- function(subform_list, subexpr_list, data) {
-  res <- subform_list
-  subvars <- names(subform_list)
+match_subform_subexpr <- function(subforms, subexprs, data) {
+  res <- subforms
+  subvars <- names(subforms)
   # find the names of the subvars involved in each subexpr
-  which_subvars <- lapply(subexpr_list, find_which_subvars, subvars = subvars,
+  which_subvars <- lapply(subexprs, find_which_subvars, subvars = subvars,
                           data = data)
   # check how many subvars involved in each subexpr
   n_subvars <- vapply(which_subvars, length, 1L)
@@ -83,7 +83,14 @@ match_subform_subexpr <- function(subform_list, subexpr_list, data) {
   } else if (any(n_subvars) == 0L) {
     stop("Each Sub(.) should involve a substituted variable"))
   }
-  lapply(subform_list, add_subexpr, subexpr_list = subexpr_list)
+  lapply(subforms, add_subexpr, subexprs = subexprs)
+}
+
+parse_subs <- function(subexprs, data, family, subset, weights, na.action,
+                       offset, contrasts, mustart, etastart, control, ...)
+{
+
+
 }
 
 #' Parse a formula (and possibly subformulas)
@@ -104,11 +111,9 @@ glFormulaSub <- function (formula, data = NULL, family = gaussian, subset,
   if(length(subexprs) == 0L) {
     return(modfr_no_sub)
   } else{
-    modfr_list <- lapply(subexprs, parse_subexpr, data = data,
-                         family = family, subset = subset, weights = weights,
-                         na.action = na.action, offset = offset,
-                         contrasts = contrasts, mustart = mustart,
-                         etastart = etastart, control = control, ...)
+    modfr_list <- parse_subs(subexprs, data = NULL, family = gaussian, subset,
+                             weights, na.action, offset, contrasts = NULL,
+                             mustart, etastart, control = glmerControl(), ...)
     return(combine_modfr(c(modfr_no_sub, modfr_list)))
   }
 }
