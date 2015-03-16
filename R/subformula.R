@@ -34,7 +34,7 @@ drop_index <- function(x) {
       as.call(lapply(x, drop_index))
     }
   } else if (is.pairlist(x)) {
-    as.pairlist(lapply(x, modify_sub, data = data))
+    as.pairlist(lapply(x, drop_index))
   } else{
     stop("Don't know how to handle type ", typeof(x), call. = FALSE)
   }
@@ -45,49 +45,69 @@ find_subvar <- function(subform) {
   lhs <- tf[[2]]
   subvar <- drop_index(lhs)
   if(!is.name(subvar)) {
-    stop("Should have only a single variable on LHS of subformula")
+    stop("Should have only a single variable on LHS of subformula",
+         call. = FALSE)
   }
   as.character(subvar)
 }
 
+# find the vars (from vars), involved in x
+find_vars <- function(x, vars) {
+  if(is.atomic(x)) {
+    NULL
+  } else if (is.name(x)) {
+    if(is.element(as.character(x), vars)){
+      as.character(x)
+    } else {
+      NULL
+    }
+  } else if (is.call(x) || is.pairlist(x)) {
+      unique(unlist(lapply(x, find_vars, vars = vars)))
+  } else{
+    stop("Don't know how to handle type ", typeof(x), call. = FALSE)
+  }
+}
 
-add_subexpr <- function(subform, subexprs) {
+add_subexpr <- function(subform, subexprs, which_subvars) {
   subvar <- find_subvar(subform)
   # find those subexpr involving (only) subvar
-  which_subexpr <- which(vapply(which_subvars, all.equal, TRUE, y = subvar))
+  which_subexpr <- which(vapply(which_subvars, function(x) {x[1] == subvar}, TRUE))
   if(length(which_subexpr) == 0L){
-    warning(paste0("No subexpressions involving ", subvar))
+    warning(paste0("No subexpressions involving \'", subvar, "\'"), call. = FALSE)
     return(NULL)
   } else if(length(which_subexpr) > 1L) {
     stop(paste0("Multiple subexpressions involving ", subvar))
   }
-  subexpr <- subexprs[which_subexpr]
+  subexpr <- subexprs[[which_subexpr]]
   return(list(subvar = subvar, subform = subform, subexpr = subexpr))
 }
 
 match_subform_subexpr <- function(subforms, subexprs, data) {
-  res <- subforms
-  subvars <- names(subforms)
+  subvars <- vapply(subforms, find_subvar, "test")
+
   # find the names of the subvars involved in each subexpr
-  which_subvars <- lapply(subexprs, find_which_subvars, subvars = subvars,
-                          data = data)
+  which_subvars <- lapply(subexprs, find_vars, vars = subvars)
   # check how many subvars involved in each subexpr
   n_subvars <- vapply(which_subvars, length, 1L)
   if(any(n_subvars) > 1L) {
-    stop("Each Sub(.) should only involve a single substituted variable")
+    stop("Each Sub(.) should only involve a single substituted variable",
+      .call = FALSE)
   } else if (any(n_subvars) == 0L) {
-    stop("Each Sub(.) should involve a substituted variable")
+    stop("Each Sub(.) should involve a substituted variable", .call = FALSE)
   }
-  lapply(subforms, add_subexpr, subexprs = subexprs)
+  lapply(subforms, add_subexpr, subexprs = subexprs, which_subvars = which_subvars)
 }
 
-parse_subs <- function(subexprs, data, family, subset, weights, na.action,
-                       offset, contrasts, mustart, etastart, control, ...)
+parse_sub <- function(sub, data, family, subset, weights, na.action,
+                       offset, contrasts, mustart, etastart, control)
 {
-  subforms <- list(...)
-  subvars <- vapply(subforms, find_subvar, "test")
-  names(subforms) <- subvars
-  subs <- match_subform_subexpr(subforms, subexprs, data)
+  subvar <- sub$subvar
+  subform <- sub$subform
+  subexpr <- sub$subexpr
+
+  # find the indices used to index subvar in subexpr
+
+  # find the indices used to index subvar in subform
 
 
 
@@ -113,9 +133,13 @@ glFormulaSub <- function (formula, data = NULL, family = gaussian, subset,
   if(length(subexprs) == 0L) {
     return(modfr_no_sub)
   } else{
-    modfr_list <- parse_subs(subexprs, data = NULL, family = gaussian, subset,
-                             weights, na.action, offset, contrasts = NULL,
-                             mustart, etastart, control = glmerControl(), ...)
+    subforms <- list(...)
+    subs <- match_subform_subexpr(subforms, subexprs, data)
+    modfr_list <- lapply(subs, parse_sub, data = data, family = family,
+                         subset = subset, weights = weights,
+                         na.action = na.action, offset = offset,
+                         contrasts = constrasts, mustart = mustart,
+                         etastart = etastart, control = control)
     return(combine_modfr(c(modfr_no_sub, modfr_list)))
   }
 }

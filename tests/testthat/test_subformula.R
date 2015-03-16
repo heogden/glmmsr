@@ -42,3 +42,21 @@ test_that("finds subvar from subform", {
 })
 
 
+test_that("matches subforms and subexprs correctly", {
+  subforms <- list(formula(ability[player] ~ 0 + (1 | player)),
+                   formula(stuff[i, j] ~ x[i] + (1 | j)))
+  subexprs <- list(quote(ability[player1] - ability[player2]),
+                   quote(stuff[team1, team2] - 3*stuff[team2, team1]))
+  data = list(player1 = c(1, 2), player2 = c(2, 1),
+              team1 = c(1, 2, 3), team2 = c(4, 2, 1), x = c(1, 2, 3, 4))
+  out <- match_subform_subexpr(subforms, subexprs, data)
+  expect_equal_to_reference(out, "subs_ability_stuff.rds")
+  subforms1 <- list(formula(ability[player] ~ 0 + (1 | player)),
+                  formula(stuff[i, j] ~ x[i] + (1 | j)),
+                  other[k] ~ (1 | k))
+  expect_warning(match_subform_subexpr(subforms1, subexprs, data),
+                "No subexpressions involving")
+
+
+}
+)
