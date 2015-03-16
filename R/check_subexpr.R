@@ -1,4 +1,4 @@
-check_subexpr <- function(x, data) {
+check_subexpr <- function(x, data, subvars) {
   if (is.atomic(x)) {
     return(x)
   } else if (is.name(x)) {

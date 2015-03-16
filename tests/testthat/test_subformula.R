@@ -29,9 +29,14 @@ test_that("splits up formula correctly", {
   form1 <- formula(y ~ 0 + x + Sub(ability[player1] - ability[player2]))
   form2 <- formula(y ~ 0 + x + Sub(ability[player1] - ability[player2])
                   + Sub(stuff[other1] - stuff[other2]))
-  expect_equal(length(split_formula(form0)$replace_exprs), 0)
-  expect_equal(length(split_formula(form1)$replace_exprs), 1)
-  expect_equal(length(split_formula(form2)$replace_exprs), 2)
+  expect_equal(length(split_formula(form0)$subexprs), 0)
+  expect_equal(length(split_formula(form1)$subexprs), 1)
+  expect_equal(length(split_formula(form2)$subexprs), 2)
+})
+
+test_that("finds subvar from subform", {
+  subform <- formula(ability[player] ~ x[player] + (1 | player))
+
 })
 
 
