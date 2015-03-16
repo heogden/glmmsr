@@ -98,6 +98,33 @@ match_subform_subexpr <- function(subforms, subexprs, data) {
   lapply(subforms, add_subexpr, subexprs = subexprs, which_subvars = which_subvars)
 }
 
+find_dim_sub <- function(x, var, d = NULL){
+  if(is.atomic(x) || is.name(x)) {
+    d
+  } else if (is.call(x)) {
+    if(identical(x[[1]], quote(`[`)) && identical(as.character(x[[2]]), var)) {
+      if(length(d) > 0L){
+        if(d != (length(x) - 2)) {
+          stop(paste0("\'", var, "\' is indexed inconsistently"), call. = FALSE)
+        }
+      } else{
+        d <- length(x) - 2
+      }
+    }
+    for(i in seq_along(x)) {
+      d <- find_dim_sub(x[[i]], var, d)
+    }
+  } else if(is.pairlist(x)) {
+    for(i in seq_along(x)) {
+      d <- find_dim_sub(x[[i]], var, d)
+    }
+  } else{
+    stop("Don't know how to handle type ", typeof(x), call. = FALSE)
+  }
+  d
+}
+
+
 parse_sub <- function(sub, data, family, subset, weights, na.action,
                        offset, contrasts, mustart, etastart, control)
 {
@@ -106,8 +133,19 @@ parse_sub <- function(sub, data, family, subset, weights, na.action,
   subexpr <- sub$subexpr
 
   # find the indices used to index subvar in subexpr
+  indices_subexpr <- find_indices(subexpr, subvar)
 
   # find the indices used to index subvar in subform
+  indices_subform <- find_indices(subform, subvar)
+
+  # check that the dimension of these indices is the same
+  if(length(index_subexpr) != length(index_subform)) {
+    stop(paste0("\'", subvar, "\' is indexed inconsistently"), call. = FALSE)
+  }
+  if(length(index_subform) > 1) {
+    # have array indexing: should flatten
+  }
+
 
 
 
