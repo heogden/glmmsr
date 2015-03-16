@@ -35,8 +35,10 @@ test_that("splits up formula correctly", {
 })
 
 test_that("finds subvar from subform", {
-  subform <- formula(ability[player] ~ x[player] + (1 | player))
-
+  subform0 <- formula(ability[player] ~ x[player] + (1 | player))
+  expect_equal(find_subvar(subform0), "ability")
+  subform1 <- formula(ability[player] + ability[player2] ~ (1 | player))
+  expect_error(find_subvar(subform1), "single variable on LHS")
 })
 
 

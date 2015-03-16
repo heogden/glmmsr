@@ -47,17 +47,12 @@ find_subvar <- function(subform) {
   if(!is.name(subvar)) {
     stop("Should have only a single variable on LHS of subformula")
   }
-  name(subform) <- subvar
-  subform
+  as.character(subvar)
 }
 
-extract_subform <- function(...) {
-  subformulas <- list(...)
-  lapply(subformulas, find_subvar)
-}
 
 add_subexpr <- function(subform, subexprs) {
-  subvar <- name(subform)
+  subvar <- find_subvar(subform)
   # find those subexpr involving (only) subvar
   which_subexpr <- which(vapply(which_subvars, all.equal, TRUE, y = subvar))
   if(length(which_subexpr) == 0L){
@@ -67,7 +62,7 @@ add_subexpr <- function(subform, subexprs) {
     stop(paste0("Multiple subexpressions involving ", subvar))
   }
   subexpr <- subexprs[which_subexpr]
-  return(list(subvar = subvar, subexpr = subexpr))
+  return(list(subvar = subvar, subform = subform, subexpr = subexpr))
 }
 
 match_subform_subexpr <- function(subforms, subexprs, data) {
@@ -81,7 +76,7 @@ match_subform_subexpr <- function(subforms, subexprs, data) {
   if(any(n_subvars) > 1L) {
     stop("Each Sub(.) should only involve a single substituted variable")
   } else if (any(n_subvars) == 0L) {
-    stop("Each Sub(.) should involve a substituted variable"))
+    stop("Each Sub(.) should involve a substituted variable")
   }
   lapply(subforms, add_subexpr, subexprs = subexprs)
 }
@@ -89,6 +84,13 @@ match_subform_subexpr <- function(subforms, subexprs, data) {
 parse_subs <- function(subexprs, data, family, subset, weights, na.action,
                        offset, contrasts, mustart, etastart, control, ...)
 {
+  subforms <- list(...)
+  subvars <- vapply(subforms, find_subvar, "test")
+  names(subforms) <- subvars
+  subs <- match_subform_subexpr(subforms, subexprs, data)
+
+
+
 
 
 }
