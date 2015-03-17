@@ -59,7 +59,7 @@ test_that("matches subforms and subexprs correctly", {
 }
 )
 
-test_that("check dimension of indexing correctly", {
+test_that("checks dimension of indexing correctly", {
   subexpr1 <- quote(ability[player1] - ability[player2])
   subexpr2 <- quote(ability[player1, player2] - ability[player2, player1])
   subexpr3 <- quote(ability[player1] + stuff[m1, m2, m3])
@@ -70,4 +70,25 @@ test_that("check dimension of indexing correctly", {
   expect_equal(find_dim_sub(subexpr3, "stuff"), 3L)
   expect_error(find_dim_sub(subexpr4, "ability"),
               "indexed inconsistently")
+})
+
+test_that("deduces indices for subform correctly", {
+  sub1 <- list(subvar = "ability",
+               subform = formula(ability[player] ~ 0 + (1 | player)),
+               subexpr = quote(ability[player1] - ability[player2]))
+  data1 <- list(player1 = c("a", "b", "c"), player2 = c("b", "c", "d"))
+  indices1 <- find_indices_subform(sub1, data1)
+  expect_equal(names(indices1), "player")
+  expect_equal(length(indices1$player), 4L)
+  sub2 <- list(subvar = "ability",
+               subform = formula(ability[p, m] ~ 0 + x[m] + (1 | p)),
+               subexpr = quote(ability[player1, match]
+                               - ability[player2, match]))
+  data2 <- list(player1 = c("a", "a", "b", "b"),
+                player2 = c("b", "b", "c", "c"),
+                match = c(1, 2, 3, 4))
+  indices2 <- find_indices_subform(sub2, data2)
+  expect_equal(names(indices2), c("p", "m"))
+  expect_equal(length(indices2$p), 3L)
+  expect_equal(length(indices2$m), 4L)
 })

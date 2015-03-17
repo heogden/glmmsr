@@ -181,7 +181,7 @@ flatten_formula <- function(formula, indices, data){
 
 }
 
-find_indices_subform <- function(sub) {
+find_indices_subform <- function(sub, data) {
   subvar <- sub$subvar
   subform <- sub$subform
   subexpr <- sub$subexpr
