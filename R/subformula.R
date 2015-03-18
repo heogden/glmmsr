@@ -1,5 +1,5 @@
 find_subexpr <- function(subvar) {
-  parse(text = substr(subvar, 5, nchar(subvar) - 1))
+  parse(text = substr(subvar, 5, nchar(subvar) - 1))[[1]]
 }
 
 split_formula <- function(formula) {
