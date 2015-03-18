@@ -250,7 +250,20 @@ parse_sub <- function(sub, data, family, subset, weights, na.action,
 
   data_subform <- c(as.list(indices_flat), subvar_data, as.list(data))
 
+  mc <- match.call()
+  mc_sub <- mc[names(mc) != "sub"]
+  mc_sub$formula <- subform
+  mc_sub$data <- data_subform
+  browser()
 
+  # need to check that there are random effects before passing to glFormula
+  if(has_re(subform)) {
+    mc_sub[[1]] <- quote(lme4::glFormula)
+  } else {
+    mc_sub$method <- "model.frame"
+    mc_sub[[1]] <- quote(glm)
+  }
+  eval(mc_sub, parent.frame())
 }
 
 #' Parse a formula (and possibly subformulas)
@@ -280,6 +293,8 @@ glFormulaSub <- function (formula, data = NULL, family = gaussian, subset,
     return(modfr_no_sub)
   } else{
     subs <- match_subform_subexpr(subforms, subexprs, data)
+
+    # use match.call here instead?
     modfr_list <- lapply(subs, parse_sub, data = data, family = family,
                          subset = subset, weights = weights,
                          na.action = na.action, offset = offset,
