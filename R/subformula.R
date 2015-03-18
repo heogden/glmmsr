@@ -259,19 +259,26 @@ parse_sub <- function(sub, data, family, subset, weights, na.action,
 #' @export
 glFormulaSub <- function (formula, data = NULL, family = gaussian, subset,
                           weights, na.action, offset, contrasts = NULL, mustart,
-                          etastart, control = glmerControl(), ...)
+                          etastart, control = glmerControl(),
+                          subforms = NULL, ...)
 {
   formula_split <- split_formula(formula)
   form_no_sub <- formula_split$form_no_sub
   subexprs <- formula_split$subexprs
   mc <- match.call()
-  mc[[1]] <- quote(lme4::glFormula)
-  mc$formula <- form_no_sub
-  modfr_no_sub <- eval(mc, parent.frame())
+  mc_no_sub <- mc[names(mc) != "subforms"]
+  mc_no_sub$formula <- form_no_sub
+  # need to check for random effects before passing to glFormula
+  if(has_re(form_no_sub)) {
+    mc_no_sub[[1]] <- quote(lme4::glFormula)
+  } else {
+    # if no random effects at obs level, pass to glm
+    mc_no_sub[[1]] <- quote(glm)
+  }
+  modfr_no_sub <- eval(mc_no_sub, parent.frame())
   if(length(subexprs) == 0L) {
     return(modfr_no_sub)
   } else{
-    subforms <- list(...)
     browser()
 
     subs <- match_subform_subexpr(subforms, subexprs, data)
