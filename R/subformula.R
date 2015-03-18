@@ -7,13 +7,17 @@ split_formula <- function(formula) {
   var_sub <- attr(tf, "specials")$Sub
   if(length(var_sub) > 0L) {
     # variables numbered starting at LHS.
-    # assuming here that there is exactly one LHS variable
-    # make this more general
+    # assuming that there is exactly one LHS variable
+    # could make this more general
     var_sub_rhs <- var_sub - 1L
     fac <- attr(tf, "factors")
     rhs_vars <- attr(fac, "dimnames")[[2]]
-    tf_no_sub <- drop.terms(tf, var_sub_rhs, keep.response = TRUE)
-    form_no_sub <- formula(tf_no_sub)
+    if(length(rhs_vars) > length(var_sub_rhs)){
+      tf_no_sub <- drop.terms(tf, var_sub_rhs, keep.response = TRUE)
+      form_no_sub <- formula(tf_no_sub)
+    } else{
+      form_no_sub <- update.formula(formula, . ~ 0)
+    }
     subexprs <- lapply(rhs_vars[var_sub_rhs], find_subexpr)
   }
   else{
@@ -144,42 +148,6 @@ find_indices <- function(x, i, var) {
   }
 }
 
-matrix_indexing <- function(x, indices) {
-  if(is.atomic(x) || is.name(x)) {
-    x
-  } else if (is.call(x)) {
-    if(identical(x[[1]], quote(`[`)) && length(x) > 3) {
-      y <- x[1:2]
-      #indices[, as.list(x[-c(1,2)]), drop = FALSE]
-      y[[3]] <- as.call(c(list(quote(cbind)), as.list(x[-c(1,2)])))
-      return(y)
-    } else{
-      as.call(lapply(x, matrix_indexing, indices = indices))
-    }
-  } else if(ispairlist(x)) {
-    as.pairlist(lapply(x, matrix_indexing, indices = indices))
-
-  } else{
-    stop("Don't know how to handle type ", typeof(x), call. = FALSE)
-  }
-}
-
-flatten_formula <- function(formula, indices, data){
-  # drop indexing in LHS of formula
-  lhs_var <- find_subvar(formula, char = FALSE)
-  tf <- terms(formula)
-  tf[[2]] <- lhs_var
-  formula_flat <- formula(tf)
-
-  # each time we see `[`, extract relevant columns of index_matrix
-  # and combine with cbind
-  # for now, insist all indexing is done with indices in indices
-
-  formula_flat <- matrix_indexing(formula_flat, indices)
-
-
-
-}
 
 find_indices_subform <- function(sub, data) {
   subvar <- sub$subvar
@@ -210,30 +178,77 @@ find_indices_subform <- function(sub, data) {
     levels_indices_i <- sort(unique(Reduce(c, lapply(indices_i, levels))))
     # coerce to factor with common levels
     indices_i <- lapply(indices_i, factor, levels = levels_indices_i)
-    L_i <- length(levels_indices_i)
+    # replace in data, so have factors with correct levels
+    for(j in seq_along(indices_i)) {
+      data[[names(indices_i)[j]]] <- indices_i[[j]]
+    }
     indices_subform[[i]] <- as.numeric(factor(levels_indices_i))
     names(indices_subform)[i] <- find_indices(subform, i, subvar)
 
   }
-  return(indices_subform)
+  return(list(data = data, indices_subform = indices_subform))
 }
+
+
+matrix_indexing <- function(x, indices) {
+  if(is.atomic(x) || is.name(x)) {
+    x
+  } else if (is.call(x)) {
+    if(identical(x[[1]], quote(`[`)) && length(x) > 3) {
+      y <- x[1:2]
+      #indices[, as.list(x[-c(1,2)]), drop = FALSE]
+      y[[3]] <- as.call(c(list(quote(cbind)), as.list(x[-c(1,2)])))
+      return(y)
+    } else{
+      as.call(lapply(x, matrix_indexing, indices = indices))
+    }
+  } else if(is.pairlist(x)) {
+    as.pairlist(lapply(x, matrix_indexing, indices = indices))
+
+  } else{
+    stop("Don't know how to handle type ", typeof(x), call. = FALSE)
+  }
+}
+
+flatten_formula <- function(formula, indices){
+  # drop indexing in LHS of formula
+  lhs_var <- find_subvar(formula, char = FALSE)
+  tf <- terms(formula)
+  tf[[2]] <- lhs_var
+  formula_flat <- formula(tf)
+
+  d <- length(indices)
+
+  if(d > 1) {
+    # each time we see `[`, extract relevant columns of index_matrix
+    # and combine with cbind
+    # for now, insist all indexing is done with indices in indices
+
+    formula_flat <- matrix_indexing(formula_flat, indices)
+  }
+  formula_flat
+}
+
 
 parse_sub <- function(sub, data, family, subset, weights, na.action,
                        offset, contrasts, mustart, etastart, control)
 {
-  indices_subform <- find_indices_subform(sub)
-  d <- length(indices_subform)
-  if(d > 1) {
-    #have array indexing: should flatten
-    L <- vapply(indices_subform, length, 1L)
-    indices_flat <- as.list(expand.grid(indices_subform))
-    subform_flat <- flatten_formula(subformula, indices_flat, data)
-  }
+  subvar <- sub$subvar
+  subform <- sub$subform
+  subexpr <- sub$subexpr
 
+  indices_subform_tot <- find_indices_subform(sub, data)
+  data <- indices_subform_tot$data
+  indices_subform <- indices_subform_tot$indices_subform
 
+  indices_flat <- expand.grid(indices_subform)
+  subform_flat <- flatten_formula(subform, indices_flat)
 
+  # find fake data for the subvar, of the correct length
+  subvar_data <- list(rep(0, NROW(indices_flat)))
+  names(subvar_data) <- subvar
 
-
+  data_subform <- c(as.list(indices_flat), subvar_data, as.list(data))
 
 
 }
@@ -257,13 +272,15 @@ glFormulaSub <- function (formula, data = NULL, family = gaussian, subset,
     return(modfr_no_sub)
   } else{
     subforms <- list(...)
+    browser()
+
     subs <- match_subform_subexpr(subforms, subexprs, data)
-    modfr_list <- lapply(subs, parse_sub, data = data, family = family,
-                         subset = subset, weights = weights,
-                         na.action = na.action, offset = offset,
-                         contrasts = constrasts, mustart = mustart,
-                         etastart = etastart, control = control)
-    return(combine_modfr(c(modfr_no_sub, modfr_list)))
+#     modfr_list <- lapply(subs, parse_sub, data = data, family = family,
+#                          subset = subset, weights = weights,
+#                          na.action = na.action, offset = offset,
+#                          contrasts = contrasts, mustart = mustart,
+#                          etastart = etastart, control = control)
+#     return(combine_modfr(c(modfr_no_sub, modfr_list)))
   }
 }
 
