@@ -268,26 +268,24 @@ glFormulaSub <- function (formula, data = NULL, family = gaussian, subset,
   mc <- match.call()
   mc_no_sub <- mc[names(mc) != "subforms"]
   mc_no_sub$formula <- form_no_sub
-  # need to check for random effects before passing to glFormula
+  # need to check that there are random effects before passing to glFormula
   if(has_re(form_no_sub)) {
     mc_no_sub[[1]] <- quote(lme4::glFormula)
   } else {
-    # if no random effects at obs level, pass to glm
+    mc_no_sub$method <- "model.frame"
     mc_no_sub[[1]] <- quote(glm)
   }
   modfr_no_sub <- eval(mc_no_sub, parent.frame())
   if(length(subexprs) == 0L) {
     return(modfr_no_sub)
   } else{
-    browser()
-
     subs <- match_subform_subexpr(subforms, subexprs, data)
-#     modfr_list <- lapply(subs, parse_sub, data = data, family = family,
-#                          subset = subset, weights = weights,
-#                          na.action = na.action, offset = offset,
-#                          contrasts = contrasts, mustart = mustart,
-#                          etastart = etastart, control = control)
-#     return(combine_modfr(c(modfr_no_sub, modfr_list)))
+    modfr_list <- lapply(subs, parse_sub, data = data, family = family,
+                         subset = subset, weights = weights,
+                         na.action = na.action, offset = offset,
+                         contrasts = contrasts, mustart = mustart,
+                         etastart = etastart, control = control)
+    return(combine_modfr(c(modfr_no_sub, modfr_list)))
   }
 }
 
