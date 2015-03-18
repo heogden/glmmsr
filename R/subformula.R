@@ -229,7 +229,6 @@ flatten_formula <- function(formula, indices){
   formula_flat
 }
 
-
 parse_sub <- function(sub, data, family)
 {
   subvar <- sub$subvar
@@ -253,6 +252,7 @@ parse_sub <- function(sub, data, family)
 
   # now need to substitute model frames into subexpr, in place of subvar
   # need to use a version of subexpr expecting model frames
+  subexpr_mod <- modify_subexpr(subexpr, subvar)
 
 
 }
