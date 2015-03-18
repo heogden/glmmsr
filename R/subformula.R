@@ -230,8 +230,7 @@ flatten_formula <- function(formula, indices){
 }
 
 
-parse_sub <- function(sub, data, family, subset, weights, na.action,
-                       offset, contrasts, mustart, etastart, control)
+parse_sub <- function(sub, data, family)
 {
   subvar <- sub$subvar
   subform <- sub$subform
@@ -250,57 +249,33 @@ parse_sub <- function(sub, data, family, subset, weights, na.action,
 
   data_subform <- c(as.list(indices_flat), subvar_data, as.list(data))
 
-  mc <- match.call()
-  mc_sub <- mc[names(mc) != "sub"]
-  mc_sub$formula <- subform
-  mc_sub$data <- data_subform
-  browser()
+  modfr_subform <- parse_formula(subform, data_subform, family)
 
-  # need to check that there are random effects before passing to glFormula
-  if(has_re(subform)) {
-    mc_sub[[1]] <- quote(lme4::glFormula)
-  } else {
-    mc_sub$method <- "model.frame"
-    mc_sub[[1]] <- quote(glm)
-  }
-  eval(mc_sub, parent.frame())
+  # now need to substitute model frames into subexpr, in place of subvar
+  # need to use a version of subexpr expecting model frames
+
+
 }
 
 #' Parse a formula (and possibly subformulas)
 #'
 #' @inheritParams glmerSR
 #' @export
-glFormulaSub <- function (formula, data = NULL, family = gaussian, subset,
-                          weights, na.action, offset, contrasts = NULL, mustart,
-                          etastart, control = glmerControl(),
-                          subforms = NULL, ...)
+glFormulaSub <- function (formula, data = NULL, family = gaussian,
+                          subforms = NULL)
 {
   formula_split <- split_formula(formula)
   form_no_sub <- formula_split$form_no_sub
   subexprs <- formula_split$subexprs
-  mc <- match.call()
-  mc_no_sub <- mc[names(mc) != "subforms"]
-  mc_no_sub$formula <- form_no_sub
-  # need to check that there are random effects before passing to glFormula
-  if(has_re(form_no_sub)) {
-    mc_no_sub[[1]] <- quote(lme4::glFormula)
-  } else {
-    mc_no_sub$method <- "model.frame"
-    mc_no_sub[[1]] <- quote(glm)
-  }
-  modfr_no_sub <- eval(mc_no_sub, parent.frame())
+  modfr_no_sub <- parse_formula(form_no_sub, data, family)
   if(length(subexprs) == 0L) {
     return(modfr_no_sub)
   } else{
     subs <- match_subform_subexpr(subforms, subexprs, data)
 
-    # use match.call here instead?
-    modfr_list <- lapply(subs, parse_sub, data = data, family = family,
-                         subset = subset, weights = weights,
-                         na.action = na.action, offset = offset,
-                         contrasts = contrasts, mustart = mustart,
-                         etastart = etastart, control = control)
-    return(combine_modfr(c(modfr_no_sub, modfr_list)))
+    modfr_list <- lapply(subs, parse_sub, data = data, family = family)
+
+    combine_modfr(c(modfr_no_sub, modfr_list))
   }
 }
 
