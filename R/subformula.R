@@ -248,7 +248,7 @@ parse_sub <- function(sub, data, family)
 
   data_subform <- c(as.list(indices_flat), subvar_data, as.list(data))
 
-  modfr_subform <- parse_formula(subform, data_subform, family)
+  modfr_subform <- parse_subformula(subform, data_subform)
 
   # now need to substitute model frames into subexpr, in place of subvar
   # need to use a version of subexpr expecting model frames
