@@ -251,9 +251,10 @@ parse_sub <- function(sub, data, family)
   modfr_subform <- parse_subformula(subform, data_subform)
 
   # now need to substitute model frames into subexpr, in place of subvar
-  # need to use a version of subexpr expecting model frames
+  # use a version of subexpr expecting model frames
   subexpr_mod <- modify_subexpr(subexpr, subvar)
 
+  browser()
 
 }
 

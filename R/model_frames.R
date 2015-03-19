@@ -19,7 +19,9 @@ parse_formula <- function(formula, data, family) {
 # effects, and manually, using model.matrix, if not
 parse_subformula <- function(formula, data) {
   if(has_re(formula)) {
-    modfr_tot <- lme4::lFormula(formula, data = data)
+    mod_control <- lme4::lmerControl(check.nobs.vs.nlev = "ignore",
+                                     check.nobs.vs.nRE = "ignore")
+    modfr_tot <- lme4::lFormula(formula, data = data, control = mod_control)
     modfr <- list(X = modfr_tot$X, reTrms = modfr_tot$reTrms)
   } else {
     fr <- lm(formula, data = data, family = family, method = "model.frame")
