@@ -65,10 +65,3 @@ modify_subexpr <- function(x, subvar) {
     stop("Don't know how to handle type ", typeof(x), call. = FALSE)
   }
 }
-
-`[fr` <- function(x, i) {
-  # two options, x either a glm model frame,
-  # or a lme4 model frame
-
-}
-
