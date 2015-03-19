@@ -43,6 +43,7 @@ is_modfr <- function(x) {
 
 `[fr` <- function(modfr, i) {
   out <- modfr
+  i <- as.numeric(i)
   out$X <- modfr$X[i, , drop = FALSE]
   if(has_reTrms(modfr)) {
     reTrms <- modfr$reTrms

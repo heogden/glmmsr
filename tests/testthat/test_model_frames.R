@@ -49,3 +49,15 @@ test_that("model frame (+, -, *, /) as expected", {
   expect_equal(mrtimestwo, twotimesmr)
   expect_equal(mrtimestwo, mroverpt5)
 })
+
+test_that("able to subset model frame by a factor", {
+  index <- factor(c("b", "c", "d"), levels = letters[1:5])
+  index_numeric <- as.numeric(index)
+  modfr_sub_fixed_subset_factor <- `[fr`(modfr_sub_fixed, index)
+  modfr_sub_random_subset_factor <- `[fr`(modfr_sub_random, index)
+  modfr_sub_fixed_subset_numeric <- `[fr`(modfr_sub_fixed, index_numeric)
+  modfr_sub_random_subset_factor <- `[fr`(modfr_sub_random, index_numeric)
+  expect_equal(modfr_sub_fixed_subset_factor,  modfr_sub_fixed_subset_numeric)
+  expect_equal(modfr_sub_random_subset_factor , modfr_sub_random_subset_factor)
+
+})

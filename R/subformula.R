@@ -175,14 +175,14 @@ find_indices_subform <- function(sub, data) {
     indices_i <- mget(indices_subexpr[[i]], as.environment(data))
     # coerce to factor
     indices_i <- lapply(indices_i, as.factor)
-    levels_indices_i <- sort(unique(Reduce(c, lapply(indices_i, levels))))
+    levels_indices_i <- unique(Reduce(c, lapply(indices_i, levels)))
     # coerce to factor with common levels
     indices_i <- lapply(indices_i, factor, levels = levels_indices_i)
     # replace in data, so have factors with correct levels
     for(j in seq_along(indices_i)) {
       data[[names(indices_i)[j]]] <- indices_i[[j]]
     }
-    indices_subform[[i]] <- as.numeric(factor(levels_indices_i))
+    indices_subform[[i]] <- 1:length(levels_indices_i)
     names(indices_subform)[i] <- find_indices(subform, i, subvar)
 
   }
@@ -249,13 +249,15 @@ parse_sub <- function(sub, data, family)
   data_subform <- c(as.list(indices_flat), subvar_data, as.list(data))
 
   modfr_subform <- parse_subformula(subform, data_subform)
+  modfr_subform_list <- list(modfr_subform)
+  names(modfr_subform_list) <- subvar
 
   # now need to substitute model frames into subexpr, in place of subvar
   # use a version of subexpr expecting model frames
   subexpr_mod <- modify_subexpr(subexpr, subvar)
-
-  browser()
-
+  # we want to replace subvar with modfr_subform
+  data_subexpr <- c(modfr_subform_list, as.list(data))
+  eval(subexpr_mod, envir = data_subexpr)
 }
 
 #' Parse a formula (and possibly subformulas)
@@ -271,12 +273,11 @@ glFormulaSub <- function (formula, data = NULL, family = gaussian,
   modfr_no_sub <- parse_formula(form_no_sub, data, family)
   if(length(subexprs) == 0L) {
     return(modfr_no_sub)
-  } else{
-    subs <- match_subform_subexpr(subforms, subexprs, data)
-
-    modfr_list <- lapply(subs, parse_sub, data = data, family = family)
-
-    combine_modfr(c(modfr_no_sub, modfr_list))
   }
+  subs <- match_subform_subexpr(subforms, subexprs, data)
+
+  modfr_list <- lapply(subs, parse_sub, data = data, family = family)
+  browser()
+  combine_modfr(c(modfr_no_sub, modfr_list))
 }
 
