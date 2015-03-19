@@ -22,10 +22,30 @@ test_that("parses subformulas with/without random effects correctly", {
   expect_equal_to_reference(modfr_sub_random, "modfr_sub_random.rds")
 })
 
+modfr_sub_fixed_subset <- `[fr`(modfr_sub_fixed, c(2, 5, 5, 6))
+modfr_sub_random_subset <- `[fr`(modfr_sub_random, c(2, 5, 5, 6))
 
 test_that("model frame subsetting as expected", {
-  expect_equal_to_reference(`[fr`(modfr_sub_fixed, c(2, 5, 5, 6)),
+  expect_equal_to_reference(modfr_sub_fixed_subset,
                             "modfr_sub_fixed_subset.rds")
-  expect_equal_to_reference(`[fr`(modfr_sub_random, c(2, 5, 5, 6)),
+  expect_equal_to_reference(modfr_sub_random_subset,
                             "modfr_sub_random_subset.rds")
+})
+
+test_that("model frame (+, -, *, /) as expected", {
+  mfplusmf <- `+fr`(modfr_sub_fixed_subset, modfr_sub_fixed_subset)
+  mftimestwo <- `*fr`(modfr_sub_fixed_subset, 2)
+  twotimesmf <- `*fr`(2, modfr_sub_fixed_subset)
+  mfoverpt5 <- `/fr`(modfr_sub_fixed_subset, 0.5)
+  expect_equal(mfplusmf, mftimestwo)
+  expect_equal(mftimestwo, twotimesmf)
+  expect_equal(mftimestwo, mfoverpt5)
+
+  mrplusmr <- `+fr`(modfr_sub_random_subset, modfr_sub_random_subset)
+  mrtimestwo <- `*fr`(modfr_sub_random_subset, 2)
+  twotimesmr <- `*fr`(2, modfr_sub_random_subset)
+  mroverpt5 <- `/fr`(modfr_sub_random_subset, 0.5)
+  expect_equal(mrplusmr, mrtimestwo)
+  expect_equal(mrtimestwo, twotimesmr)
+  expect_equal(mrtimestwo, mroverpt5)
 })
