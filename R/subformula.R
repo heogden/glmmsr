@@ -173,18 +173,16 @@ find_indices_subform <- function(sub, data) {
                   indices_subexpr[[i]][!in_data]))
     }
     indices_i <- mget(indices_subexpr[[i]], as.environment(data))
-    # coerce to factor
-    indices_i <- lapply(indices_i, as.factor)
-    levels_indices_i <- unique(Reduce(c, lapply(indices_i, levels)))
     # coerce to factor with common levels
-    indices_i <- lapply(indices_i, factor, levels = levels_indices_i)
+    index <- find_indices(subform, i, subvar)
+    levels_i <- get(index, data)
+    indices_i <- lapply(indices_i, factor, levels = levels_i)
     # replace in data, so have factors with correct levels
     for(j in seq_along(indices_i)) {
       data[[names(indices_i)[j]]] <- indices_i[[j]]
     }
-    indices_subform[[i]] <- 1:length(levels_indices_i)
-    names(indices_subform)[i] <- find_indices(subform, i, subvar)
-
+    indices_subform[[i]] <- 1:length(levels_i)
+    names(indices_subform)[i] <- index
   }
   return(list(data = data, indices_subform = indices_subform))
 }

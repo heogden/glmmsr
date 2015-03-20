@@ -16,12 +16,13 @@ y <- rbinom(length(p0), 1, p0)
 formula <- y ~ 0 + Sub(ability[player1] - ability[player2])
 subform <- ability[player] ~ 0 + x[player] + (1 | player)
 subform_i <- ability[i] ~ 0 + x[i] + (1 | i)
-data <- list(x = x, player1 = player1, player2 = player2)
+data <- list(x = x, player1 = player1, player2 = player2, player = player)
+data_i <- list(x = x, player1 = player1, player2 = player2, i = player)
 
 test_that("parses simple call correctly (no array indexing)", {
   fit <- glmerSR(formula, data = data, family = binomial,
                  subforms = list(subform))
-  fit_i <- glmerSR(formula, data = data, family = binomial,
+  fit_i <- glmerSR(formula, data = data_i, family = binomial,
                  subforms = list(subform_i))
   expect_equal(unname(coef(fit)[[1]]), unname(coef(fit_i)[[1]]))
 })
