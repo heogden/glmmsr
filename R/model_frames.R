@@ -1,14 +1,17 @@
 # convert formula to a model frame, using glFormula if there are random
 # effects, and manually, using model.matrix, if not
 parse_formula <- function(formula, data, family) {
+  formula_vars <- all.vars(formula)
+  data_vars <- data[formula_vars]
   if (is.character(family))
     family <- get(family, mode = "function", envir = parent.frame())
   if (is.function(family))
     family <- family()
   if(has_re(formula)) {
-    modfr <- lme4::glFormula(formula, data = data, family = family)
+    modfr <- lme4::glFormula(formula, data = data_vars, family = family)
   } else {
-    fr <- glm(formula, data = data, family = family, method = "model.frame")
+    fr <- glm(formula, data = data_vars, family = family,
+              method = "model.frame")
     X <- model.matrix(formula, data = fr)
     modfr <- list(fr = fr, X = X, family = family, formula = formula)
   }
@@ -18,13 +21,18 @@ parse_formula <- function(formula, data, family) {
 # convert formula to a model frame, using lFormula if there are random
 # effects, and manually, using model.matrix, if not
 parse_subformula <- function(formula, data) {
+  formula_vars <- all.vars(formula)
+  data_vars <- data[formula_vars]
   if(has_re(formula)) {
     mod_control <- lme4::lmerControl(check.nobs.vs.nlev = "ignore",
                                      check.nobs.vs.nRE = "ignore")
-    modfr_tot <- lme4::lFormula(formula, data = data, control = mod_control)
+    modfr_tot <- lme4::lFormula(formula, data = data_vars,
+                                control = mod_control)
     modfr <- list(X = modfr_tot$X, reTrms = modfr_tot$reTrms)
   } else {
-    fr <- lm(formula, data = data, family = family, method = "model.frame")
+
+    fr <- lm(formula, data = data_vars, family = family,
+             method = "model.frame")
     X <- model.matrix(formula, data = fr)
     modfr <- list(X = X)
   }
