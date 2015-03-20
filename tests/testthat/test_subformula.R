@@ -93,8 +93,3 @@ test_that("deduces indices for subform correctly", {
   expect_equal(length(indices2$p), 3L)
   expect_equal(length(indices2$m), 4L)
 })
-
-test_that("parses simple call correctly (no array indexing)", {
-#    glFormulaSub(formula, data = data, family = binomial,
-#                 subforms = list(subform))
-})

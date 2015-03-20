@@ -132,7 +132,7 @@ concatenate_Matrix <- function(M1, M2) {
 }
 
 concatenate_frames <- function(modfr1, modfr2) {
-  out <- modfr2
+  out <- modfr1
   out$X <- cbind(modfr1$X, modfr2$X)
   if(has_reTrms(modfr1)) {
     if(has_reTrms(modfr2)) {

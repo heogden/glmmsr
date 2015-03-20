@@ -8,10 +8,22 @@
 #' @param ... other arguments. May include subformulas.
 #' @inheritParams lme4::glmer
 #' @export
-glmerSR <- function(formula, data = NULL, family = gaussian,
-                    control = glmerControl(), start = NULL, verbose = 0L,
-                    nAGQ = 1L, k = 0L, subset, weights, na.action, offset,
-                    contrasts = NULL, mustart, etastart,
-                    devFunOnly = FALSE, ...) {
-
+glmerSR <- function(formula, data = NULL, family = gaussian, verbose = 0L,
+                    nAGQ = 1L, k = 0L, devFunOnly = FALSE, subforms) {
+  modfr <- glFormulaSub(formula, data, family, subforms)
+  if(has_reTrms(modfr)) {
+    devfun <- do.call(mkGlmerDevfun, modfr)
+    if(!devFunOnly){
+      opt <- optimizeGlmer(devfun)
+    }
+    devfun <- updateGlmerDevfun(devfun, modfr$reTrms)
+    if(devFunOnly) {
+      return(devfun)
+    } else {
+      opt <- optimizeGlmer(devfun, stage=2)
+      return(mkMerMod(environment(devfun), opt, modfr$reTrms, fr = modfr$fr))
+    }
+  } else {
+    stop("haven't yet implemented no random effects case")
+  }
 }
