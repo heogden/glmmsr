@@ -120,3 +120,44 @@ is_modfr <- function(x) {
   `+fr`(modfr1, minus_modfr2)
 }
 
+concatenate_Matrix <- function(M1, M2) {
+  M1 <- as(M1, "dgTMatrix")
+  M2 <- as(M2, "dgTMatrix")
+  M_x <- c(M1@x, M2@x)
+  dim1 <- dim(M1)
+  dim2 <- dim(M2)
+  M_i <- 1 + c(M1@i, dim1[1] + M2@i)
+  M_j <- 1 + c(M1@j, dim1[2] + M2@j)
+  Matrix::sparseMatrix(i = M_i, j = M_j,x = M_x, dims = dim1 + dim2)
+}
+
+concatenate_frames <- function(modfr1, modfr2) {
+  out <- modfr2
+  out$X <- cbind(modfr1$X, modfr2$X)
+  if(has_reTrms(modfr1)) {
+    if(has_reTrms(modfr2)) {
+      reTrms1 <- modfr1$reTrms
+      reTrms2 <- modfr2$reTrms
+      out$reTrms$Zt <- Matrix::rBind(reTrms1$Zt, reTrms2$Zt)
+      out$reTrms$theta <- c(reTrms1$theta, reTrms2$theta)
+      out$reTrms$Lind <- c(reTrms1$Lind, reTrms2$Lind)
+      out$reTrms$Gp <- c(0L, reTrms1$Gp[2] + reTrms2$Gp[2])
+      out$reTrms$lower <- c(reTrms1$lower, reTrms2$upper)
+      out$reTrms$Lambdat <- concatenate_Matrix(reTrms1$Lambdat, reTrms2$Lambdat)
+      out$reTrms$flist <- cbind(reTrms1$flist, reTrms2$flist)
+      out$reTrms$cnms <- cbind(reTrms1$cnms, reTrms2$cnms)
+      out$reTrms$Ztlist <- c(reTrms1$Ztlist, reTrms2$Ztlist)
+    }
+  } else {
+    if(has_reTrms(modfr2)) {
+      out$reTrms <- modfr2$reTrms
+    }
+  }
+  out
+}
+
+attach_subframes <- function(modfr, subframes) {
+  subframes_combined <- Reduce(concatenate_frames, subframes)
+  concatenate_frames(modfr, subframes_combined)
+}
+

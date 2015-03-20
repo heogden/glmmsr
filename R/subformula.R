@@ -278,6 +278,6 @@ glFormulaSub <- function (formula, data = NULL, family = gaussian,
 
   modfr_list <- lapply(subs, parse_sub, data = data, family = family)
   browser()
-  combine_modfr(c(modfr_no_sub, modfr_list))
+  attach_subframes(modfr_no_sub, modfr_list)
 }
 

@@ -61,3 +61,10 @@ test_that("able to subset model frame by a factor", {
   expect_equal(modfr_sub_random_subset_factor , modfr_sub_random_subset_factor)
 
 })
+
+test_that("model frames concatenate correctly", {
+  fixed_concat <- concatenate_frames(modfr_sub_fixed, modfr_sub_fixed)
+  random_concat <- concatenate_frames(modfr_sub_random, modfr_sub_random)
+  expect_equal_to_reference(fixed_concat, "fixed_concat.rds")
+  expect_equal_to_reference(random_concat, "random_concat.rds")
+})
