@@ -37,7 +37,7 @@ modify_subexpr <- function(x, subvar) {
     arg2sub <- FALSE
     if(length(x) > 1L) {
       arg1sub <- attr(x[[2]], "sub")
-      if(length(x) < 2L) {
+      if(length(x) > 2L) {
         arg2sub <- attr(x[[3]], "sub")
       }
     }
