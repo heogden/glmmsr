@@ -107,32 +107,6 @@ match_subform_subexpr <- function(subforms, subexprs, data) {
   lapply(subforms, add_subexpr, subexprs = subexprs, which_subvars = which_subvars)
 }
 
-find_dim_sub <- function(x, var, d = NULL){
-  if(is.atomic(x) || is.name(x)) {
-    d
-  } else if (is.call(x)) {
-    if(identical(x[[1]], quote(`[`)) && identical(as.character(x[[2]]), var)) {
-      if(length(d) > 0L){
-        if(d != (length(x) - 2)) {
-          stop(paste0("\'", var, "\' is indexed inconsistently"), call. = FALSE)
-        }
-      } else{
-        d <- length(x) - 2
-      }
-    }
-    for(i in seq_along(x)) {
-      d <- find_dim_sub(x[[i]], var, d)
-    }
-  } else if(is.pairlist(x)) {
-    for(i in seq_along(x)) {
-      d <- find_dim_sub(x[[i]], var, d)
-    }
-  } else{
-    stop("Don't know how to handle type ", typeof(x), call. = FALSE)
-  }
-  d
-}
-
 
 parse_sub <- function(sub, data, family)
 {

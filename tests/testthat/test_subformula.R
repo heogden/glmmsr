@@ -60,16 +60,3 @@ test_that("matches subforms and subexprs correctly", {
                 "No subexpressions involving")
 }
 )
-
-test_that("checks dimension of indexing correctly", {
-  subexpr1 <- quote(ability[player1] - ability[player2])
-  subexpr2 <- quote(ability[player1, player2] - ability[player2, player1])
-  subexpr3 <- quote(ability[player1] + stuff[m1, m2, m3])
-  subexpr4 <- quote(ability[player1] + ability[player1, player2])
-  expect_equal(find_dim_sub(subexpr1, "ability"), 1L)
-  expect_equal(find_dim_sub(subexpr2, "ability"), 2L)
-  expect_equal(find_dim_sub(subexpr3, "ability"), 1L)
-  expect_equal(find_dim_sub(subexpr3, "stuff"), 3L)
-  expect_error(find_dim_sub(subexpr4, "ability"),
-              "indexed inconsistently")
-})
