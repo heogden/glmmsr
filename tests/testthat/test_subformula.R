@@ -19,6 +19,7 @@ data <- list(x = x, player1 = player1, player2 = player2)
 
 test_that("passes to glFormula if no Sub() terms", {
     form <- y ~ 0 + (1 | player1) + (1 | player2)
+    data <- list(y = y, player1 = player1, player2 = player2)
     modfr1 <- glFormulaSub(form, data = data, family = binomial)
     modfr2 <- lme4::glFormula(form, data = data, family = binomial)
     expect_equal(modfr1, modfr2)
@@ -71,25 +72,4 @@ test_that("checks dimension of indexing correctly", {
   expect_equal(find_dim_sub(subexpr3, "stuff"), 3L)
   expect_error(find_dim_sub(subexpr4, "ability"),
               "indexed inconsistently")
-})
-
-test_that("deduces indices for subform correctly", {
-  sub1 <- list(subvar = "ability",
-               subform = formula(ability[player] ~ 0 + (1 | player)),
-               subexpr = quote(ability[player1] - ability[player2]))
-  data1 <- list(player1 = c("a", "b", "c"), player2 = c("b", "c", "d"))
-  indices1 <- find_indices_subform(sub1, data1)$indices_subform
-  expect_equal(names(indices1), "player")
-  expect_equal(length(indices1$player), 4L)
-  sub2 <- list(subvar = "ability",
-               subform = formula(ability[p, m] ~ 0 + x[m] + (1 | p)),
-               subexpr = quote(ability[player1, match]
-                               - ability[player2, match]))
-  data2 <- list(player1 = c("a", "a", "b", "b"),
-                player2 = c("b", "b", "c", "c"),
-                match = c(1, 2, 3, 4))
-  indices2 <- find_indices_subform(sub2, data2)$indices_subform
-  expect_equal(names(indices2), c("p", "m"))
-  expect_equal(length(indices2$p), 3L)
-  expect_equal(length(indices2$m), 4L)
 })

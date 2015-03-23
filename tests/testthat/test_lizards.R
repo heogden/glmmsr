@@ -1,7 +1,7 @@
 library(glmmsr)
 library(BradleyTerry2)
 
-
+attach(flatlizards)
 m <- nrow(flatlizards$contests)
 
 #have to swap around first response, because lme4 disallows constant response
@@ -23,19 +23,16 @@ data <- c(list(y = y, player1 = player1, player2 = player2, player = player),
           flatlizardspred)
 
 mod <- glmerSR(y ~ 0 + Sub(ability[player1] - ability[player2]),
-        family = binomia(link = "probit"), data = data,
+        family = binomial(link = "probit"), data = data,
         subforms = list(ability[player] ~ 0 + throat.PC1[player]
                         + throat.PC3[player] + head.length[player]
                         + SVL[player] + (1 | player)))
 
 mod
 
-Player1 <- factor(player1, levels = player)
-Player2 <- factor(player2, levels = player)
 
-mod_BTm <- BTm(y, Player1, Player2,
-               ~ throat.PC1[..] + throat.PC3[..] + head.length[..] + SVL[..] + (1|..),
-                      family = binomial,
+result <- rep(1, m)
+Whiting.model2 <- BTm(result, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
+                        head.length[..] + SVL[..] + (1|..),
                       data = list(contests, predictors))
-
-mod_BTm
+Whiting.model2
