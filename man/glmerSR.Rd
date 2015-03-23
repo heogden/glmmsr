@@ -17,7 +17,7 @@ glmerSR(formula, data = NULL, family = gaussian, verbose = 0L,
 
 \item{data}{an optional data frame or environment containing the variables
 named in \code{formula}, and in any of the subformulas contained in
-\code{...}.}
+subforms.}
 
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
@@ -46,7 +46,7 @@ reduction approximation to the likelihood.}
     \emph{exactly} the same values on subsequent calls (but the results
     should always be within machine tolerance).}
 
-\item{...}{other arguments. May include subformulas.}
+\item{subforms}{an (optional) list of subformulas}
 }
 \description{
 Fit a GLMM

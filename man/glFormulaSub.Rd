@@ -16,10 +16,12 @@ glFormulaSub(formula, data = NULL, family = gaussian, subforms = NULL)
 
 \item{data}{an optional data frame or environment containing the variables
 named in \code{formula}, and in any of the subformulas contained in
-\code{...}.}
+subforms.}
 
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
+
+\item{subforms}{an (optional) list of subformulas}
 }
 \description{
 Parse a formula (and possibly subformulas)
