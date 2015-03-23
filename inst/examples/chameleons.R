@@ -87,3 +87,12 @@ mod <- glmerSR(resp ~ 0 + Sub(ability[player1, match] -
                subforms = subforms)
 
 # two analyses the same, because both estimate random effects variances to be 0
+data2 = c(list(resp = rep(1, length(winner)), winner = winner, loser = loser,
+              match = match, prevwins2 = prevwins2),
+         as.list(chameleons$predictors))
+
+mod2 <- glmerSR(resp ~ 0 + Sub(ability[winner, match] -
+                                 ability[loser, match]),
+                family = binomial, data = data2,
+                subforms = subforms)
+
