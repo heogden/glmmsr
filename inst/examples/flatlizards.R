@@ -23,10 +23,10 @@ data <- c(list(y = y, player1 = player1, player2 = player2, player = player),
           flatlizardspred)
 
 mod <- glmerSR(y ~ 0 + Sub(ability[player1] - ability[player2]),
-        family = binomial(link = "probit"), data = data,
-        subforms = list(ability[player] ~ 0 + throat.PC1[player]
-                        + throat.PC3[player] + head.length[player]
-                        + SVL[player] + (1 | player)))
+               family = binomial(link = "probit"), data = data,
+               subforms = list(ability[player] ~ 0 + throat.PC1[player]
+                               + throat.PC3[player] + head.length[player]
+                               + SVL[player] + (1 | player)))
 
 mod
 
