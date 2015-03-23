@@ -16,7 +16,7 @@ glmerSR <- function(formula, data = NULL, family = gaussian, verbose = 0L,
     if(!devFunOnly){
       opt <- optimizeGlmer(devfun)
     }
-    devfun <- updateGlmerDevfun(devfun, modfr$reTrms)
+    devfun <- updateGlmerDevfun(devfun, modfr$reTrms, nAGQ = nAGQ)
     if(devFunOnly) {
       return(devfun)
     } else {
