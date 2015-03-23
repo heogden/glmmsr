@@ -9,11 +9,15 @@ loser <- chameleons$loser$ID
 match <- 1:length(winner)
 
 prevwins2 <- matrix(0, nrow = length(levels(winner)), ncol = length(winner))
-subforms <- list(ability[p, t] ~ prevwins2[p, t] + ch.res[p] + prop.main[p] + (1 | p))
+subforms <- list(ability[p, t] ~ 0 + prevwins2[p, t] + ch.res[p] + prop.main[p]
+                 + (1 | p))
 
-data = c(list(winner = winner, loser = loser, match = match, prevwins2 = prevwins2),
-         as.list(chameleons$predictors))
+resp <- rep(1, length(winner))
 
-mod <- glmerSR(Sub(ability[winner, match] - ability[loser, match],
-                   subforms = subforms)
+data = c(list(resp = resp, winner = winner, loser = loser, match = match,
+              prevwins2 = prevwins2), as.list(chameleons$predictors))
+
+mod <- glmerSR(resp ~ 0 + Sub(ability[winner, match] - ability[loser, match]),
+               family = binomial, data = data,
+               subforms = subforms)
 

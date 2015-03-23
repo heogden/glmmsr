@@ -4,112 +4,47 @@
 \alias{glmerSR}
 \title{Fit a GLMM}
 \usage{
-glmerSR(formula, data = NULL, family = gaussian, control = glmerControl(),
-  start = NULL, verbose = 0L, nAGQ = 1L, k = 0L, subset, weights,
-  na.action, offset, contrasts = NULL, mustart, etastart,
-  devFunOnly = FALSE, ...)
+glmerSR(formula, data = NULL, family = gaussian, verbose = 0L,
+  nAGQ = 1L, k = 0L, devFunOnly = FALSE, subforms)
 }
 \arguments{
-\item{formula}{a two-sided linear formula object
-  describing both the fixed-effects and fixed-effects part
-  of the model, with the response on the left of a \code{~}
-  operator and the terms, separated by \code{+} operators,
-  on the right.  Random-effects terms are distinguished by
-  vertical bars (\code{"|"}) separating expressions for
-  design matrices from grouping factors.}
+\item{formula}{a two-sided linear formula object describing both the
+    fixed-effects and fixed-effects part of the model, with the response
+    on the left of a \code{~} operator and the terms, separated by
+    \code{+} operators, on the right.  Random-effects terms are
+    distinguished by vertical bars (\code{"|"}) separating expressions
+    for design matrices from grouping factors.}
 
 \item{data}{an optional data frame or environment containing the variables
 named in \code{formula}, and in any of the subformulas contained in
 \code{...}.}
 
-\item{family}{a GLM family, see \code{\link[stats]{glm}}
-  and \code{\link[stats]{family}}.}
+\item{family}{a GLM family, see \code{\link[stats]{glm}} and
+    \code{\link[stats]{family}}.}
 
-\item{control}{a list (of correct class, resulting from
-  \code{\link{lmerControl}()} or
-  \code{\link{glmerControl}()} respectively) containing
-  control parameters, including the nonlinear optimizer to
-  be used and parameters to be passed through to the
-  nonlinear optimizer, see the \code{*lmerControl}
-  documentation for details.}
+\item{verbose}{integer scalar.  If \code{> 0} verbose output is
+    generated during the optimization of the parameter estimates.  If
+    \code{> 1} verbose output is generated during the individual PIRLS
+    steps.}
 
-\item{start}{a named list of starting values for the
-  parameters in the model, or a numeric vector. A numeric
-  \code{start} argument will be used as the starting value
-  of \code{theta}.  If \code{start} is a list, the
-  \code{theta} element (a numeric vector) is used as the
-  starting value for the first optimization step (default=1
-  for diagonal elements and 0 for off-diagonal elements of
-  the lower Cholesky factor); the fitted value of
-  \code{theta} from the first step, plus
-  \code{start[["fixef"]]}, are used as starting values for
-  the second optimization step.  If \code{start} has both
-  \code{fixef} and \code{theta} elements, the first
-  optimization step is skipped. For more details or finer
-  control of optimization, see \code{\link{modular}}.}
-
-\item{verbose}{integer scalar.  If \code{> 0} verbose
-  output is generated during the optimization of the
-  parameter estimates.  If \code{> 1} verbose output is
-  generated during the individual PIRLS steps.}
-
-\item{nAGQ}{integer scalar - the number of points per
-  axis for evaluating the adaptive Gauss-Hermite
-  approximation to the log-likelihood.  Defaults to 1,
-  corresponding to the Laplace approximation.  Values
-  greater than 1 produce greater accuracy in the evaluation
-  of the log-likelihood at the expense of speed.  A value
-  of zero uses a faster but less exact form of parameter
-  estimation for GLMMs by optimizing the random effects and
-  the fixed-effects coefficients in the penalized
-  iteratively reweighted least squares step.}
+\item{nAGQ}{integer scalar - the number of points per axis for
+    evaluating the adaptive Gauss-Hermite approximation to the
+    log-likelihood.  Defaults to 1, corresponding to the Laplace
+    approximation.  Values greater than 1 produce greater accuracy in
+    the evaluation of the log-likelihood at the expense of speed.  A
+    value of zero uses a faster but less exact form of parameter
+    estimation for GLMMs by optimizing the random effects and the
+    fixed-effects coefficients in the penalized iteratively reweighted
+    least squares step.}
 
 \item{k}{integer scalar - the level of approximation used in the sequential
 reduction approximation to the likelihood.}
 
-\item{subset}{an optional expression indicating the
-  subset of the rows of \code{data} that should be used in
-  the fit. This can be a logical vector, or a numeric
-  vector indicating which observation numbers are to be
-  included, or a character vector of the row names to be
-  included.  All observations are included by default.}
-
-\item{weights}{an optional vector of \sQuote{prior
-  weights} to be used in the fitting process.  Should be
-  \code{NULL} or a numeric vector.}
-
-\item{na.action}{a function that indicates what should
-  happen when the data contain \code{NA}s.  The default
-  action (\code{na.omit}, inherited from the 'factory
-  fresh' value of \code{getOption("na.action")}) strips any
-  observations with any missing values in any variables.}
-
-\item{offset}{this can be used to specify an \emph{a
-  priori} known component to be included in the linear
-  predictor during fitting. This should be \code{NULL} or a
-  numeric vector of length equal to the number of cases.
-  One or more \code{\link{offset}} terms can be included in
-  the formula instead or as well, and if more than one is
-  specified their sum is used.  See
-  \code{\link{model.offset}}.}
-
-\item{contrasts}{an optional list. See the
-  \code{contrasts.arg} of \code{model.matrix.default}.}
-
-\item{mustart}{optional starting values on the scale of
-  the conditional mean, as in \code{\link[stats]{glm}}; see
-  there for details.}
-
-\item{etastart}{optional starting values on the scale of
-  the unbounded predictor as in \code{\link[stats]{glm}};
-  see there for details.}
-
-\item{devFunOnly}{logical - return only the deviance
-  evaluation function. Note that because the deviance
-  function operates on variables stored in its environment,
-  it may not return \emph{exactly} the same values on
-  subsequent calls (but the results should always be within
-  machine tolerance).}
+\item{devFunOnly}{logical - return only the deviance evaluation
+    function. Note that because the deviance function operates on
+    variables stored in its environment, it may not return
+    \emph{exactly} the same values on subsequent calls (but the results
+    should always be within machine tolerance).}
 
 \item{...}{other arguments. May include subformulas.}
 }

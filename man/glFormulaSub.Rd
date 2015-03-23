@@ -4,72 +4,22 @@
 \alias{glFormulaSub}
 \title{Parse a formula (and possibly subformulas)}
 \usage{
-glFormulaSub(formula, data = NULL, family = gaussian, subset, weights,
-  na.action, offset, contrasts = NULL, mustart, etastart,
-  control = glmerControl(), ...)
+glFormulaSub(formula, data = NULL, family = gaussian, subforms = NULL)
 }
 \arguments{
-\item{formula}{a two-sided linear formula object
-  describing both the fixed-effects and fixed-effects part
-  of the model, with the response on the left of a \code{~}
-  operator and the terms, separated by \code{+} operators,
-  on the right.  Random-effects terms are distinguished by
-  vertical bars (\code{"|"}) separating expressions for
-  design matrices from grouping factors.}
+\item{formula}{a two-sided linear formula object describing both the
+    fixed-effects and fixed-effects part of the model, with the response
+    on the left of a \code{~} operator and the terms, separated by
+    \code{+} operators, on the right.  Random-effects terms are
+    distinguished by vertical bars (\code{"|"}) separating expressions
+    for design matrices from grouping factors.}
 
 \item{data}{an optional data frame or environment containing the variables
 named in \code{formula}, and in any of the subformulas contained in
 \code{...}.}
 
-\item{family}{a GLM family, see \code{\link[stats]{glm}}
-  and \code{\link[stats]{family}}.}
-
-\item{subset}{an optional expression indicating the
-  subset of the rows of \code{data} that should be used in
-  the fit. This can be a logical vector, or a numeric
-  vector indicating which observation numbers are to be
-  included, or a character vector of the row names to be
-  included.  All observations are included by default.}
-
-\item{weights}{an optional vector of \sQuote{prior
-  weights} to be used in the fitting process.  Should be
-  \code{NULL} or a numeric vector.}
-
-\item{na.action}{a function that indicates what should
-  happen when the data contain \code{NA}s.  The default
-  action (\code{na.omit}, inherited from the 'factory
-  fresh' value of \code{getOption("na.action")}) strips any
-  observations with any missing values in any variables.}
-
-\item{offset}{this can be used to specify an \emph{a
-  priori} known component to be included in the linear
-  predictor during fitting. This should be \code{NULL} or a
-  numeric vector of length equal to the number of cases.
-  One or more \code{\link{offset}} terms can be included in
-  the formula instead or as well, and if more than one is
-  specified their sum is used.  See
-  \code{\link{model.offset}}.}
-
-\item{contrasts}{an optional list. See the
-  \code{contrasts.arg} of \code{model.matrix.default}.}
-
-\item{mustart}{optional starting values on the scale of
-  the conditional mean, as in \code{\link[stats]{glm}}; see
-  there for details.}
-
-\item{etastart}{optional starting values on the scale of
-  the unbounded predictor as in \code{\link[stats]{glm}};
-  see there for details.}
-
-\item{control}{a list (of correct class, resulting from
-  \code{\link{lmerControl}()} or
-  \code{\link{glmerControl}()} respectively) containing
-  control parameters, including the nonlinear optimizer to
-  be used and parameters to be passed through to the
-  nonlinear optimizer, see the \code{*lmerControl}
-  documentation for details.}
-
-\item{...}{other arguments. May include subformulas.}
+\item{family}{a GLM family, see \code{\link[stats]{glm}} and
+    \code{\link[stats]{family}}.}
 }
 \description{
 Parse a formula (and possibly subformulas)

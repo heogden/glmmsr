@@ -132,3 +132,10 @@ flatten_formula <- function(formula, indices){
   }
   formula_flat
 }
+
+
+multi_to_flat <- function(multi_id, indices) {
+  l <- vapply(indices, length, 1L)
+  1 + sum(multi_id*(l-1))
+}
+

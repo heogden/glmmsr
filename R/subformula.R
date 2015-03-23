@@ -127,7 +127,7 @@ parse_sub <- function(sub, data, family)
 
   data_subform <- c(as.list(indices_flat), subvar_data, as.list(data))
 
-  modfr_subform <- parse_subformula(subform, data_subform)
+  modfr_subform <- parse_subformula(subform_flat, data_subform)
   modfr_subform_list <- list(modfr_subform)
   names(modfr_subform_list) <- subvar
 
@@ -136,6 +136,7 @@ parse_sub <- function(sub, data, family)
   subexpr_mod <- modify_subexpr(subexpr, subvar)
   # we want to replace subvar with modfr_subform
   data_subexpr <- c(modfr_subform_list, as.list(data))
+
   eval(subexpr_mod, envir = data_subexpr)
 }
 

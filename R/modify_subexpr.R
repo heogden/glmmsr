@@ -44,6 +44,12 @@ modify_subexpr <- function(x, subvar) {
     if(arg1sub || arg2sub) {
       if(identical(x[[1]], quote(`[`)) && arg1sub && !arg2sub) {
         x[[1]] <- quote(`[fr`)
+        if(length(x) > 3L) {
+          # have multiple indexing: must flatten
+          index <- parse(text = paste(x[-c(1, 2)], collapse = "_"))[[1]]
+          x <- x[1:3]
+          x[[3]] <- index
+        }
       } else if(identical(x[[1]], quote(`+`))) {
         x[[1]] <- quote(`+fr`)
       } else if(identical(x[[1]], quote(`-`))) {
@@ -58,9 +64,37 @@ modify_subexpr <- function(x, subvar) {
       }
     }
     as.call(lapply(x, modify_subexpr, subvar = subvar))
+
   } else if(is.pairlist(x)) {
     as.pairlist(lapply(x, modify_subexpr, subvar = subvar))
 
+  } else{
+    stop("Don't know how to handle type ", typeof(x), call. = FALSE)
+  }
+}
+
+extract_to_flatten <- function(x, subvar) {
+  x <- add_sub_status(x, subvar)
+  if(is.atomic(x) || is.name(x)) {
+    list()
+  } else if(is.call(x)) {
+    if(identical(x[[1]], quote(`[`)) && length(x) > 3L && attr(x[[2]], "sub")) {
+      # have multiple indexing: must flatten
+      to_flatten <- paste(as.list(x)[-c(1, 2)])
+      out <- list()
+      out[[1]] <- to_flatten
+      out <- unique(c(out, unlist(lapply(x, extract_to_flatten,
+                                         subvar = subvar), recursive = FALSE)))
+      out[vapply(out, length, 1L) > 0L]
+    } else {
+      out <- unique(unlist(lapply(x, extract_to_flatten, subvar = subvar),
+                           recursive = FALSE))
+      out[vapply(out, length, 1L) > 0L]
+    }
+  } else if(is.pairlist(x)) {
+    out <- unique(unlist(lapply(x, extract_to_flatten, subvar = subvar),
+                         recursive = FALSE))
+    out[vapply(out, length, 1L) > 0L]
   } else{
     stop("Don't know how to handle type ", typeof(x), call. = FALSE)
   }
