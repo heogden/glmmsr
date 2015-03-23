@@ -44,3 +44,10 @@ test_that("deduces indices for subform correctly", {
                "Indexing factors must have identical levels")
 
 })
+
+test_that("converts from multi-indexing to single indexing correctly", {
+  indices <- list("a" = c(1, 2, 3), "b" = c(1, 2), "c" = c(1, 2, 3, 4))
+  indices_exp <- expand.grid(indices)
+  ids <- multi_to_flat(t(indices_exp[c(3, 5, 11, 23),]), indices)
+  expect_equal(ids, c(3, 5, 11, 23))
+})

@@ -118,14 +118,14 @@ parse_sub <- function(sub, data, family)
   data <- indices_subform_tot$data
   indices_subform <- indices_subform_tot$indices_subform
 
-  indices_flat <- expand.grid(indices_subform)
-  subform_flat <- flatten_formula(subform, indices_flat)
+  indices_expand <- expand.grid(indices_subform)
+  subform_flat <- flatten_formula(subform, indices_expand)
 
   # find fake data for the subvar, of the correct length
-  subvar_data <- list(rep(0, NROW(indices_flat)))
+  subvar_data <- list(rep(0, NROW(indices_expand)))
   names(subvar_data) <- subvar
 
-  data_subform <- c(as.list(indices_flat), subvar_data, as.list(data))
+  data_subform <- c(as.list(indices_expand), subvar_data, as.list(data))
 
   modfr_subform <- parse_subformula(subform_flat, data_subform)
   modfr_subform_list <- list(modfr_subform)
@@ -134,8 +134,15 @@ parse_sub <- function(sub, data, family)
   # now need to substitute model frames into subexpr, in place of subvar
   # use a version of subexpr expecting model frames
   subexpr_mod <- modify_subexpr(subexpr, subvar)
+  to_flatten <- extract_to_flatten(subexpr, subvar)
+  subset_vars_flat <- lapply(to_flatten, flatten_vars,
+                             indices = indices_subform,
+                             data = data)
+
+  names(subset_vars_flat) <- lapply(to_flatten, paste, collapse = "_")
+
   # we want to replace subvar with modfr_subform
-  data_subexpr <- c(modfr_subform_list, as.list(data))
+  data_subexpr <- c(modfr_subform_list, subset_vars_flat, as.list(data))
 
   eval(subexpr_mod, envir = data_subexpr)
 }

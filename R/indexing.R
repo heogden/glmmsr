@@ -136,6 +136,12 @@ flatten_formula <- function(formula, indices){
 
 multi_to_flat <- function(multi_id, indices) {
   l <- vapply(indices, length, 1L)
-  1 + sum(multi_id*(l-1))
+  h <- c(1, cumprod(l)[-length(l)])
+  unname(1 + colSums((multi_id-1)*h))
+}
+
+flatten_vars <- function(var_names, indices, data) {
+  multi_id <- Reduce(rbind, lapply(data[var_names], as.numeric))
+  multi_to_flat(multi_id, indices)
 }
 
