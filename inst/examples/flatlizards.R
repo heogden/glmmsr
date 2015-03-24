@@ -1,4 +1,3 @@
-
 library(BradleyTerry2)
 y <- rep(1, nrow(flatlizards$contests))
 
