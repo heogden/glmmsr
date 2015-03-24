@@ -13,8 +13,7 @@
 #' The main function of the glmmsr package is \code{\link{glmerSR}}, which is
 #' used to fit the GLMM. Its interface is a generalization of
 #' \code{\link[lme4]{glmer}}, to allow a larger class of models, including
-#' structured pairwise comparison models. This interface is described in
-#' \code{\link{subform}}.
+#' structured pairwise comparison models.
 #'
 #' @references Helen E. Ogden (2015). A sequential reduction method for
 #'   inference in generalized linear mixed models. Electronic Journal of
