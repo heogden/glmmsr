@@ -15,14 +15,46 @@ y <- rbinom(length(p0), 1, p0)
 
 formula <- y ~ 0 + Sub(ability[player1] - ability[player2])
 subform <- ability[player] ~ 0 + x[player] + (1 | player)
-subform_i <- ability[i] ~ 0 + x[i] + (1 | i)
-data <- list(x = x, player1 = player1, player2 = player2, player = player)
-data_i <- list(x = x, player1 = player1, player2 = player2)
+data <- list(x = x, player1 = player1, player2 = player2)
 
-test_that("parses simple call correctly (no array indexing)", {
-  fit <- glmerSR(formula, data = data, family = binomial,
-                 subforms = list(subform))
+fit <- glmerSR(formula, data = data, family = binomial,
+               subforms = list(subform))
+s <- attr(VarCorr(fit)[[1]], "stddev")
+
+
+test_that("doesn't matter what name used for index", {
+  subform_i <- ability[i] ~ 0 + x[i] + (1 | i)
+  data_i <- list(x = x, player1 = player1, player2 = player2)
   fit_i <- glmerSR(formula, data = data_i, family = binomial,
                  subforms = list(subform_i))
-  expect_equal(unname(coef(fit)[[1]]), unname(coef(fit_i)[[1]]))
+  expect_equal(unname(fixef(fit)[[1]]), unname(fixef(fit_i)[[1]]))
+
+  s_i <- attr(VarCorr(fit_i)[[1]], "stddev")
+  expect_equal(s, s_i)
+})
+
+
+test_that("different forms of indexing give same result", {
+  player1_num <- rep(2:10, 10)
+  player2_num <- rep(1:9, 10)
+  data_num <- list(x = x, player1 = player1_num, player2 = player2_num)
+
+  fit_num <- glmerSR(formula, data = data_num, family = binomial,
+                 subforms = list(subform))
+  expect_equal(unname(fixef(fit)[[1]]), unname(fixef(fit_num)[[1]]))
+
+  s_num <- attr(VarCorr(fit_num)[[1]], "stddev")
+  expect_equal(s, s_num)
+})
+
+test_that("OK if don't use all rows of X", {
+  player1_no_1 <- rep(3:11, 10)
+  player2_no_1 <- rep(2:10, 10)
+  data_no_1 <- list(x = c(x[1],x), player1 = player1_no_1, player2 = player2_no_1)
+
+  fit_no_1 <- glmerSR(formula, data = data_no_1, family = binomial,
+                     subforms = list(subform))
+  expect_equal(unname(fixef(fit)[[1]]), unname(fixef(fit_no_1)[[1]]))
+  s_no_1 <- attr(VarCorr(fit_no_1)[[1]], "stddev")
+  expect_equal(s, s_no_1)
 })
