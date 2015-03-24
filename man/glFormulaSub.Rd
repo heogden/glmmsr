@@ -20,6 +20,8 @@ subforms.}
 
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
+
+\item{subforms}{a list of subformulas}
 }
 \description{
 Parse a formula (and possibly subformulas)
