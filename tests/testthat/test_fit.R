@@ -50,7 +50,9 @@ test_that("different forms of indexing give same result", {
 test_that("OK if don't use all rows of X", {
   player1_no_1 <- rep(3:11, 10)
   player2_no_1 <- rep(2:10, 10)
-  data_no_1 <- list(x = c(x[1],x), player1 = player1_no_1, player2 = player2_no_1)
+  # has entries for 1 and 12
+  data_no_1 <- list(x = c(x[1],x, x[1]),
+                    player1 = player1_no_1, player2 = player2_no_1)
 
   fit_no_1 <- glmerSR(formula, data = data_no_1, family = binomial,
                      subforms = list(subform))
