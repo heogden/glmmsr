@@ -1,0 +1,153 @@
+---
+title: "Fitting GLMMs with glmmsr"
+author: "Helen Ogden"
+date: " "
+output: rmarkdown::html_vignette
+bibliography: glmmsr.bib
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+  
+---
+
+## Introduction
+
+At the moment, the sequential reduction approximation is not used. 
+
+## The subformula interface
+
+
+
+## Example 1: `flatlizards` data
+@Whiting2006 conducted an experiment to determine the impact of 
+various covariates on the fighting ability of male flat-lizards.
+The data are available in `BradleyTerry2`: see `?flatlizards`
+for more details.
+
+```{r, message = FALSE}
+library(BradleyTerry2)
+y <- rep(1, nrow(flatlizards$contests))
+
+loser <- flatlizards$contests$loser
+winner <- flatlizards$contests$winner
+```
+
+The throat spectrum is missing for lizards 96 and 99.
+Since `glmmsr` can't yet handle missing values, we manually match
+the default behaviour of `BradleyTerry2`, adding a separate
+predictor for each lizard with missing values in the covariates
+of interest.
+```{r, warning = FALSE}
+flatlizardspred <- as.data.frame(flatlizards$predictors)
+flatlizardspred[is.na(flatlizardspred$throat.PC3), ] <- 0
+liz96 <- rep(0, length(flatlizards$predictors$id))
+liz96[flatlizards$predictors$id == 96] <- 1
+liz99 <- rep(0, length(flatlizards$predictors$id))
+liz99[flatlizards$predictors$id == 99] <- 1
+
+liz_dat <- c(list(y = y, winner = winner, loser = loser, liz96 = liz96, 
+               liz99 = liz99), flatlizardspred)
+```
+
+We can now fit the model, using the fitting function `glmerSR`.
+```{r}
+library(glmmsr)
+liz_mod <- glmerSR(y ~ 0 + Sub(ability[winner] - ability[loser]),
+               family = binomial(link = "probit"), data = liz_dat,
+               subforms = list(ability[liz] ~ 0 + liz96[liz] + liz99[liz] 
+                               +throat.PC1[liz] + throat.PC3[liz] 
+                               + head.length[liz] + SVL[liz] + (1 | liz)))
+```
+The index `liz` is not given in `data`. Instead,
+it is deduced from the levels of the terms `winner` and `loser` which
+index `ability` in the subexpression. The name of the index (`liz`)
+is arbitrary.
+
+We examine the fitted model.
+```{r}
+print(summary(liz_mod), correlation = FALSE, show.resids = FALSE)
+```
+We compare with the same model fit with `BradleyTerry2`
+```{r}
+liz_mod_BTm <- BTm(y, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
+                      head.length[..] + SVL[..] + (1|..),
+                      family = binomial(link = "probit"),
+                      data = flatlizards)
+summary(liz_mod_BTm)
+```
+The two fitted models are quite different: in particular,
+there is far more uncertainty in `liz_mod` than in `liz_mod_BTm`. There is a 
+difference because different approximations to the likelihood are used to fit 
+the model in each case. Currently, `glmerSR` passes to `lme4` for model fitting,
+which uses a Laplace approximation to the likelihood. `BradleyTerry2` uses
+Penalised Quasi-Likelihood (PQL) to fit the model.
+
+## Example 2: `chameleons` data
+
+@Stuart-Fox2006 study contests between male Cape dwarf chameleons.
+The data are available in `BradleyTerry2`: see `?chameleons` for
+more details. The model suggested by 
+@Stuart-Fox2006 includes an `experience` effect: we allow
+the `ability' for each chameleon to change as the tournament progresses.
+
+In particular, for each chameleon $i$ at each match $m$, we count the 
+number of wins for that chameleon in its (at most) two previous matches. 
+We start by constructing a matrix `prevwins2` to record these counts.
+```{r}
+winner <- chameleons$winner$ID
+loser <- chameleons$loser$ID
+match <- 1:length(winner)
+
+wins <- matrix(0, nrow = length(levels(winner)), ncol = length(winner))
+wins[cbind(as.numeric(winner), match)] <- 1
+
+losses <- matrix(0, nrow = length(levels(winner)), ncol = length(winner))
+losses[cbind(as.numeric(loser), match)] <- 1
+
+contests <- wins + losses
+
+find_prev2 <- function(wins_im, contests_im) {
+  m <- min(2, sum(contests_im))
+  if(m > 0) {
+    res <- sum(wins_im[rev(which(contests_im > 0L))[1:m]])
+  } else{
+    res <- 0
+  }
+  res
+}
+
+prevwins2 <- matrix(0, nrow = nrow(wins), ncol = ncol(wins))
+for(i in 1:nrow(wins)) {
+  for(m in 2:ncol(wins)) {
+    prevwins2[i, m] <- find_prev2(wins[i, 1:(m-1)], contests[i, 1:(m-1)])
+  }
+}
+```
+
+Then we fit the model
+```{r}
+resp <- rep(1, length(winner))
+cham_dat <- c(list(resp = resp, winner = winner, loser = loser, 
+                  match = match, prevwins2 = prevwins2), 
+             as.list(chameleons$predictors))
+
+cham_mod <- glmerSR(resp ~ 0 + Sub(ability[winner, match] -
+                               ability[loser, match]),
+               family = binomial, data = cham_dat,
+               subforms = list(ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i] 
+                               + prop.main[i] + (1 | i)))
+print(summary(cham_mod), correlation = FALSE, show.resids = FALSE)
+```
+We can fit the same model with `BradleyTerry2`.
+
+```{r}
+cham_mod_BTm <- BTm(player1 = winner, player2 = loser,
+                    formula = ~ prev.wins.2 + ch.res[ID] + prop.main[ID] + (1|ID),
+                    id = "ID", data = chameleons)
+summary(cham_mod_BTm)
+```
+In this case the two fits are the same, because in both
+cases the random effects variance is estimated to be zero.
+
+## References

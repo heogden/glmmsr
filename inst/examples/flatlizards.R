@@ -1,42 +1,39 @@
+
 library(BradleyTerry2)
+y <- rep(1, nrow(flatlizards$contests))
 
-m <- nrow(flatlizards$contests)
-
-# have to swap around first response, because lme4 disallows constant response
-y <- c(0, rep(1, m-1))
-n <- nrow(flatlizards$predictors)
 loser <- flatlizards$contests$loser
 winner <- flatlizards$contests$winner
 
-player1 <- c(loser[1], winner[-1])
-player2 <- c(winner[1], loser[-1])
+# The throat spectrum is missing for lizards 96 and 99.
+# Since `glmmsr` can't yet handle missing values, we manually match
+# the default behaviour of `BradleyTerry2`, adding a separate
+# predictor for each lizard with missing values in the covariates
+# of interest.
 
-# glmmsr does not yet handle missing values
-# remove all matches involving player with missing values in throat.PC3
-matches_na <- which(is.na(flatlizards$predictors$throat.PC3[player1]) |
-                      is.na(flatlizards$predictors$throat.PC3[player2]))
-player1_rm <- player1[-matches_na]
-player2_rm <- player2[-matches_na]
-y_rm <- y[-matches_na]
-
-# remove all missing values from the predictors
 flatlizardspred <- as.data.frame(flatlizards$predictors)
-flatlizardspred[is.na(flatlizardspred)] <- 0
+flatlizardspred[is.na(flatlizardspred$throat.PC3), ] <- 0
+liz96 <- rep(0, length(flatlizards$predictors$id))
+liz96[flatlizards$predictors$id == 96] <- 1
+liz99 <- rep(0, length(flatlizards$predictors$id))
+liz99[flatlizards$predictors$id == 99] <- 1
 
-data <- c(list(y = y_rm, player1 = player1_rm, player2 = player2_rm),
-          flatlizardspred)
-
-mod <- glmerSR(y ~ 0 + Sub(ability[player1] - ability[player2]),
-               family = binomial(link = "probit"), data = data,
-               subforms = list(ability[player] ~ 0 + throat.PC1[player]
-                               + throat.PC3[player] + head.length[player]
-                               + SVL[player] + (1 | player)))
-
-mod
+lizdat <- c(list(y = y, winner = winner, loser = loser, liz96 = liz96,
+liz99 = liz99), flatlizardspred)
 
 
-result <- rep(1, m)
-Whiting.model2 <- BTm(result, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
-                        head.length[..] + SVL[..] + (1|..),
-                      data = list(contests, predictors))
-Whiting.model2
+mod <- glmerSR(y ~ 0 + Sub(ability[winner] - ability[loser]),
+family = binomial(link = "probit"), data = lizdat,
+subforms = list(ability[liz] ~ 0 + liz96[liz] + liz99[liz]
++throat.PC1[liz] + throat.PC3[liz]
++ head.length[liz] + SVL[liz] + (1 | liz)))
+
+summary(mod)
+
+# compare with the same model fit with BradleyTerry2
+
+mod_BTm <- BTm(y, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
+              head.length[..] + SVL[..] + (1|..),
+              family = binomial(link = "probit"), data = flatlizards)
+summary(mod_BTm)
+

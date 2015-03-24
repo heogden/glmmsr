@@ -16,7 +16,7 @@ losses[cbind(as.numeric(loser), match)] <- 1
 
 contests <- wins + losses
 
-find_prev2_it <- function(wins_it, contests_it) {
+find_prev2 <- function(wins_it, contests_it) {
   m <- min(2, sum(contests_it))
   if(m > 0) {
     res <- sum(wins_it[rev(which(contests_it > 0L))[1:m]])
@@ -29,7 +29,7 @@ find_prev2_it <- function(wins_it, contests_it) {
 prevwins2 <- matrix(0, nrow = nrow(wins), ncol = ncol(wins))
 for(i in 1:nrow(wins)) {
   for(t in 2:ncol(wins)) {
-    prevwins2[i, t] <- find_prev2_it(wins[i, 1:(t-1)], contests[i, 1:(t-1)])
+    prevwins2[i, t] <- find_prev2(wins[i, 1:(t-1)], contests[i, 1:(t-1)])
   }
 }
 
@@ -38,35 +38,6 @@ all.equal(prevwins2[cbind(winner, 1:length(winner))],
           chameleons$winner$prev.wins.2)
 all.equal(prevwins2[cbind(loser, 1:length(loser))],
           chameleons$loser$prev.wins.2)
-
-wins <- matrix(0, nrow = length(levels(winner)), ncol = length(winner))
-wins[cbind(as.numeric(winner), match)] <- 1
-
-losses <- matrix(0, nrow = length(levels(winner)), ncol = length(winner))
-losses[cbind(as.numeric(loser), match)] <- 1
-
-contests <- wins + losses
-
-find_prev2_it <- function(wins_it, contests_it) {
-  m <- min(2, sum(contests_it))
-  if(m > 0) {
-    res <- sum(wins_it[rev(which(contests_it > 0L))[1:m]])
-  } else{
-    res <- 0
-  }
-  res
-}
-
-prevwins2 <- matrix(0, nrow = nrow(wins), ncol = ncol(wins))
-for(i in 1:nrow(wins)) {
-  for(t in 2:ncol(wins)) {
-    prevwins2[i, t] <- find_prev2_it(wins[i, 1:(t-1)], contests[i, 1:(t-1)])
-  }
-}
-
-#check
-all.equal(prevwins2[cbind(winner, 1:length(winner))], chameleons$winner$prev.wins.2)
-all.equal(prevwins2[cbind(loser, 1:length(loser))], chameleons$loser$prev.wins.2)
 
 
 subforms <- list(ability[p, t] ~ 0 + prevwins2[p, t] + ch.res[p] + prop.main[p]
@@ -86,7 +57,14 @@ mod <- glmerSR(resp ~ 0 + Sub(ability[player1, match] -
                family = binomial, data = data,
                subforms = subforms)
 
+# we can fit with BradleyTerry2
+cham_mod_BTm <- BTm(player1 = winner, player2 = loser,
+                    formula = ~ prev.wins.2 + ch.res[ID] + prop.main[ID] + (1|ID),
+                    id = "ID", data = chameleons)
+
 # two analyses the same, because both estimate random effects variances to be 0
+
+# or we can fit using winner and loser
 data2 = c(list(resp = rep(1, length(winner)), winner = winner, loser = loser,
               match = match, prevwins2 = prevwins2),
          as.list(chameleons$predictors))
