@@ -8,7 +8,8 @@ parse_formula <- function(formula, data, family) {
   if (is.function(family))
     family <- family()
   if(has_re(formula)) {
-    modfr <- lme4::glFormula(formula, data = data_vars, family = family)
+    modfr <- lme4::glFormula(formula, data = data_vars, family = family,
+                             na.action = na.fail)
   } else {
     fr <- glm(formula, data = data_vars, family = family,
               method = "model.frame")
@@ -27,7 +28,7 @@ parse_subformula <- function(formula, data) {
     mod_control <- lme4::lmerControl(check.nobs.vs.nlev = "ignore",
                                      check.nobs.vs.nRE = "ignore")
     modfr_tot <- lme4::lFormula(formula, data = data_vars,
-                                control = mod_control)
+                                control = mod_control, na.action = na.fail)
     modfr <- list(X = modfr_tot$X, reTrms = modfr_tot$reTrms)
   } else {
 

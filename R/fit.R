@@ -1,6 +1,6 @@
 #' Fit a GLMM
 #'
-#' @param data an optional data frame or environment containing the variables
+#' @param data an optional data frame, list or environment containing the variables
 #'  named in \code{formula}, and in any of the subformulas contained in
 #'  subforms.
 #' @param k integer scalar - the level of approximation used in the sequential
