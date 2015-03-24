@@ -48,15 +48,26 @@ test_that("different forms of indexing give same result", {
 })
 
 test_that("OK if don't use all rows of X", {
-  player1_no_1 <- rep(3:11, 10)
-  player2_no_1 <- rep(2:10, 10)
+  player1_no_1 <- factor(rep(3:11, 10), levels = 1:12)
+  player2_no_1 <- factor(rep(2:10, 10), levels = 1:12)
+  player1_no_1_num <- rep(3:11, 10)
+  player2_no_1_num <- rep(2:10, 10)
   # has entries for 1 and 12
   data_no_1 <- list(x = c(x[1],x, x[1]),
                     player1 = player1_no_1, player2 = player2_no_1)
+  data_no_1_num <- list(x = c(x[1],x, x[1]),
+                    player1 = player1_no_1_num, player2 = player2_no_1_num)
 
   fit_no_1 <- glmerSR(formula, data = data_no_1, family = binomial,
                      subforms = list(subform))
   expect_equal(unname(fixef(fit)[[1]]), unname(fixef(fit_no_1)[[1]]))
   s_no_1 <- attr(VarCorr(fit_no_1)[[1]], "stddev")
   expect_equal(s, s_no_1)
+
+  fit_no_1_num <- glmerSR(formula, data = data_no_1_num, family = binomial,
+                      subforms = list(subform))
+
+  expect_equal(unname(fixef(fit)[[1]]), unname(fixef(fit_no_1_num)[[1]]))
+  s_no_1_num <- attr(VarCorr(fit_no_1_num)[[1]], "stddev")
+  expect_equal(s, s_no_1_num)
 })

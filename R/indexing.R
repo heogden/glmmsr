@@ -40,6 +40,22 @@ find_indices <- function(x, i, var) {
   }
 }
 
+# find all variables with ith index equal to index
+find_vars_with_index <- function(x, i, index) {
+  if(is.atomic(x) || is.name(x)) {
+    NULL
+  } else if (is.call(x)) {
+    if(identical(x[[1]], quote(`[`)) && (length(x) > i + 1) &&
+         identical(as.character(x[[i+2]]), index)) {
+      return(as.character(x[[2]]))
+    }
+    unique(unlist(lapply(x, find_vars_with_index, i = i, index = index)))
+  } else if(is.pairlist(x)) {
+    unique(unlist(lapply(x, find_vars_with_index, i = i, index = index)))
+  } else{
+    stop("Don't know how to handle type ", typeof(x), call. = FALSE)
+  }
+}
 
 find_indices_subform <- function(sub, data) {
   subvar <- sub$subvar
@@ -77,22 +93,46 @@ find_indices_subform <- function(sub, data) {
     } else if(all(vapply(indices_i, is.factor, TRUE))) {
       levels_i_across_indices <- lapply(indices_i, levels)
       levels_i <- levels_i_across_indices[[1]]
+      index_i <- factor(levels_i, levels = levels_i)
       # check that indexing the same across all indices
       if(any(!vapply(levels_i_across_indices, identical, TRUE, y = levels_i))) {
         stop("Indexing factors must have identical levels", call. = FALSE)
       }
     } else if(all(vapply(indices_i, is.numeric, TRUE))) {
-      max_index <- max(Reduce(c, indices_i))
-      levels_i <- 1:max_index
+      index_i <- sort(unique(Reduce(c, indices_i)))
     } else {
       stop("Should use factor or numeric to index variables", call. = FALSE)
     }
-    indices_subform[[i]] <- 1:length(levels_i)
+    #data <- drop_unused_levels(index, i, as.numeric(levels_i), subform, data)
+    indices_subform[[i]] <- find_index_i(index, i, index_i, subform, data)
     names(indices_subform)[i] <- index
   }
   return(list(data = data, indices_subform = indices_subform))
 }
 
+
+find_index_i <- function(index, i, index_i, subform, data) {
+  vars <- find_vars_with_index(subform, i, index)
+  in_data <- vapply(vars, exists, TRUE, where = data)
+  vars <- vars[in_data]
+  x_vars <- data[vars]
+  # for each var, we subset vars to keep only levels
+  if(length(x_vars) > 0) {
+    levels_i_max <- max(vapply(x_vars, find_dim_in_dir, 1L, i = i))
+  } else {
+    levels_i_max <- length(index_i)
+  }
+  if(is.factor(index_i)) {
+    if(length(index_i) != levels_i_max) {
+      stop(paste0("Indexing factor ", index, " has wrong number of levels"),
+           call. = FALSE)
+    } else{
+      return(index_i)
+    }
+  } else {
+    return(1:levels_i_max)
+  }
+}
 
 matrix_indexing <- function(x, indices) {
   if(is.atomic(x) || is.name(x)) {
