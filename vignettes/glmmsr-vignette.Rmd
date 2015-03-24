@@ -54,10 +54,9 @@ We can now fit the model, using the fitting function `glmerSR`.
 ```{r}
 library(glmmsr)
 liz_mod <- glmerSR(y ~ 0 + Sub(ability[winner] - ability[loser]),
-               family = binomial(link = "probit"), data = liz_dat,
-               subforms = list(ability[liz] ~ 0 + liz96[liz] + liz99[liz] 
-                               +throat.PC1[liz] + throat.PC3[liz] 
-                               + head.length[liz] + SVL[liz] + (1 | liz)))
+                   ability[liz] ~ 0 + liz96[liz] + liz99[liz] + throat.PC1[liz] 
+                   + throat.PC3[liz] + head.length[liz] + SVL[liz] + (1 | liz),
+                  family = binomial(link = "probit"), data = liz_dat)
 ```
 The index `liz` is not given in `data`. Instead,
 it is deduced from the levels of the terms `winner` and `loser` which
@@ -133,10 +132,11 @@ cham_dat <- c(list(resp = resp, winner = winner, loser = loser,
              as.list(chameleons$predictors))
 
 cham_mod <- glmerSR(resp ~ 0 + Sub(ability[winner, match] -
-                               ability[loser, match]),
-               family = binomial, data = cham_dat,
-               subforms = list(ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i] 
-                               + prop.main[i] + (1 | i)))
+                                   ability[loser, match]),
+                    ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i] 
+                                    + prop.main[i] + (1 | i),
+                    family = binomial, data = cham_dat)
+
 print(summary(cham_mod), correlation = FALSE, show.resids = FALSE)
 ```
 We can fit the same model with `BradleyTerry2`.

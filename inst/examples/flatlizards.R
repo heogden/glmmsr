@@ -23,10 +23,9 @@ liz99 = liz99), flatlizardspred)
 
 
 mod <- glmerSR(y ~ 0 + Sub(ability[winner] - ability[loser]),
-family = binomial(link = "probit"), data = lizdat,
-subforms = list(ability[liz] ~ 0 + liz96[liz] + liz99[liz]
-+throat.PC1[liz] + throat.PC3[liz]
-+ head.length[liz] + SVL[liz] + (1 | liz)))
+               ability[liz] ~ 0 + liz96[liz] + liz99[liz] + throat.PC1[liz] +
+                      throat.PC3[liz] + head.length[liz] + SVL[liz] + (1 | liz),
+               data = lizdat, family = binomial(link = "probit"))
 
 summary(mod)
 

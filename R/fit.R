@@ -1,15 +1,16 @@
 #' Fit a GLMM
 #'
+#' @param ... contains subformulas
 #' @param data an optional data frame, list or environment containing the variables
 #'  named in \code{formula}, and in any of the subformulas contained in
 #'  subforms.
 #' @param k integer scalar - the level of approximation used in the sequential
 #'  reduction approximation to the likelihood.
-#' @param subforms an (optional) list of subformulas
 #' @inheritParams lme4::glmer
 #' @export
-glmerSR <- function(formula, data = NULL, family = gaussian, verbose = 0L,
-                    nAGQ = 1L, k = 0L, devFunOnly = FALSE, subforms) {
+glmerSR <- function(formula, ..., data = NULL, family = gaussian, verbose = 0L,
+                    nAGQ = 1L, k = 0L, devFunOnly = FALSE) {
+  subforms <- list(...)
   modfr <- glFormulaSub(formula, data, family, subforms)
   if(has_reTrms(modfr)) {
     control <- glmerControl(check.response.not.const = "ignore")
