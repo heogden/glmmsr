@@ -4,8 +4,8 @@
 \alias{glmerSR}
 \title{Fit a GLMM}
 \usage{
-glmerSR(formula, data = NULL, family = gaussian, verbose = 0L,
-  nAGQ = 1L, k = 0L, devFunOnly = FALSE, subforms)
+glmerSR(formula, ..., data = NULL, family = gaussian, verbose = 0L,
+  nAGQ = 1L, k = 0L, devFunOnly = FALSE)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -15,7 +15,9 @@ glmerSR(formula, data = NULL, family = gaussian, verbose = 0L,
     distinguished by vertical bars (\code{"|"}) separating expressions
     for design matrices from grouping factors.}
 
-\item{data}{an optional data frame or environment containing the variables
+\item{...}{contains subformulas}
+
+\item{data}{an optional data frame, list or environment containing the variables
 named in \code{formula}, and in any of the subformulas contained in
 subforms.}
 
@@ -45,8 +47,6 @@ reduction approximation to the likelihood.}
     variables stored in its environment, it may not return
     \emph{exactly} the same values on subsequent calls (but the results
     should always be within machine tolerance).}
-
-\item{subforms}{an (optional) list of subformulas}
 }
 \description{
 Fit a GLMM

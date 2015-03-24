@@ -14,14 +14,12 @@ glFormulaSub(formula, data = NULL, family = gaussian, subforms = NULL)
     distinguished by vertical bars (\code{"|"}) separating expressions
     for design matrices from grouping factors.}
 
-\item{data}{an optional data frame or environment containing the variables
+\item{data}{an optional data frame, list or environment containing the variables
 named in \code{formula}, and in any of the subformulas contained in
 subforms.}
 
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
-
-\item{subforms}{an (optional) list of subformulas}
 }
 \description{
 Parse a formula (and possibly subformulas)
