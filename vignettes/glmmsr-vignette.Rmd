@@ -88,8 +88,8 @@ Penalised Quasi-Likelihood (PQL) to fit the model.
 @Stuart-Fox2006 study contests between male Cape dwarf chameleons.
 The data are available in `BradleyTerry2`: see `?chameleons` for
 more details. The model suggested by 
-@Stuart-Fox2006 includes an `experience` effect: we allow
-the `ability' for each chameleon to change as the tournament progresses.
+@Stuart-Fox2006 includes an experience effect: we allow
+the ability for each chameleon to change as the tournament progresses.
 
 In particular, for each chameleon $i$ at each match $m$, we count the 
 number of wins for that chameleon in its (at most) two previous matches. 
