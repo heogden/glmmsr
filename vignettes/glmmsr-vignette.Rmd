@@ -1,5 +1,5 @@
 ---
-title: "Fitting GLMMs with glmmsr"
+title: "Fitting GLMMs with `glmmsr`"
 author: "Helen Ogden"
 date: " "
 output: rmarkdown::html_vignette
@@ -13,11 +13,60 @@ vignette: >
 
 ## Introduction
 
-At the moment, the sequential reduction approximation is not used. 
+The `glmmsr` package is designed to fit generalized linear mixed
+models (GLMMs) using the sequential reduction approximation to the likelihood
+[@Ogden2015]. It is based on `lme4` [@lme4], but with an extended interface
+to allow easy fitting of a wider range of models. At the moment, the sequential reduction approximation is not used. This document explains how to use the
+subformula interface, demonstrated with some examples from the `BradleyTerry2`
+package [@BradleyTerry2].
 
 ## The subformula interface
+The function used to fit a GLMM is `glmerSR`, which is based on `glmer` from
+`lme4`. A typical call would look like
+`glmerSR(formula, ..., data, family)`
+where
 
+1. `formula` may contain one or more terms surrounded with `Sub(.)`. We call the
+expression contained within `Sub(.)` a **substitution expression**. This is a 
+mathematical expression dictating how the response depends on a
+**substituted variable**: a dummy variable not contained in `data`. 
 
+2. `...` contains a **subformula** for each substituted variable, which
+describes how the substituted variable depends on 
+covariates. 
+
+Next, we consider an example of the type of model we might want to fit using 
+this interface.
+
+## Pairwise competition models
+Suppose that we observe the outcome of a set of matches played between pairs of 
+players, and that we also observe some covariates $x_{i}$ for each player $i$. 
+We suppose that each player $i$ has an `ability` $\lambda_i$, and that
+\[Pr(\text{$i$ beats $j$} | \lambda_i, \lambda_j) = g(\lambda_i - \lambda_j),\]
+where $g(.)$ is an inverse link function. If we are interested in how the 
+ability depends on the covariates, we might model
+\[\lambda_i = \beta x_{i} + b_i, \]
+where $b_i \sim N(0, \sigma^2)$, and $\beta$ and $\sigma$ are unknown
+parameters.
+
+This is a structured pairwise competition model. The `BradleyTerry2` package 
+provides a good interface to fit these models, but it uses Penalized Quasi 
+Likelihood (PQL) for inference if there are random effects in the model. PQL
+is often a poor approximation to the true likelihood. 
+
+We wrote down the structured pairwise competition model using a two-step 
+approach: first we described how the response depends on the unknown 
+abilities, then we wrote down how the abilities depend on covariates. This type 
+of model can be written quite naturally using the subformula interface. We have 
+a formula
+`response ~ 0 + Sub(ability[player1] - ability[player2])`, 
+where `ability` is a substitution variable. We write
+down a corresponding subformula
+`ability[i] ~ 0 + x[i] + (1 | i)`.
+Here `player1` and `player2` are factors with common levels, and `x`
+is a vector of player-specific covariates, where the ordering of the players is
+given by the levels of `player1` and `player2`. The index `i` is arbitrary, and 
+is deduced automatically from the levels of `player1` and `player2`.
 
 ## Example 1: `flatlizards` data
 @Whiting2006 conducted an experiment to determine the impact of 
@@ -80,7 +129,7 @@ there is far more uncertainty in `liz_mod` than in `liz_mod_BTm`. There is a
 difference because different approximations to the likelihood are used to fit 
 the model in each case. Currently, `glmerSR` passes to `lme4` for model fitting,
 which uses a Laplace approximation to the likelihood. `BradleyTerry2` uses
-Penalised Quasi-Likelihood (PQL) to fit the model.
+PQL to fit the model.
 
 ## Example 2: `chameleons` data
 
