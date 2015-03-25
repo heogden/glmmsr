@@ -41,7 +41,7 @@ this interface.
 ## Pairwise competition models
 Suppose that we observe the outcome of a set of matches played between pairs of 
 players, and that we also observe some covariates $x_{i}$ for each player $i$. 
-We suppose that each player $i$ has an `ability` $\lambda_i$, and that
+We suppose that each player $i$ has an 'ability' $\lambda_i$, and that
 \[Pr(\text{$i$ beats $j$} | \lambda_i, \lambda_j) = g(\lambda_i - \lambda_j),\]
 where $g(.)$ is an inverse link function. If we are interested in how the 
 ability depends on the covariates, we might model
