@@ -17,11 +17,12 @@ knitr::opts_chunk$set(
 ## `glmmsr`: fit GLMMs with sequential reduction
 
 Generalized linear mixed models (GLMMs) are an important and widely-used model 
-class. In R, we can fit these models with the `lme4` package, but there are some
-limitations. First, except in very simple cases, lme4 uses a Laplace 
+class. In R, we can fit these models with the 
+[`lme4`](https://github.com/lme4/lme4) package, but there are some
+limitations. First, except in very simple cases, `lme4` uses a Laplace 
 approximation to the likelihood for inference, which may be of poor quality in 
 some cases. Second, it is difficult to fit some GLMMs, such as pairwise 
-comparison models, with lme4. 
+comparison models, with `lme4`. 
 
 The `glmmsr` package aims to offer progress on both of these problems. 
 
