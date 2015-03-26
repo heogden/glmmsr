@@ -18,12 +18,8 @@ glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
   if(k > 0L) {
     stop("Sequential reduction approximation not yet implemented")
   }
-  if(is.list(subformula) || length(subformula) == 0L){
-    subforms <- subformula
-  } else {
-    subforms <- list(subformula)
-  }
-  modfr <- glFormulaSub(formula, data, family, subforms, control)
+  modfr <- glFormulaSub(formula, subformula = subformula, data = data,
+                        family = family, control = control)
   if(has_reTrms(modfr)) {
     modfr_ext <- modfr
     modfr_ext$control <- control
