@@ -14,8 +14,10 @@ test_that("parses formulas with/without random effects correctly", {
   expect_equal_to_reference(modfr_lme4, "modfr_lme4.rds")
 })
 
-modfr_sub_fixed  <- parse_subformula(y ~ x, data = data)
-modfr_sub_random <- parse_subformula(y ~ x + (1 | cluster), data = data)
+modfr_sub_fixed  <- parse_subformula(y ~ x, data = data,
+                                     control = glmmsrControl())
+modfr_sub_random <- parse_subformula(y ~ x + (1 | cluster), data = data,
+                                     control = glmmsrControl())
 
 test_that("parses subformulas with/without random effects correctly", {
   expect_equal_to_reference(modfr_sub_fixed, "modfr_sub_fixed.rds")

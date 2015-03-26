@@ -108,7 +108,7 @@ match_subform_subexpr <- function(subforms, subexprs, data) {
 }
 
 
-parse_sub <- function(sub, data, family)
+parse_sub <- function(sub, data, family, control)
 {
   subvar <- sub$subvar
   subform <- sub$subform
@@ -127,7 +127,7 @@ parse_sub <- function(sub, data, family)
 
   data_subform <- c(as.list(indices_expand), subvar_data, as.list(data))
 
-  modfr_subform <- parse_subformula(subform_flat, data_subform)
+  modfr_subform <- parse_subformula(subform_flat, data_subform, control)
   modfr_subform_list <- list(modfr_subform)
   names(modfr_subform_list) <- subvar
 
@@ -153,7 +153,7 @@ parse_sub <- function(sub, data, family)
 #' @param subforms a list of subformulas.
 #' @export
 glFormulaSub <- function (formula, data = NULL, family = gaussian,
-                          subforms = NULL)
+                          subforms = NULL, control = glmmsrControl())
 {
   formula_split <- split_formula(formula)
   form_no_sub <- formula_split$form_no_sub
@@ -164,7 +164,8 @@ glFormulaSub <- function (formula, data = NULL, family = gaussian,
   }
   subs <- match_subform_subexpr(subforms, subexprs, data)
 
-  modfr_list <- lapply(subs, parse_sub, data = data, family = family)
+  modfr_list <- lapply(subs, parse_sub, data = data, family = family,
+                       control = control)
 
   attach_subframes(modfr_no_sub, modfr_list)
 }

@@ -5,7 +5,8 @@
 \title{Fit a GLMM}
 \usage{
 glmerSR(formula, subformula = NULL, data = NULL, family = gaussian,
-  verbose = 0L, nAGQ = 1L, k = 0L, devFunOnly = FALSE)
+  control = glmmsrControl(), verbose = 0L, nAGQ = 1L, k = 0L,
+  devFunOnly = FALSE)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -19,11 +20,14 @@ glmerSR(formula, subformula = NULL, data = NULL, family = gaussian,
 depends on covariates, or a list of subformulas, if there is more
 than one \code{Sub()} term in \code{formula}.}
 
-\item{data}{an optional data frame, list or environment containing the variables
-named in \code{formula}, and in any of the subformulas.}
+\item{data}{an optional data frame, list or environment containing the
+variables named in \code{formula}, and in any of the subformulas.}
 
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
+
+\item{control}{the output of a call to \code{\link{glmmsrControl}}, a list
+containing control paramaters.}
 
 \item{verbose}{integer scalar.  If \code{> 0} verbose output is
     generated during the optimization of the parameter estimates.  If

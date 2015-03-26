@@ -21,14 +21,12 @@ parse_formula <- function(formula, data, family) {
 
 # convert formula to a model frame, using lFormula if there are random
 # effects, and manually, using model.matrix, if not
-parse_subformula <- function(formula, data) {
+parse_subformula <- function(formula, data, control) {
   formula_vars <- all.vars(formula)
   data_vars <- data[formula_vars]
   if(has_re(formula)) {
-    mod_control <- lme4::lmerControl(check.nobs.vs.nlev = "ignore",
-                                     check.nobs.vs.nRE = "ignore")
     modfr_tot <- lme4::lFormula(formula, data = data_vars,
-                                control = mod_control, na.action = na.fail)
+                                control = control, na.action = na.fail)
     modfr <- list(X = modfr_tot$X, reTrms = modfr_tot$reTrms)
   } else {
 

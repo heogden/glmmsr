@@ -4,7 +4,8 @@
 \alias{glFormulaSub}
 \title{Parse a formula (and possibly subformulas)}
 \usage{
-glFormulaSub(formula, data = NULL, family = gaussian, subforms = NULL)
+glFormulaSub(formula, data = NULL, family = gaussian, subforms = NULL,
+  control = glmmsrControl())
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -14,13 +15,16 @@ glFormulaSub(formula, data = NULL, family = gaussian, subforms = NULL)
     distinguished by vertical bars (\code{"|"}) separating expressions
     for design matrices from grouping factors.}
 
-\item{data}{an optional data frame, list or environment containing the variables
-named in \code{formula}, and in any of the subformulas.}
+\item{data}{an optional data frame, list or environment containing the
+variables named in \code{formula}, and in any of the subformulas.}
 
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
 
 \item{subforms}{a list of subformulas.}
+
+\item{control}{the output of a call to \code{\link{glmmsrControl}}, a list
+containing control paramaters.}
 }
 \description{
 Parse a formula (and possibly subformulas)
