@@ -70,4 +70,7 @@ test_that("model frames concatenate correctly", {
   random_concat <- concatenate_frames(modfr_sub_random, modfr_sub_random)
   expect_equal_to_reference(fixed_concat, "fixed_concat.rds")
   expect_equal_to_reference(random_concat, "random_concat.rds")
+  reTrms_concat <- random_concat$reTrms
+  expect_equal(sort(unique(reTrms_concat$Lind)), seq_along(reTrms_concat$theta))
+  expect_false(is.matrix(reTrms_concat$cnms))
 })

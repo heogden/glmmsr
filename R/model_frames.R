@@ -159,12 +159,14 @@ concatenate_frames <- function(modfr1, modfr2) {
       reTrms2 <- modfr2$reTrms
       out$reTrms$Zt <- Matrix::rBind(reTrms1$Zt, reTrms2$Zt)
       out$reTrms$theta <- c(reTrms1$theta, reTrms2$theta)
-      out$reTrms$Lind <- c(reTrms1$Lind, reTrms2$Lind)
+      out$reTrms$Lind <- c(reTrms1$Lind, reTrms2$Lind + length(reTrms1$theta))
       out$reTrms$Gp <- c(0L, reTrms1$Gp[2] + reTrms2$Gp[2])
       out$reTrms$lower <- c(reTrms1$lower, reTrms2$upper)
       out$reTrms$Lambdat <- concatenate_Matrix(reTrms1$Lambdat, reTrms2$Lambdat)
-      out$reTrms$flist <- cbind(reTrms1$flist, reTrms2$flist)
-      out$reTrms$cnms <- cbind(reTrms1$cnms, reTrms2$cnms)
+      out$reTrms$flist <- c(reTrms1$flist, reTrms2$flist)
+      # need "assign" attribute to print out groups correctly
+      attr(out$reTrms$flist, "assign") <- TRUE
+      out$reTrms$cnms <- c(reTrms1$cnms, reTrms2$cnms)
       out$reTrms$Ztlist <- c(reTrms1$Ztlist, reTrms2$Ztlist)
     }
   } else {

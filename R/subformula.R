@@ -2,6 +2,8 @@ find_subexpr <- function(subvar) {
   parse(text = substr(subvar, 5, nchar(subvar) - 1))[[1]]
 }
 
+
+
 split_formula <- function(formula) {
   tf <- terms(formula, specials = "Sub")
   var_sub <- attr(tf, "specials")$Sub
@@ -13,8 +15,10 @@ split_formula <- function(formula) {
     fac <- attr(tf, "factors")
     rhs_vars <- attr(fac, "dimnames")[[2]]
     if(length(rhs_vars) > length(var_sub_rhs)){
+      attr(tf, "intercept") <- 1
       tf_no_sub <- drop.terms(tf, var_sub_rhs, keep.response = TRUE)
-      form_no_sub <- formula(tf_no_sub)
+      attr(tf_no_sub, "intercept") <- 0
+      form_no_sub <- fixFormulaObject(tf_no_sub)
     } else{
       form_no_sub <- update.formula(formula, . ~ 0)
     }

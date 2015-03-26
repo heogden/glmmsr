@@ -37,3 +37,29 @@ subset_dim <- function(x, i, indices){
                      ", drop = FALSE]")
   eval(parse(text = expr_text))
 }
+
+
+# copied from terms.formula
+# stop dropping of brackets around (1 | group) terms
+fixFormulaObject <- function(object) {
+  Terms <- terms(object)
+  tmp <- attr(Terms, "term.labels")
+  ind <- grep("|", tmp, fixed = TRUE)
+  if (length(ind))
+    tmp[ind] <- paste("(", tmp[ind], ")")
+  if (length(ind <- attr(Terms, "offset"))) {
+    tmp2 <- as.character(attr(Terms, "variables"))[-1L]
+    tmp <- c(tmp, tmp2[ind])
+  }
+  rhs <- if (length(tmp))
+    paste(tmp, collapse = " + ")
+  else "1"
+  if (!attr(terms(object), "intercept"))
+    rhs <- paste(rhs, "- 1")
+  if (length(form <- formula(object)) > 2L) {
+    res <- formula(paste("lhs ~", rhs))
+    res[[2L]] <- form[[2L]]
+    res
+  }
+  else formula(paste("~", rhs))
+}

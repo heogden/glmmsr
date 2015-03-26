@@ -77,3 +77,13 @@ test_that("includes offset", {
   expect_false(identical(coef(fit), coef(fit_off)))
 })
 
+test_that("random effects at observation level work OK", {
+  data_re_obs <- data
+  gr <- rep(1, length(y))
+  gr[1:(length(y)/2)] <- 2
+  gr <- as.factor(gr)
+  data_re_obs$gr <- gr
+  formula_re_obs <- y ~ 0 + (1 | gr) + Sub(ability[player1] - ability[player2])
+  fit_re_obs <- glmerSR(formula_re_obs, subform, data = data_re_obs,
+                        family = binomial)
+})

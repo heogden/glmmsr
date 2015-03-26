@@ -21,13 +21,8 @@ glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
   modfr <- glFormulaSub(formula, subformula = subformula, data = data,
                         family = family, control = control, offset = offset)
   if(has_reTrms(modfr)) {
-    modfr_ext <- modfr
-    modfr_ext$control <- control
     devfun <- do.call(mkGlmerDevfun, c(modfr, list(verbose = verbose,
                       control = control, nAGQ = nAGQ)))
-    if(!devFunOnly){
-      opt <- optimizeGlmer(devfun, verbose = verbose)
-    }
     devfun <- updateGlmerDevfun(devfun, modfr$reTrms, nAGQ = nAGQ)
     if(devFunOnly) {
       return(devfun)
