@@ -22,6 +22,16 @@ where
 
 The vignette gives more details and examples of how to use the subformula interface.
 
+Installing `glmmsr`
+-------------------
+
+You will need the [devtools](https://github.com/hadley/devtools) package. Then run
+
+``` r
+devtools::install_github("heogden/lme4/const_response")
+devtools::install_github("heogden/glmmsr")
+```
+
 References
 ----------
 
