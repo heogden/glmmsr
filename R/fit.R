@@ -15,6 +15,9 @@ glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                     control = glmmsrControl(), verbose = 0L, nAGQ = 1L, k = 0L,
                     devFunOnly = FALSE)
 {
+  if(k > 0L) {
+    stop("Sequential reduction approximation not yet implemented")
+  }
   if(is.list(subformula) || length(subformula) == 0L){
     subforms <- subformula
   } else {
