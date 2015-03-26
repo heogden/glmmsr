@@ -16,9 +16,10 @@ vignette: >
 The `glmmsr` package is designed to fit generalized linear mixed
 models (GLMMs) using the sequential reduction approximation to the likelihood
 [@Ogden2015]. It is based on `lme4` [@lme4], but with an extended interface
-to allow easy fitting of a wider range of models. At the moment, the sequential reduction approximation is not used. This document explains how to use the
-subformula interface, demonstrated with some examples from the `BradleyTerry2`
-package [@BradleyTerry2].
+to allow easy fitting of a wider range of models. At the moment, the sequential
+reduction approximation is not used, and the package is only an interface to
+lme4. This document explains how to use the subformula interface, demonstrated 
+with some examples from the `BradleyTerry2` package [@BradleyTerry2].
 
 ## The subformula interface
 The function used to fit a GLMM is `glmerSR`, which is based on `glmer` from
@@ -116,7 +117,7 @@ We examine the fitted model.
 ```{r}
 print(summary(liz_mod), correlation = FALSE, show.resids = FALSE)
 ```
-We compare with the same model fit with `BradleyTerry2`
+We can also fit this model with `BradleyTerry2`
 ```{r}
 liz_mod_BTm <- BTm(y, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
                       head.length[..] + SVL[..] + (1|..),
