@@ -4,8 +4,8 @@
 \alias{glFormulaSub}
 \title{Parse a formula (and possibly subformulas)}
 \usage{
-glFormulaSub(formula, data = NULL, family = gaussian, subforms = NULL,
-  control = glmmsrControl())
+glFormulaSub(formula, subformula = NULL, data = NULL, family = gaussian,
+  control = glmmsrControl(), offset = NULL)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -15,16 +15,25 @@ glFormulaSub(formula, data = NULL, family = gaussian, subforms = NULL,
     distinguished by vertical bars (\code{"|"}) separating expressions
     for design matrices from grouping factors.}
 
+\item{subformula}{a subformula, describing how a substituted variable
+depends on covariates, or a list of subformulas, if there is more
+than one \code{Sub()} term in \code{formula}.}
+
 \item{data}{an optional data frame, list or environment containing the
 variables named in \code{formula}, and in any of the subformulas.}
 
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
 
-\item{subforms}{a list of subformulas.}
-
 \item{control}{the output of a call to \code{\link{glmmsrControl}}, a list
 containing control paramaters.}
+
+\item{offset}{this can be used to specify an \emph{a priori} known
+    component to be included in the linear predictor during
+    fitting. This should be \code{NULL} or a numeric vector of length
+    equal to the number of cases.  One or more \code{\link{offset}}
+    terms can be included in the formula instead or as well, and if more
+    than one is specified their sum is used.  See \code{\link{model.offset}}.}
 }
 \description{
 Parse a formula (and possibly subformulas)

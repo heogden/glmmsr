@@ -1,4 +1,5 @@
 library(glmmsr)
+context("Modifying subexpressions")
 
 test_that("modifies subexpr for model frame indexing correctly", {
   subexpr1 <- quote(ability[player1] - ability[player2])

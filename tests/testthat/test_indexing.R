@@ -1,4 +1,5 @@
 library(glmmsr)
+context("Indexing")
 
 test_that("checks dimension of indexing correctly", {
   subexpr1 <- quote(ability[player1] - ability[player2])

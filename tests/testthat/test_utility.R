@@ -1,4 +1,5 @@
 library(glmmsr)
+context("Utility functions")
 
 test_that("correctly detects whether a formula has random effects", {
   expect_equal(has_re(y ~ 0 + (1 | p)), TRUE)

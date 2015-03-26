@@ -1,4 +1,5 @@
 library(glmmsr)
+context("Model fitting")
 
 set.seed(1)
 player <- 1:10
@@ -15,7 +16,7 @@ y <- rbinom(length(p0), 1, p0)
 
 formula <- y ~ 0 + Sub(ability[player1] - ability[player2])
 subform <- ability[player] ~ 0 + x[player] + (1 | player)
-data <- list(x = x, player1 = player1, player2 = player2)
+data <- list(y = y, x = x, player1 = player1, player2 = player2)
 
 fit <- glmerSR(formula, subform, data = data, family = binomial)
 s <- attr(VarCorr(fit)[[1]], "stddev")
@@ -67,3 +68,12 @@ test_that("OK if don't use all rows of X", {
   s_no_1_num <- attr(VarCorr(fit_no_1_num)[[1]], "stddev")
   expect_equal(s, s_no_1_num)
 })
+
+test_that("includes offset", {
+  set.seed(1)
+  offset <- rnorm(length(y))
+  fit_off <- glmerSR(formula, subform, data = data, family = binomial,
+                 offset = offset)
+  expect_false(identical(coef(fit), coef(fit_off)))
+})
+

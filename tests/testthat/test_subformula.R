@@ -1,4 +1,6 @@
 library(glmmsr)
+context("Parsing subformula")
+
 
 set.seed(1)
 player <- 1:10
@@ -22,7 +24,7 @@ test_that("passes to glFormula if no Sub() terms", {
     data <- list(y = y, player1 = player1, player2 = player2)
     modfr1 <- glFormulaSub(form, data = data, family = binomial)
     modfr2 <- lme4::glFormula(form, data = data, family = binomial)
-    expect_equal(modfr1, modfr2)
+    expect_equal(modfr1$reTrms, modfr2$reTrms)
 })
 
 test_that("splits up formula correctly", {

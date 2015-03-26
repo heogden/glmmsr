@@ -13,13 +13,13 @@
 #' @export
 glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                     control = glmmsrControl(), verbose = 0L, nAGQ = 1L, k = 0L,
-                    devFunOnly = FALSE)
+                    offset = NULL, devFunOnly = FALSE)
 {
   if(k > 0L) {
     stop("Sequential reduction approximation not yet implemented")
   }
   modfr <- glFormulaSub(formula, subformula = subformula, data = data,
-                        family = family, control = control)
+                        family = family, control = control, offset = offset)
   if(has_reTrms(modfr)) {
     modfr_ext <- modfr
     modfr_ext$control <- control

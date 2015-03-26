@@ -152,7 +152,8 @@ parse_sub <- function(sub, data, family, control)
 #' @inheritParams glmerSR
 #' @export
 glFormulaSub <- function (formula, subformula = NULL, data = NULL,
-                          family = gaussian, control = glmmsrControl())
+                          family = gaussian, control = glmmsrControl(),
+                          offset = NULL)
 {
   if(is.list(subformula) || length(subformula) == 0L){
     subforms <- subformula
@@ -162,7 +163,8 @@ glFormulaSub <- function (formula, subformula = NULL, data = NULL,
   formula_split <- split_formula(formula)
   form_no_sub <- formula_split$form_no_sub
   subexprs <- formula_split$subexprs
-  modfr_no_sub <- parse_formula(form_no_sub, data, family)
+  modfr_no_sub <- parse_formula(form_no_sub, data = data,
+                                family = family, off = offset)
   if(length(subexprs) == 0L) {
     return(modfr_no_sub)
   }

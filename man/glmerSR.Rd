@@ -6,7 +6,7 @@
 \usage{
 glmerSR(formula, subformula = NULL, data = NULL, family = gaussian,
   control = glmmsrControl(), verbose = 0L, nAGQ = 1L, k = 0L,
-  devFunOnly = FALSE)
+  offset = NULL, devFunOnly = FALSE)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -46,6 +46,13 @@ containing control paramaters.}
 
 \item{k}{integer scalar - the level of approximation used in the sequential
 reduction approximation to the likelihood.}
+
+\item{offset}{this can be used to specify an \emph{a priori} known
+    component to be included in the linear predictor during
+    fitting. This should be \code{NULL} or a numeric vector of length
+    equal to the number of cases.  One or more \code{\link{offset}}
+    terms can be included in the formula instead or as well, and if more
+    than one is specified their sum is used.  See \code{\link{model.offset}}.}
 
 \item{devFunOnly}{logical - return only the deviance evaluation
     function. Note that because the deviance function operates on
