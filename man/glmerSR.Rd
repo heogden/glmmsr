@@ -4,8 +4,8 @@
 \alias{glmerSR}
 \title{Fit a GLMM}
 \usage{
-glmerSR(formula, ..., data = NULL, family = gaussian, verbose = 0L,
-  nAGQ = 1L, k = 0L, devFunOnly = FALSE)
+glmerSR(formula, subformula = NULL, data = NULL, family = gaussian,
+  verbose = 0L, nAGQ = 1L, k = 0L, devFunOnly = FALSE)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -15,11 +15,12 @@ glmerSR(formula, ..., data = NULL, family = gaussian, verbose = 0L,
     distinguished by vertical bars (\code{"|"}) separating expressions
     for design matrices from grouping factors.}
 
-\item{...}{contains subformulas}
+\item{subformula}{a subformula, describing how a substituted variable
+depends on covariates, or a list of subformulas, if there is more
+than one \code{Sub()} term in \code{formula}.}
 
 \item{data}{an optional data frame, list or environment containing the variables
-named in \code{formula}, and in any of the subformulas contained in
-subforms.}
+named in \code{formula}, and in any of the subformulas.}
 
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}

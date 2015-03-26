@@ -15,13 +15,12 @@ glFormulaSub(formula, data = NULL, family = gaussian, subforms = NULL)
     for design matrices from grouping factors.}
 
 \item{data}{an optional data frame, list or environment containing the variables
-named in \code{formula}, and in any of the subformulas contained in
-subforms.}
+named in \code{formula}, and in any of the subformulas.}
 
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
 
-\item{subforms}{a list of subformulas}
+\item{subforms}{a list of subformulas.}
 }
 \description{
 Parse a formula (and possibly subformulas)
