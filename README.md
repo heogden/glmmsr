@@ -28,9 +28,11 @@ Installing `glmmsr`
 You will need the [devtools](https://github.com/hadley/devtools) package. Then run
 
 ``` r
-devtools::install_github("heogden/lme4/const_response")
+devtools::install_github("heogden/lme4@const_response")
 devtools::install_github("heogden/glmmsr")
 ```
+
+The first line installs the current development version of `lme4`, with a modification to allow the response to be constant (which is often the case for competition data).
 
 References
 ----------
