@@ -5,7 +5,7 @@ date: " "
 output: rmarkdown::html_vignette
 bibliography: glmmsr.bib
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{glmmsr}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
   
