@@ -3,7 +3,6 @@ language: r
 sudo: required
 
 # Be strict when checking our package
-# Temporarily switched OFF
 warnings_are_errors: false
 
 # Install development version of lme4, modified to allow a constant response
