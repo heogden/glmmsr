@@ -3,3 +3,4 @@
 temp
 ^README\.Rmd$
 ^README-*\.png$
+.travis.yml
