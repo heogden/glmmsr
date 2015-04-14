@@ -15,15 +15,13 @@ glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                     control = glmmsrControl(), verbose = 0L, nAGQ = 1L, k = 0L,
                     offset = NULL, devFunOnly = FALSE)
 {
-  if(k > 0L) {
-    stop("Sequential reduction approximation not yet implemented")
-  }
   modfr <- glFormulaSub(formula, subformula = subformula, data = data,
                         family = family, control = control, offset = offset)
   if(has_reTrms(modfr)) {
-    devfun <- do.call(mkGlmerDevfun, c(modfr, list(verbose = verbose,
-                      control = control, nAGQ = nAGQ)))
-    devfun <- updateGlmerDevfun(devfun, modfr$reTrms, nAGQ = nAGQ)
+    devfun <- do.call(mkGlmerDevfunSR, c(modfr, list(verbose = verbose,
+                                                     control = control,
+                                                     nAGQ = nAGQ)))
+
     if(devFunOnly) {
       return(devfun)
     } else {

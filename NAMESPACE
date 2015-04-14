@@ -3,4 +3,5 @@
 export(glFormulaSub)
 export(glmerSR)
 export(glmmsrControl)
+export(mkGlmerDevfunSR)
 import(lme4)
