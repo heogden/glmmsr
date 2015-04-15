@@ -10,7 +10,9 @@ modfr <- parse_formula(y ~ x + (1 | cluster), data = data,
                        family = binomial, off = NULL)
 
 test_that("find posterior dependence graph correctly", {
-  G <- find_pdg(modfr)
+  act <- find_active(modfr)
+  q <- nrow(modfr$reTrms$Zt)
+  G <- find_pdg(act, q)
   expect_equal_to_reference(G, "pdg_two_level.rds")
 })
 
