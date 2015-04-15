@@ -26,5 +26,15 @@ find_elim_order <- function(G) {
     cost[i] <- igraph::degree(H, eliminate_next) + 1
     H <- eliminate(eliminate_next, H)
   }
-  return(list(order = order, cost = cost))
+  attr(order, "cost") <- max(cost)
+  order
+}
+
+reorder_modfr <- function(modfr, elim_order) {
+  # ordering only changes reTrms
+  reTrms <- modfr$reTrms
+  reTrms$Zt <- reTrms$Zt[elim_order, , drop = FALSE]
+  reTrms$Ztlist <- lapply(reTrms$Ztlist, "[", i = elim_order, drop = FALSE)
+  modfr$reTrms <- reTrms
+  modfr
 }
