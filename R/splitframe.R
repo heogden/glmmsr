@@ -69,7 +69,7 @@ split_modfr <- function(modfr) {
   act <- find_active(modfr)
   G <- igraph::permute.vertices(G, elim_order)
   cliques <- igraph::maximal.cliques(G)
-  cliques <- sort_cliques(cliques)
+  cliques <- sort_cliques(cliques, n)
   cliques_ext <- add_items_obs(cliques, act, 1:q, 1:n)
   lapply(cliques_ext, find_local_term, modfr = modfr)
 }

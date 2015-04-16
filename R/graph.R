@@ -7,10 +7,9 @@ number_clique <- function(clique, n, m){
   return(clique_number)
 }
 
-sort_cliques <- function(cliques){
+sort_cliques <- function(cliques, n){
   cliques <-  lapply(cliques, sort)
-  m <- igraph::clique.number(G)
-  n <- length(igraph::V(G))
+  m <- max(vapply(cliques, length, 1L))
   clique_numbers <- sapply(cliques, number_clique, n = n, m = m)
   return(cliques[order(clique_numbers)])
 }
