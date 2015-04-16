@@ -16,7 +16,7 @@ eliminate <- function(v, G){
 # Slow for very large graphs
 find_elim_order <- function(G) {
   G <- igraph::set.vertex.attribute(G, "item", igraph::V(G), igraph::V(G))
-  n <- length(V(G))
+  n <- length(igraph::V(G))
   order <- c()
   H <- G
   cost <- c()
