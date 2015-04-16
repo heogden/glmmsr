@@ -20,7 +20,12 @@ test_that("find posterior dependence graph correctly", {
   act <- find_active(modfr)
   q <- nrow(modfr$reTrms$Zt)
   G <- find_pdg(act, q)
-  expect_equal_to_reference(G, "pdg_two_level.rds")
+  expect_equal(length(igraph::V(G)), q)
+  expect_equal(length(igraph::E(G)), 0)
+  act_3 <- find_active(modfr_3)
+  q_3 <- nrow(modfr_3$reTrms$Zt)
+  G_3 <- find_pdg(act_3, q_3)
+  expect_equal(length(igraph::V(G_3)), q_3)
 })
 
 test_that("reordering model frame keeps devfun unchanged", {

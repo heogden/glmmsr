@@ -10,12 +10,8 @@ find_active <- function(modfr) {
 # Find the posterior dependence graph, given the active set for each observation
 find_pdg <- function(act, q) {
   edges <- unlist(lapply(unique(act), find_pairs))
-  G <- igraph::graph.empty(q, directed = FALSE)
-  if(length(edges) > 0L) {
-    edge_list <- unique(matrix(edges, ncol = 2, byrow = TRUE))
-    G <- igraph::add.edges(G, edge_list)
-  }
-  G
+  G <- igraph::graph(edges, n = q, directed = FALSE)
+  igraph::simplify(G)
 }
 
 add_items_obs_C <- function(C, act, items_rem, obs_rem) {
