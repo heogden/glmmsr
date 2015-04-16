@@ -10,29 +10,20 @@ modfr_glm <- parse_formula(y ~ x, data = data, family = binomial, off = NULL)
 modfr_lme4 <- parse_formula(y ~ x + (1 | cluster), data = data,
                             family = binomial, off = NULL)
 
-test_that("parses formulas with/without random effects correctly", {
-  expect_equal_to_reference(modfr_glm, "modfr_glm.rds")
-  expect_equal_to_reference(modfr_lme4, "modfr_lme4.rds")
-})
 
 modfr_sub_fixed  <- parse_subformula(y ~ x, data = data,
                                      control = glmmsrControl())
 modfr_sub_random <- parse_subformula(y ~ x + (1 | cluster), data = data,
                                      control = glmmsrControl())
 
-test_that("parses subformulas with/without random effects correctly", {
-  expect_equal_to_reference(modfr_sub_fixed, "modfr_sub_fixed.rds")
-  expect_equal_to_reference(modfr_sub_random, "modfr_sub_random.rds")
-})
-
-modfr_sub_fixed_subset <- `[fr`(modfr_sub_fixed, c(2, 5, 5, 6))
-modfr_sub_random_subset <- `[fr`(modfr_sub_random, c(2, 5, 5, 6))
+subset <- c(2, 5, 5, 6)
+modfr_sub_fixed_subset <- `[fr`(modfr_sub_fixed, subset)
+modfr_sub_random_subset <- `[fr`(modfr_sub_random, subset)
 
 test_that("model frame subsetting as expected", {
-  expect_equal_to_reference(modfr_sub_fixed_subset,
-                            "modfr_sub_fixed_subset.rds")
-  expect_equal_to_reference(modfr_sub_random_subset,
-                            "modfr_sub_random_subset.rds")
+  expect_equal(modfr_sub_fixed$X[subset, ], modfr_sub_fixed_subset$X)
+  expect_equal(modfr_sub_random$reTrms$Zt[, subset],
+               modfr_sub_random_subset$reTrms$Zt)
 })
 
 test_that("model frame (+, -, *, /) as expected", {
@@ -67,10 +58,10 @@ test_that("able to subset model frame by a factor", {
 
 test_that("model frames concatenate correctly", {
   fixed_concat <- concatenate_frames(modfr_sub_fixed, modfr_sub_fixed)
+  expect_equal(fixed_concat$X, cbind(modfr_sub_fixed$X, modfr_sub_fixed$X))
   random_concat <- concatenate_frames(modfr_sub_random, modfr_sub_random)
-  expect_equal_to_reference(fixed_concat, "fixed_concat.rds")
-  expect_equal_to_reference(random_concat, "random_concat.rds")
   reTrms_concat <- random_concat$reTrms
+  expect_equal(dim(reTrms_concat$Zt), c(10, 10))
   expect_equal(sort(unique(reTrms_concat$Lind)), seq_along(reTrms_concat$theta))
   expect_false(is.matrix(reTrms_concat$cnms))
 })
