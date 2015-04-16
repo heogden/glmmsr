@@ -9,6 +9,13 @@ data = list(y = y, x = x, cluster = cluster)
 modfr <- parse_formula(y ~ x + (1 | cluster), data = data,
                        family = binomial, off = NULL)
 
+# for a three-level model
+big_cluster <- rep(1:2, each = 5)
+data_3 = list(y = y, x = x, cluster = cluster, big_cluster = big_cluster)
+modfr_3 <- parse_formula(y ~ x + (1 | cluster) + (1 | big_cluster),
+                         data = data_3,
+                         family = binomial, off = NULL)
+
 test_that("find posterior dependence graph correctly", {
   act <- find_active(modfr)
   q <- nrow(modfr$reTrms$Zt)
@@ -23,4 +30,13 @@ test_that("reordering model frame keeps devfun unchanged", {
   devfun2 <- lme4::mkGlmerDevfun(modfr2$fr, modfr2$X, modfr2$reTrms,
                                  modfr2$family)
   expect_equal(devfun(1), devfun2(1))
+})
+
+test_that("split_modfr partitions items", {
+  lmodfr <- split_modfr(modfr)
+  q <- nrow(modfr$reTrms$Zt)
+  expect_equal(sort(Reduce(c, sapply(lmodfr, "[", "items_C"))), 1:q)
+  lmodfr_3 <- split_modfr(modfr_3)
+  q_3 <- nrow(modfr_3$reTrms$Zt)
+  expect_equal(sort(Reduce(c, sapply(lmodfr_3, "[", "items_C"))), 1:q_3)
 })
