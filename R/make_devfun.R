@@ -1,4 +1,5 @@
 #' Make the deviance function
+#' @inheritParams lme4::mkGlmerDevfun
 #' @inheritParams glmerSR
 #' @export
 mkGlmerDevfunSR <- function(fr, X, reTrms, family, nAGQ = 1L, k = 0L,

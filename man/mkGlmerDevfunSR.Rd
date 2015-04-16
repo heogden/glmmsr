@@ -8,29 +8,41 @@ mkGlmerDevfunSR(fr, X, reTrms, family, nAGQ = 1L, k = 0L, verbose = 0L,
   control = glmmsrControl(), ...)
 }
 \arguments{
-\item{family}{a GLM family, see \code{\link[stats]{glm}} and
-    \code{\link[stats]{family}}.}
+\item{fr}{A model frame containing the variables needed to create an
+    \code{\link{lmerResp}} or \code{\link{glmResp}} instance.}
 
-\item{nAGQ}{integer scalar - the number of points per axis for
-    evaluating the adaptive Gauss-Hermite approximation to the
-    log-likelihood.  Defaults to 1, corresponding to the Laplace
-    approximation.  Values greater than 1 produce greater accuracy in
-    the evaluation of the log-likelihood at the expense of speed.  A
-    value of zero uses a faster but less exact form of parameter
-    estimation for GLMMs by optimizing the random effects and the
-    fixed-effects coefficients in the penalized iteratively reweighted
-    least squares step.}
+\item{X}{fixed-effects design matrix}
+
+\item{reTrms}{information on random effects structure (see
+    \code{\link{mkReTrms}}).}
+
+\item{family}{a GLM family; see \code{\link[stats]{glm}}
+    and \code{\link[stats]{family}}.}
+
+\item{nAGQ}{number of Gauss-Hermite quadrature points}
 
 \item{k}{integer scalar - the level of approximation used in the sequential
 reduction approximation to the likelihood.}
 
-\item{verbose}{integer scalar.  If \code{> 0} verbose output is
-    generated during the optimization of the parameter estimates.  If
-    \code{> 1} verbose output is generated during the individual PIRLS
-    steps.}
+\item{verbose}{print output?}
 
-\item{control}{the output of a call to \code{\link{glmmsrControl}}, a list
-containing control paramaters.}
+\item{control}{a list giving
+    \describe{
+      \item{for \code{[g]lFormula}:}{all
+	options for running the model, see \code{\link{lmerControl}};}
+      \item{for \code{mkLmerDevfun,mkGlmerDevfun}:}{options
+	for the inner optimization step;}
+      \item{for \code{optimizeLmer} and \code{optimizeGlmer}:}{control
+	parameters for nonlinear optimizer (typically inherited from the
+	\dots argument to \code{\link{lmerControl}}).}
+	% FIXME: reference optCtrl
+    }
+  }
+
+\item{...}{other potential arguments; for \code{optimizeLmer} and
+    \code{optimizeGlmer}, these are passed to internal function
+    \code{optwrap}, which has relevant parameters \code{calc.derivs}
+    and \code{use.last.params} (see \code{\link{lmerControl}}).}
 }
 \description{
 Make the deviance function
