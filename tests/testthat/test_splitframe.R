@@ -46,11 +46,20 @@ test_that("reordering model frame keeps devfun unchanged", {
   expect_equal(devfun(1), devfun2(1))
 })
 
+lmodfr <- split_modfr(modfr)
+lmodfr_3 <- split_modfr(modfr_3)
+
 test_that("split_modfr partitions items", {
-  lmodfr <- split_modfr(modfr)
   q <- nrow(modfr$reTrms$Zt)
   expect_equal(sort(Reduce(c, sapply(lmodfr, "[", "items_C"))), 1:q)
-  lmodfr_3 <- split_modfr(modfr_3)
   q_3 <- nrow(modfr_3$reTrms$Zt)
   expect_equal(sort(Reduce(c, sapply(lmodfr_3, "[", "items_C"))), 1:q_3)
 })
+
+test_that("split_modfr partitions obs", {
+  n <- nrow(modfr$X)
+  expect_equal(sum(sapply(lapply(lmodfr, "[[", "X"), nrow)), n)
+  n_3 <- nrow(modfr_3$X)
+  expect_equal(sum(sapply(lapply(lmodfr_3, "[[", "X"), nrow)), n_3)
+})
+

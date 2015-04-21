@@ -32,6 +32,12 @@ add_items_obs <- function(cliques, act, items, obs) {
     items_rem <- setdiff(items_rem, cliques_ext[[i]]$items)
     obs_rem <- setdiff(obs_rem, cliques_ext[[i]]$obs)
   }
+  if(length(items_rem) != 0) {
+    stop("Couldn't allocate some items to a clique")
+  }
+  if(length(obs_rem) != 0) {
+    stop("Couldn't allocate some observations to a clique")
+  }
   cliques_ext
 }
 
@@ -64,7 +70,7 @@ split_modfr <- function(modfr) {
   elim_order <- find_elim_order(G)
   modfr <- reorder_modfr(modfr, elim_order)
   act <- find_active(modfr)
-  G <- igraph::permute.vertices(G, elim_order)
+  G <- find_pdg(act, q)
   cliques <- igraph::maximal.cliques(G)
   cliques <- sort_cliques(cliques, n)
   cliques_ext <- add_items_obs(cliques, act, 1:q, 1:n)
