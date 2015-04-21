@@ -39,15 +39,16 @@ find_local_term <- function(clique_ext, modfr) {
   C <- clique_ext$C
   items_C <- clique_ext$items_C
   obs_C <- clique_ext$obs_C
-  X_C <- modfr$X[obs_C, , drop = FALSE]
+  X_C <- unname(modfr$X[obs_C, , drop = FALSE])
   Zt_C <- unname(as.matrix(modfr$reTrms$Zt[C, obs_C, drop = FALSE]))
-  Lambdat_C <- modfr$reTrms$Lambdat[C, C, drop = FALSE]
+  Lambdat_C <- as.matrix(modfr$reTrms$Lambdat[C, C, drop = FALSE])
   Lind_mat <- modfr$reTrms$Lambdat
   Lind_mat@x <- as.numeric(modfr$reTrms$Lind)
   Lind_C <- as.integer(Lind_mat[C, C, drop = FALSE]@x)
   resp <- model.response(modfr$fr)
   if(NCOL(resp) == 1) {
     resp_C <- resp[obs_C]
+    resp_C <- matrix(unname(resp_C), ncol = 1)
   } else {
     resp_C <- resp[obs_C, , drop = FALSE]
   }
