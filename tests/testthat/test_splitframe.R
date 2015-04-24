@@ -63,3 +63,10 @@ test_that("split_modfr partitions obs", {
   expect_equal(sum(sapply(lapply(lmodfr_3, "[[", "X"), nrow)), n_3)
 })
 
+test_that("saves list of little model frames in correct form", {
+  save_lmodfrs(lmodfr_3, file = "tmp.txt")
+  expect_equal(readLines("tmp.txt"),
+               readLines("lmodfrs.txt"))
+  file.remove("tmp.txt")
+})
+

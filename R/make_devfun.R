@@ -10,7 +10,7 @@ mkGlmerDevfunSR <- function(fr, X, reTrms, family, nAGQ = 1L, k = 0L,
     devfun <- updateGlmerDevfun(devfun, reTrms, nAGQ)
   } else {
     modfr <- list(fr = fr, X = X, reTrms = reTrms, family = family)
-    lmodfr <- split_modfr(modfr)
+    lmodfrs <- split_modfr(modfr)
   }
   return(devfun)
 }

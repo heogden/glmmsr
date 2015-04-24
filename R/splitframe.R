@@ -76,3 +76,22 @@ split_modfr <- function(modfr) {
   cliques_ext <- add_items_obs(cliques, act, 1:q, 1:n)
   lapply(cliques_ext, find_local_term, modfr = modfr)
 }
+
+lmodfr_to_oneline <- function(lmodfr, file = "") {
+  size <- length(lmodfr$C)
+  nobs <- nrow(lmodfr$X)
+  nfixed <- ncol(lmodfr$X)
+  nitems <- length(lmodfr$items)
+  ret <- c(size, nobs, nfixed, nitems,
+           lmodfr$C, lmodfr$X, lmodfr$Zt, lmodfr$Lambdat,
+           lmodfr$Lind, lmodfr$resp, lmodfr$items_C)
+  cat(cat(ret, file = file, append = TRUE),
+      "\n", sep = "", file = file, append = TRUE)
+}
+
+save_lmodfrs <- function(lmodfrs, file = "") {
+  if(file.exists(file)) {
+    file.remove(file)
+  }
+  a <- lapply(lmodfrs, lmodfr_to_oneline, file = file)
+}
