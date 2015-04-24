@@ -3,8 +3,8 @@ language: r
 sudo: required
 
 # Be strict when checking our package
-warnings_are_errors: false
+warnings_are_errors: true
 
-# Install development version of lme4, modified to allow a constant response
+# Install development version of lme4
 r_github_packages:
- - heogden/lme4@const_response
+ - lme4/lme4
