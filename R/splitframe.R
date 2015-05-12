@@ -14,26 +14,19 @@ find_pdg <- function(act, q) {
   igraph::simplify(G)
 }
 
-add_items_obs_C <- function(C, act, items_rem, obs_rem) {
-  items_C <- intersect(C, items_rem)
+add_obs_C <- function(C, act, obs_rem) {
   obs_C <- obs_rem[vapply(act[obs_rem],
                           function(items){all(is.element(items, C))},
                           TRUE)]
-  list(C = C, items_C = items_C, obs_C = obs_C)
-
+  list(C = C, obs_C = obs_C)
 }
 
-add_items_obs <- function(cliques, act, items, obs) {
-  items_rem <- items
+add_obs <- function(cliques, act, obs) {
   obs_rem <- obs
   cliques_ext <- list()
   for(i in seq_along(cliques)) {
-    cliques_ext[[i]] <- add_items_obs_C(cliques[[i]], act, items_rem, obs_rem)
-    items_rem <- setdiff(items_rem, cliques_ext[[i]]$items)
+    cliques_ext[[i]] <- add_obs_C(cliques[[i]], act, obs_rem)
     obs_rem <- setdiff(obs_rem, cliques_ext[[i]]$obs)
-  }
-  if(length(items_rem) != 0) {
-    stop("Couldn't allocate some items to a clique")
   }
   if(length(obs_rem) != 0) {
     stop("Couldn't allocate some observations to a clique")
@@ -43,7 +36,6 @@ add_items_obs <- function(cliques, act, items, obs) {
 
 find_local_term <- function(clique_ext, modfr) {
   C <- clique_ext$C
-  items_C <- clique_ext$items_C
   obs_C <- clique_ext$obs_C
   X_C <- unname(modfr$X[obs_C, , drop = FALSE])
   Zt_C <- unname(as.matrix(modfr$reTrms$Zt[C, obs_C, drop = FALSE]))
@@ -59,7 +51,7 @@ find_local_term <- function(clique_ext, modfr) {
     resp_C <- resp[obs_C, , drop = FALSE]
   }
   list(C = C, X = X_C, Zt = Zt_C, Lambdat = Lambdat_C,
-       Lind = Lind_C, resp = resp_C, items_C = items_C)
+       Lind = Lind_C, resp = resp_C)
 }
 
 split_modfr <- function(modfr) {
@@ -73,25 +65,30 @@ split_modfr <- function(modfr) {
   G <- find_pdg(act, q)
   cliques <- igraph::maximal.cliques(G)
   cliques <- sort_cliques(cliques, n)
-  cliques_ext <- add_items_obs(cliques, act, 1:q, 1:n)
+  cliques_ext <- add_obs(cliques, act, 1:n)
   lapply(cliques_ext, find_local_term, modfr = modfr)
 }
 
 lmodfr_to_oneline <- function(lmodfr, file = "") {
-  size <- length(lmodfr$C)
+  size_clique <- length(lmodfr$C)
   nobs <- nrow(lmodfr$X)
   nfixed <- ncol(lmodfr$X)
-  nitems <- length(lmodfr$items)
-  ret <- c(size, nobs, nfixed, nitems,
-           lmodfr$C, lmodfr$X, lmodfr$Zt, lmodfr$Lambdat,
-           lmodfr$Lind, lmodfr$resp, lmodfr$items_C)
+  ret <- c("G", size_clique, lmodfr$C, nobs, nfixed, lmodfr$X, lmodfr$Zt,
+           lmodfr$Lambdat, lmodfr$Lind, lmodfr$resp)
   cat(cat(ret, file = file, append = TRUE),
       "\n", sep = "", file = file, append = TRUE)
 }
 
-save_lmodfrs <- function(lmodfrs, file = "") {
+save_normal_terms <- function(q, file = "") {
+  for(i in 1:q){
+    cat("N ", i, "\n", sep = "", file = file, append = TRUE)
+  }
+}
+
+save_lmodfrs <- function(lmodfrs, q, file = "") {
   if(file.exists(file)) {
     file.remove(file)
   }
   a <- lapply(lmodfrs, lmodfr_to_oneline, file = file)
+  a <- save_normal_terms(q, file = file)
 }

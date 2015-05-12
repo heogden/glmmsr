@@ -49,13 +49,6 @@ test_that("reordering model frame keeps devfun unchanged", {
 lmodfr <- split_modfr(modfr)
 lmodfr_3 <- split_modfr(modfr_3)
 
-test_that("split_modfr partitions items", {
-  q <- nrow(modfr$reTrms$Zt)
-  expect_equal(sort(Reduce(c, sapply(lmodfr, "[", "items_C"))), 1:q)
-  q_3 <- nrow(modfr_3$reTrms$Zt)
-  expect_equal(sort(Reduce(c, sapply(lmodfr_3, "[", "items_C"))), 1:q_3)
-})
-
 test_that("split_modfr partitions obs", {
   n <- nrow(modfr$X)
   expect_equal(sum(sapply(lapply(lmodfr, "[[", "X"), nrow)), n)
@@ -64,7 +57,7 @@ test_that("split_modfr partitions obs", {
 })
 
 test_that("saves list of little model frames in correct form", {
-  save_lmodfrs(lmodfr_3, file = "tmp.txt")
+  save_lmodfrs(lmodfr_3, q_3, file = "tmp.txt")
   expect_equal(readLines("tmp.txt"),
                readLines("lmodfrs.txt"))
   file.remove("tmp.txt")
