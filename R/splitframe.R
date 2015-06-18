@@ -44,6 +44,12 @@ find_local_term <- function(clique_ext, modfr) {
   Lind_mat@x <- as.numeric(modfr$reTrms$Lind) - 1
   Lind_C <- as.integer(Lind_mat[C, C, drop = FALSE]@x)
   resp <- model.response(modfr$fr)
+  weights <- model.weights(modfr$fr)
+  if(is.null(weights)) {
+    weights_C <- rep(1, length(obs_C))
+  } else {
+    weights_C <- weights[obs_C]
+  }
   if(NCOL(resp) == 1) {
     resp_C <- resp[obs_C]
     resp_C <- matrix(unname(resp_C), ncol = 1)
@@ -54,7 +60,7 @@ find_local_term <- function(clique_ext, modfr) {
     #####################
   }
   list(C = C, X = X_C, Zt = Zt_C, Lambdat = Lambdat_C,
-       Lind = Lind_C, resp = resp_C)
+       Lind = Lind_C, resp = resp_C, weights = weights_C)
 }
 
 split_modfr <- function(modfr) {
@@ -82,7 +88,7 @@ lmodfr_to_oneline <- function(lmodfr, file = "") {
                                     Lambdat_triplet@x))
   ret <- c("G", size_clique, lmodfr$C, nobs, nfixed, lmodfr$X, lmodfr$Zt,
            nentries, Lambdat_print,
-           lmodfr$Lind, lmodfr$resp)
+           lmodfr$Lind, lmodfr$resp, lmodfr$weights)
   cat(cat(ret, file = file, append = TRUE),
       "\n", sep = "", file = file, append = TRUE)
 }

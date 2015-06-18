@@ -6,9 +6,10 @@ y <- rbinom(10, 1, 0.5)
 x <- rbinom(10, 1, 0.5)
 cluster <- rep(1:5, each = 2)
 data = list(y = y, x = x, cluster = cluster)
-modfr_glm <- parse_formula(y ~ x, data = data, family = binomial, off = NULL)
+modfr_glm <- parse_formula(y ~ x, data = data, family = binomial,
+                           weights = NULL, off = NULL)
 modfr_lme4 <- parse_formula(y ~ x + (1 | cluster), data = data,
-                            family = binomial, off = NULL)
+                            family = binomial, weights = NULL, off = NULL)
 
 
 modfr_sub_fixed  <- parse_subformula(y ~ x, data = data,

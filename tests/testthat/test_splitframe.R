@@ -13,7 +13,7 @@ x <- rbinom(n, 1, 0.5)
 cluster <- rep(1:n_clusters, each = n_in_cluster)
 data = list(y = y, x = x, cluster = cluster)
 modfr <- parse_formula(y ~ x + (1 | cluster), data = data,
-                       family = binomial, off = NULL)
+                       family = binomial, weights = NULL, off = NULL)
 q <- nrow(modfr$reTrms$Zt)
 
 # for a three-level model
@@ -23,7 +23,7 @@ subcluster <- rep(1:n_subclusters, each = n_in_subcluster)
 data_3 = list(y = y, x = x, cluster = cluster, subcluster = subcluster)
 modfr_3 <- parse_formula(y ~ x + (1 | cluster) + (1 | subcluster),
                          data = data_3,
-                         family = binomial, off = NULL)
+                         family = binomial, off = NULL, weights = NULL)
 q_3 <- nrow(modfr_3$reTrms$Zt)
 
 test_that("find posterior dependence graph correctly", {

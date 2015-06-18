@@ -13,10 +13,11 @@
 #' @export
 glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                     control = glmmsrControl(), verbose = 0L, nAGQ = 1L, k = 0L,
-                    offset = NULL, devFunOnly = FALSE)
+                    weights = NULL, offset = NULL, devFunOnly = FALSE)
 {
   modfr <- glFormulaSub(formula, subformula = subformula, data = data,
-                        family = family, control = control, offset = offset)
+                        family = family, control = control, weights = weights,
+                        offset = offset)
   if(has_reTrms(modfr)) {
     devfun <- do.call(mkGlmerDevfunSR, c(modfr, list(verbose = verbose,
                                                      control = control,

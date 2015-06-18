@@ -1,6 +1,6 @@
 # convert formula to a model frame, using glFormula if there are random
 # effects, and manually, using model.matrix, if not
-parse_formula <- function(formula, data, family, off) {
+parse_formula <- function(formula, data, family, weights, off) {
   formula_vars <- all.vars(formula)
   data_vars <- data[formula_vars]
   if (is.character(family))
@@ -8,22 +8,52 @@ parse_formula <- function(formula, data, family, off) {
   if (is.function(family))
     family <- family()
   if(has_re(formula)) {
-    if(is.null(off)) {
+    if(is.null(off) && is.null(weights)) {
       modfr <- lme4::glFormula(formula, data = data_vars, family = family,
                                na.action = na.fail)
     } else {
-      modfr <- lme4::glFormula(formula, data = data_vars, family = family,
-                               na.action = na.fail, offset = off)
+      if(is.null(weights)) {
+        modfr <- lme4::glFormula(formula, data = data_vars, family = family,
+                                 na.action = na.fail, offset = off)
+      } else {
+        if(is.null(offset)) {
+          modfr <- lme4::glFormula(formula, data = data_vars, family = family,
+                                   na.action = na.fail, weights = weights)
+        } else {
+          modfr <- lme4::glFormula(formula, data = data_vars, family = family,
+                                   na.action = na.fail, weights = weights,
+                                   offset = off)
+        }
+      }
     }
   } else {
-    if(is.null(off)) {
+    if(is.null(off) && is.null(weights)) {
       fr <- glm(formula, data = data_vars, family = family,
                 method = "model.frame")
     } else {
-      data_vars_off <- data_vars
-      data_vars_off$off <- off
-      fr <- glm(formula, data = data_vars_off, family = family,
-                method = "model.frame", offset = off)
+      if(is.null(weights)) {
+        data_vars_off <- data_vars
+        data_vars_off$off <- off
+        fr <- glm(formula, data = data_vars_off, family = family,
+                  method = "model.frame", offset = off)
+      } else {
+        if(is.null(offset)) {
+          data_vars_weights <- data_vars
+          data_vars_weights$weights <- weights
+          fr <- glm(formula, data = data_vars_weights,
+                    family = family, method = "model.frame",
+                    weights = weights)
+        } else {
+          data_vars_off_weights <- data_vars
+          data_vars_off_weights$off <- off
+          data_vars_off_weights$weights <- weights
+          fr <- glm(formula, data = data_vars_off_weights,
+                    family = family, method = "model.frame",
+                    offset = off, weights = weights)
+        }
+
+      }
+
     }
     X <- model.matrix(formula, data = fr)
     modfr <- list(fr = fr, X = X, family = family, formula = formula)
@@ -147,7 +177,7 @@ concatenate_Matrix <- function(M1, M2) {
   dim2 <- dim(M2)
   M_i <- 1 + c(M1@i, dim1[1] + M2@i)
   M_j <- 1 + c(M1@j, dim1[2] + M2@j)
-  Matrix::sparseMatrix(i = M_i, j = M_j,x = M_x, dims = dim1 + dim2)
+  Matrix::sparseMatrix(i = M_i, j = M_j, x = M_x, dims = dim1 + dim2)
 }
 
 concatenate_frames <- function(modfr1, modfr2) {
