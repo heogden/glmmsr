@@ -56,6 +56,11 @@ test_that("split_modfr partitions obs", {
   expect_equal(sum(sapply(lapply(lmodfr_3, "[[", "X"), nrow)), n_3)
 })
 
+test_that("split_modfr gives correct cliques", {
+  C1_expect <- as.numeric(which(modfr_3$reTrms$Zt[,1] != 0))
+  expect_equal(lmodfr_3[[1]]$C, C1_expect)
+})
+
 test_that("saves list of little model frames in correct form", {
   save_lmodfrs(lmodfr_3, q_3, file = "tmp.txt")
   expect_equal(readLines("tmp.txt"),

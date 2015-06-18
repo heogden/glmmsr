@@ -41,8 +41,8 @@ find_local_term <- function(clique_ext, modfr) {
   Zt_C <- unname(as.matrix(modfr$reTrms$Zt[C, obs_C, drop = FALSE]))
   Lambdat_C <- modfr$reTrms$Lambdat[C, C, drop = FALSE]
   Lind_mat <- modfr$reTrms$Lambdat
-  Lind_mat@x <- as.numeric(modfr$reTrms$Lind) - 1
-  Lind_C <- as.integer(Lind_mat[C, C, drop = FALSE]@x)
+  Lind_mat@x <- as.numeric(modfr$reTrms$Lind)
+  Lind_C <- as.integer(Lind_mat[C, C, drop = FALSE]@x) - 1
   resp <- model.response(modfr$fr)
   weights <- model.weights(modfr$fr)
   if(is.null(weights)) {
@@ -68,10 +68,12 @@ split_modfr <- function(modfr) {
   n <- ncol(modfr$reTrms$Zt)
   q <- nrow(modfr$reTrms$Zt)
   G <- find_pdg(act, q)
-  elim_order <- find_elim_order(G)
-  modfr <- reorder_modfr(modfr, elim_order)
-  act <- find_active(modfr)
-  G <- find_pdg(act, q)
+  # removing sorting: If we do sort, need to also
+  # return the new modfr
+#   elim_order <- find_elim_order(G)
+#   modfr <- reorder_modfr(modfr, elim_order)
+#   act <- find_active(modfr)
+#   G <- find_pdg(act, q)
   cliques <- igraph::maximal.cliques(G)
   cliques <- sort_cliques(cliques, n)
   cliques_ext <- add_obs(cliques, act, 1:n)
