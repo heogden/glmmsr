@@ -41,14 +41,17 @@ find_local_term <- function(clique_ext, modfr) {
   Zt_C <- unname(as.matrix(modfr$reTrms$Zt[C, obs_C, drop = FALSE]))
   Lambdat_C <- modfr$reTrms$Lambdat[C, C, drop = FALSE]
   Lind_mat <- modfr$reTrms$Lambdat
-  Lind_mat@x <- as.numeric(modfr$reTrms$Lind)
+  Lind_mat@x <- as.numeric(modfr$reTrms$Lind) - 1
   Lind_C <- as.integer(Lind_mat[C, C, drop = FALSE]@x)
   resp <- model.response(modfr$fr)
   if(NCOL(resp) == 1) {
     resp_C <- resp[obs_C]
     resp_C <- matrix(unname(resp_C), ncol = 1)
   } else {
+    #####################
+    # FIXME: should convert to vector form
     resp_C <- resp[obs_C, , drop = FALSE]
+    #####################
   }
   list(C = C, X = X_C, Zt = Zt_C, Lambdat = Lambdat_C,
        Lind = Lind_C, resp = resp_C)
