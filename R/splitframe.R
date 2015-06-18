@@ -39,7 +39,7 @@ find_local_term <- function(clique_ext, modfr) {
   obs_C <- clique_ext$obs_C
   X_C <- unname(modfr$X[obs_C, , drop = FALSE])
   Zt_C <- unname(as.matrix(modfr$reTrms$Zt[C, obs_C, drop = FALSE]))
-  Lambdat_C <- as.matrix(modfr$reTrms$Lambdat[C, C, drop = FALSE])
+  Lambdat_C <- modfr$reTrms$Lambdat[C, C, drop = FALSE]
   Lind_mat <- modfr$reTrms$Lambdat
   Lind_mat@x <- as.numeric(modfr$reTrms$Lind)
   Lind_C <- as.integer(Lind_mat[C, C, drop = FALSE]@x)
@@ -73,8 +73,13 @@ lmodfr_to_oneline <- function(lmodfr, file = "") {
   size_clique <- length(lmodfr$C)
   nobs <- nrow(lmodfr$X)
   nfixed <- ncol(lmodfr$X)
+  Lambdat_triplet <- as(lmodfr$Lambdat, "dgTMatrix")
+  nentries <- length(Lambdat_triplet@i)
+  Lambdat_print <- as.numeric(rbind(Lambdat_triplet@i, Lambdat_triplet@j,
+                                    Lambdat_triplet@x))
   ret <- c("G", size_clique, lmodfr$C, nobs, nfixed, lmodfr$X, lmodfr$Zt,
-           lmodfr$Lambdat, lmodfr$Lind, lmodfr$resp)
+           nentries, Lambdat_print,
+           lmodfr$Lind, lmodfr$resp)
   cat(cat(ret, file = file, append = TRUE),
       "\n", sep = "", file = file, append = TRUE)
 }
