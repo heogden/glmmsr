@@ -6,7 +6,7 @@
 \usage{
 glmerSR(formula, subformula = NULL, data = NULL, family = gaussian,
   control = glmmsrControl(), verbose = 0L, nAGQ = 1L, k = 0L,
-  offset = NULL, devFunOnly = FALSE)
+  weights = NULL, offset = NULL, devFunOnly = FALSE)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -46,6 +46,10 @@ containing control paramaters.}
 
 \item{k}{integer scalar - the level of approximation used in the sequential
 reduction approximation to the likelihood.}
+
+\item{weights}{an optional vector of \sQuote{prior weights} to be used
+      in the fitting process.  Should be \code{NULL} or a numeric
+      vector.}
 
 \item{offset}{this can be used to specify an \emph{a priori} known
     component to be included in the linear predictor during
