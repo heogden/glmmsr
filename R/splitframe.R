@@ -88,7 +88,7 @@ lmodfr_to_oneline <- function(lmodfr, file = "") {
   nentries <- length(Lambdat_triplet@i)
   Lambdat_print <- as.numeric(rbind(Lambdat_triplet@i, Lambdat_triplet@j,
                                     Lambdat_triplet@x))
-  ret <- c("G", size_clique, lmodfr$C, nobs, nfixed, lmodfr$X, lmodfr$Zt,
+  ret <- c("G", size_clique, lmodfr$C - 1, nobs, nfixed, lmodfr$X, lmodfr$Zt,
            nentries, Lambdat_print,
            lmodfr$Lind, lmodfr$resp, lmodfr$weights)
   cat(cat(ret, file = file, append = TRUE),
@@ -96,7 +96,7 @@ lmodfr_to_oneline <- function(lmodfr, file = "") {
 }
 
 save_normal_terms <- function(q, file = "") {
-  for(i in 1:q){
+  for(i in 0:(q-1)){
     cat("N", i, 0, 1, "\n", sep = " ", file = file, append = TRUE)
   }
 }
