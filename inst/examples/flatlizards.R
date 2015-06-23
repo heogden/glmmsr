@@ -35,3 +35,11 @@ mod_BTm <- BTm(y, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
               family = binomial(link = "probit"), data = flatlizards)
 summary(mod_BTm)
 
+# create and split model frame
+modfr <- glFormulaSub(y ~ 0 + Sub(ability[winner] - ability[loser]),
+                      ability[liz] ~ 0 + liz96[liz] + liz99[liz] + throat.PC1[liz] +
+                        throat.PC3[liz] + head.length[liz] + SVL[liz] + (1 | liz),
+                      data = lizdat, family = binomial(link = "probit"))
+lmodfr <- split_modfr(modfr)
+q <- nrow(modfr$reTrms$Zt)
+save_lmodfrs(lmodfr, q, file = "lmodfr_lizards.txt")
