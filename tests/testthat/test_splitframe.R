@@ -26,6 +26,10 @@ modfr_3 <- parse_formula(y ~ x + (1 | cluster) + (1 | subcluster),
                          family = binomial, off = NULL, weights = NULL)
 q_3 <- nrow(modfr_3$reTrms$Zt)
 
+# devfun_3 <- do.call(lme4::mkGlmerDevfun, modfr_3)
+# devfun_3 <- updateGlmerDevfun(devfun_3, modfr_3$reTrms)
+# devfun_3(c(0.5, 1.2, 1.2, -0.2))
+
 test_that("find posterior dependence graph correctly", {
   act <- find_active(modfr)
   G <- find_pdg(act, q)
