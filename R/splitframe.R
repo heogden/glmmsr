@@ -97,7 +97,7 @@ lmodfr_to_oneline <- function(lmodfr, file = "") {
 
 save_normal_terms <- function(q, file = "") {
   for(i in 0:(q-1)){
-    cat("N", i, 0, 1, "\n", sep = " ", file = file, append = TRUE)
+    cat("N", 1, i, 0, 1, "\n", sep = " ", file = file, append = TRUE)
   }
 }
 
