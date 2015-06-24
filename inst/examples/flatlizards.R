@@ -43,3 +43,21 @@ modfr <- glFormulaSub(y ~ 0 + Sub(ability[winner] - ability[loser]),
 lmodfr <- split_modfr(modfr)
 q <- nrow(modfr$reTrms$Zt)
 save_lmodfrs(lmodfr, q, file = "lmodfr_lizards.txt")
+
+# extract normal approximation
+devfun_lme4 <- lme4::mkGlmerDevfun(modfr$fr, modfr$X, modfr$reTrms, modfr$family,
+                    control = glmerControl(check.response.not.const = "ignore"))
+devfun_lme4 <- updateGlmerDevfun(devfun_lme4, modfr$reTrms)
+
+theta <- 0.5
+beta <- rep(0, 6)
+devfun_lme4(c(theta, beta))
+
+PR <- get("pp", environment(devfun_lme4))
+L <- PR$L()
+Sigma_inv <- crossprod(expand(L)$L)
+mu <- PR$delu
+
+save_normal(mu, Sigma_inv, file = "normal_lizards.txt")
+
+Sigma <- solve(Sigma_inv)

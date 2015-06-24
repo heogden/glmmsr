@@ -108,3 +108,16 @@ save_lmodfrs <- function(lmodfrs, q, file = "") {
   a <- lapply(lmodfrs, lmodfr_to_oneline, file = file)
   a <- save_normal_terms(q, file = file)
 }
+
+save_normal <- function(mean, precision, file = "") {
+  if(file.exists(file)) {
+    file.remove(file)
+  }
+  precision <- as(precision, "dgTMatrix")
+  nentries <- length(precision@i)
+  precision_print <- c(nentries, as.numeric(rbind(precision@i,
+                                                  precision@j,
+                                                  precision@x)))
+  cat(mean, "\n", file = file, append = TRUE)
+  cat(precision_print, "\n", file = file, append = TRUE)
+}
