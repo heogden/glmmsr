@@ -28,11 +28,8 @@ Installing `glmmsr`
 You will need the [devtools](https://github.com/hadley/devtools) package. Then run
 
 ``` r
-devtools::install_github("lme4/lme4")
 devtools::install_github("heogden/glmmsr", build_vignettes = TRUE)
 ```
-
-The first line installs the current development version of `lme4`.
 
 To view the vignette, use
 

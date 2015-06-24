@@ -8,7 +8,7 @@ Description: Fit a generalized linear mixed model with the sequential reduction
     (used in lme4). The interface is an extension to lme4, to allow some models
     (for examle pairwise comparison models) not easily specified with lme4.
 Depends: R (>= 3.1.2)
-Imports: lme4,
+Imports: lme4 (>= 1.1-8),
          Matrix,
          igraph
 URL: http://github.com/heogden/glmmsr

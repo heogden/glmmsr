@@ -4,7 +4,3 @@ sudo: required
 
 # Be strict when checking our package
 warnings_are_errors: true
-
-# Install development version of lme4
-r_github_packages:
- - lme4/lme4
