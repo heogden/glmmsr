@@ -29,6 +29,14 @@ q_3 <- nrow(modfr_3$reTrms$Zt)
 # devfun_3 <- do.call(lme4::mkGlmerDevfun, modfr_3)
 # devfun_3 <- updateGlmerDevfun(devfun_3, modfr_3$reTrms)
 # devfun_3(c(0.5, 1.2, 1.2, -0.2))
+#
+# PR <- get("pp", environment(devfun_3))
+# L <- PR$L()
+# Sigma_inv <- crossprod(expand(L)$L)
+# mu <- PR$delu
+#
+# save_normal(mu, Sigma_inv, file = "normal_three_level.txt")
+
 
 test_that("find posterior dependence graph correctly", {
   act <- find_active(modfr)
