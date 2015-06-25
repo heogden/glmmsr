@@ -41,27 +41,6 @@ q_3 <- nrow(modfr_3$reTrms$Zt)
 #
 # save_normal(mu, Sigma_inv, file = "normal_three_level.txt")
 
-
-test_that("find posterior dependence graph correctly", {
-  act <- find_active(modfr)
-  G <- find_pdg(act, q)
-  expect_equal(length(igraph::V(G)), q)
-  expect_equal(length(igraph::E(G)), 0)
-  act_3 <- find_active(modfr_3)
-  G_3 <- find_pdg(act_3, q_3)
-  expect_equal(length(igraph::V(G_3)), q_3)
-  expect_equal(length(igraph::E(G_3)), n_clusters*n_in_cluster/n_in_subcluster)
-})
-
-test_that("reordering model frame keeps devfun unchanged", {
-  devfun <- lme4::mkGlmerDevfun(modfr$fr, modfr$X, modfr$reTrms, modfr$family)
-  elim_order <- c(2:q, 1)
-  modfr2 <- reorder_modfr(modfr, elim_order)
-  devfun2 <- lme4::mkGlmerDevfun(modfr2$fr, modfr2$X, modfr2$reTrms,
-                                 modfr2$family)
-  expect_equal(devfun(1), devfun2(1))
-})
-
 lmodfr <- split_modfr(modfr)
 lmodfr_3 <- split_modfr(modfr_3)
 

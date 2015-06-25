@@ -9,8 +9,7 @@ Description: Fit a generalized linear mixed model with the sequential reduction
     (for examle pairwise comparison models) not easily specified with lme4.
 Depends: R (>= 3.1.2)
 Imports: lme4 (>= 1.1-8),
-         Matrix,
-         igraph
+         Matrix
 URL: http://github.com/heogden/glmmsr
 BugReports: http://github.com/heogden/glmmsr/issues
 License: GPL (>=2)

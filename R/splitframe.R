@@ -7,13 +7,6 @@ find_active <- function(modfr) {
   tapply(LambdatZt@i + 1, LambdatZt@j + 1, c, simplify = FALSE)
 }
 
-# Find the posterior dependence graph, given the active set for each observation
-find_pdg <- function(act, q) {
-  edges <- unlist(lapply(unique(act), find_pairs))
-  G <- igraph::graph(edges, n = q, directed = FALSE)
-  igraph::simplify(G)
-}
-
 add_obs_C <- function(C, act, obs_rem) {
   obs_C <- obs_rem[vapply(act[obs_rem],
                           function(items){all(is.element(items, C))},
@@ -65,17 +58,8 @@ find_local_term <- function(clique_ext, modfr) {
 
 split_modfr <- function(modfr) {
   act <- find_active(modfr)
+  cliques <- unname(unique(act))
   n <- ncol(modfr$reTrms$Zt)
-  q <- nrow(modfr$reTrms$Zt)
-  G <- find_pdg(act, q)
-  # removing sorting: If we do sort, need to also
-  # return the new modfr
-#   elim_order <- find_elim_order(G)
-#   modfr <- reorder_modfr(modfr, elim_order)
-#   act <- find_active(modfr)
-#   G <- find_pdg(act, q)
-  cliques <- igraph::maximal.cliques(G)
-  cliques <- sort_cliques(cliques, n)
   cliques_ext <- add_obs(cliques, act, 1:n)
   lapply(cliques_ext, find_local_term, modfr = modfr)
 }
