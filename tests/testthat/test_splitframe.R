@@ -31,8 +31,12 @@ q_3 <- nrow(modfr_3$reTrms$Zt)
 # devfun_3(c(0.5, 1.2, 1.2, -0.2))
 #
 # PR <- get("pp", environment(devfun_3))
-# L <- PR$L()
-# Sigma_inv <- crossprod(expand(L)$L)
+# L_tot <- expand(PR$L())
+# L <- L_tot$L
+# P <- L_tot$P
+# t(P)%*%L%*%t(L)%*%P
+#
+# Sigma_inv <- t(P)%*%tcrossprod(L)%*%P
 # mu <- PR$delu
 #
 # save_normal(mu, Sigma_inv, file = "normal_three_level.txt")

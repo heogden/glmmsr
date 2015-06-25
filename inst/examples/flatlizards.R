@@ -42,7 +42,7 @@ modfr <- glFormulaSub(y ~ 0 + Sub(ability[winner] - ability[loser]),
                       data = lizdat, family = binomial(link = "probit"))
 lmodfr <- split_modfr(modfr)
 q <- nrow(modfr$reTrms$Zt)
-save_lmodfrs(lmodfr, q, file = "lmodfr_lizards.txt")
+#save_lmodfrs(lmodfr, q, file = "lmodfr_lizards.txt")
 
 # extract normal approximation
 devfun_lme4 <- lme4::mkGlmerDevfun(modfr$fr, modfr$X, modfr$reTrms, modfr$family,
@@ -51,13 +51,17 @@ devfun_lme4 <- updateGlmerDevfun(devfun_lme4, modfr$reTrms)
 
 theta <- 0.5
 beta <- rep(0, 6)
-devfun_lme4(c(theta, beta))
+-devfun_lme4(c(theta, beta))/2
 
 PR <- get("pp", environment(devfun_lme4))
-L <- PR$L()
-Sigma_inv <- crossprod(expand(L)$L)
+L_tot <- expand(PR$L())
+L <- L_tot$L
+P <- L_tot$P
+t(P)%*%L%*%t(L)%*%P
+
+Sigma_inv <- t(P)%*%tcrossprod(L)%*%P
 mu <- PR$delu
 
-save_normal(mu, Sigma_inv, file = "normal_lizards.txt")
+#save_normal(mu, Sigma_inv, file = "normal_lizards.txt")
 
 Sigma <- solve(Sigma_inv)
