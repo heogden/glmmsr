@@ -8,11 +8,11 @@ mkGlmerDevfunSR <- function(fr, X, reTrms, family, nAGQ = 1L, k = 0L,
   devfun_lme4 <- mkGlmerDevfun(fr = fr, X = X, reTrms = reTrms, family = family,
                           nAGQ = nAGQ, verbose = verbose,
                           control = control, ...)
-  devfun_lme4 <- updateGlmerDevfun(devfun, reTrms, nAGQ)
+  devfun_lme4 <- updateGlmerDevfun(devfun_lme4, reTrms, nAGQ)
   if(k == 0L) {
     return(devfun_lme4)
   } else {
-    if(!requireNameSpace("rgraphpass", quietly = TRUE)) {
+    if(!requireNamespace("rgraphpass", quietly = TRUE)) {
       modfr <- list(fr = fr, X = X, reTrms = reTrms, family = family)
       n_re <- nrow(reTrms$Zt)
       factorization_terms <- find_factorization_terms(modfr)
