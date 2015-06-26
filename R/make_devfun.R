@@ -12,7 +12,7 @@ mkGlmerDevfunSR <- function(fr, X, reTrms, family, nAGQ = 1L, k = 0L,
   if(k == 0L) {
     return(devfun_lme4)
   } else {
-    if(!requireNamespace("rgraphpass", quietly = TRUE)) {
+    if(requireNamespace("rgraphpass", quietly = TRUE)) {
       modfr <- list(fr = fr, X = X, reTrms = reTrms, family = family)
       n_re <- nrow(reTrms$Zt)
       factorization_terms <- find_factorization_terms(modfr)
