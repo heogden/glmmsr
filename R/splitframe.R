@@ -56,14 +56,6 @@ find_local_term <- function(clique_ext, modfr) {
        Lind = Lind_C, resp = resp_C, weights = weights_C)
 }
 
-split_modfr <- function(modfr) {
-  act <- find_active(modfr)
-  cliques <- unname(unique(act))
-  n <- ncol(modfr$reTrms$Zt)
-  cliques_ext <- add_obs(cliques, act, 1:n)
-  lapply(cliques_ext, find_local_term, modfr = modfr)
-}
-
 find_factorization_terms <- function(modfr) {
   act <- find_active(modfr)
   cliques <- unname(unique(act))
@@ -87,46 +79,4 @@ find_factorization_terms <- function(modfr) {
                                              precision = I1)
   }
   return(factorization_terms)
-}
-
-lmodfr_to_oneline <- function(lmodfr, file = "") {
-  size_clique <- length(lmodfr$C)
-  nobs <- nrow(lmodfr$X)
-  nfixed <- ncol(lmodfr$X)
-  Lambdat_triplet <- as(lmodfr$Lambdat, "dgTMatrix")
-  nentries <- length(Lambdat_triplet@i)
-  Lambdat_print <- as.numeric(rbind(Lambdat_triplet@i, Lambdat_triplet@j,
-                                    Lambdat_triplet@x))
-  ret <- c("G", size_clique, lmodfr$C - 1, nobs, nfixed, lmodfr$X, lmodfr$Zt,
-           nentries, Lambdat_print,
-           lmodfr$Lind, lmodfr$resp, lmodfr$weights)
-  cat(cat(ret, file = file, append = TRUE),
-      "\n", sep = "", file = file, append = TRUE)
-}
-
-save_normal_terms <- function(q, file = "") {
-  for(i in 0:(q-1)){
-    cat("N", 1, i, 0, 1, "\n", sep = " ", file = file, append = TRUE)
-  }
-}
-
-save_lmodfrs <- function(lmodfrs, q, file = "") {
-  if(file.exists(file)) {
-    file.remove(file)
-  }
-  a <- lapply(lmodfrs, lmodfr_to_oneline, file = file)
-  a <- save_normal_terms(q, file = file)
-}
-
-save_normal <- function(mean, precision, file = "") {
-  if(file.exists(file)) {
-    file.remove(file)
-  }
-  precision <- as(precision, "dgTMatrix")
-  nentries <- length(precision@i)
-  precision_print <- c(nentries, as.numeric(rbind(precision@i,
-                                                  precision@j,
-                                                  precision@x)))
-  cat(mean, "\n", file = file, append = TRUE)
-  cat(precision_print, "\n", file = file, append = TRUE)
 }
