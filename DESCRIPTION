@@ -14,7 +14,8 @@ URL: http://github.com/heogden/glmmsr
 BugReports: http://github.com/heogden/glmmsr/issues
 License: GPL (>=2)
 LazyData: true
-Suggests: testthat,
-    knitr,
-    BradleyTerry2
+Suggests: BradleyTerry2,
+          knitr,
+          rgraphpass,
+          testthat
 VignetteBuilder: knitr

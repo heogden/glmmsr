@@ -64,6 +64,31 @@ split_modfr <- function(modfr) {
   lapply(cliques_ext, find_local_term, modfr = modfr)
 }
 
+find_factorization_terms <- function(modfr) {
+  act <- find_active(modfr)
+  cliques <- unname(unique(act))
+  n <- ncol(modfr$reTrms$Zt)
+  cliques_ext <- add_obs(cliques, act, 1:n)
+  factorization_terms <- rgraphpass::factor_vector()
+  for(i in seq_along(cliques)) {
+    lmodfr <- find_local_term(cliques[[i]], modfr)
+    factorization_terms$append_glm_factor(items = lmodfr$C - 1,
+                                          X = lmodfr$X,
+                                          Zt = lmodfr$Zt,
+                                          Lambdat = lmodfr$Lambdat,
+                                          Lind = lmodfr$Lind,
+                                          response = lmodfr$resp,
+                                          weights = lmodfr$weights)
+  }
+  I1 <- matrix(1, nrow = 1, ncol = 1)
+  for(i in seq_len(n)) {
+    factorization_terms$append_normal_factor(items = c(i - 1),
+                                             mean = c(0),
+                                             precision = I1)
+  }
+  return(factorization_terms)
+}
+
 lmodfr_to_oneline <- function(lmodfr, file = "") {
   size_clique <- length(lmodfr$C)
   nobs <- nrow(lmodfr$X)
