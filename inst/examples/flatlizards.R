@@ -25,9 +25,24 @@ mod <- glmerSR(y ~ 0 + Sub(ability[winner] - ability[loser]),
                ability[liz] ~ 0 + liz96[liz] + liz99[liz] + throat.PC1[liz] +
                       throat.PC3[liz] + head.length[liz] + SVL[liz] + (1 | liz),
                data = lizdat, family = binomial(link = "probit"))
-
+# (fails)
 summary(mod)
 
+#for a simple model, with no covariates
+devfun_laplace <- glmerSR(y ~ 0 + Sub(ability[winner] - ability[loser]),
+                  ability[liz] ~ 0 + (1 | liz),
+                  data = lizdat, family = binomial(link = "probit"),
+                  devFunOnly = TRUE)
+
+devfun_laplace(0.5)
+
+devfun_10_2 <- glmerSR(y ~ 0 + Sub(ability[winner] - ability[loser]),
+                        ability[liz] ~ 0 + (1 | liz),
+                        data = lizdat, family = binomial(link = "probit"),
+                        nAGQ = 10, k = 2,
+                        devFunOnly = TRUE)
+
+devfun_10_2(0.5)
 # compare with the same model fit with BradleyTerry2
 
 mod_BTm <- BTm(y, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
