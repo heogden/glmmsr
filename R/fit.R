@@ -21,7 +21,8 @@ glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
   if(has_reTrms(modfr)) {
     devfun <- do.call(mkGlmerDevfunSR, c(modfr, list(verbose = verbose,
                                                      control = control,
-                                                     nAGQ = nAGQ)))
+                                                     nAGQ = nAGQ,
+                                                     k = k)))
 
     if(devFunOnly) {
       return(devfun)

@@ -56,52 +56,28 @@ find_local_term <- function(clique_ext, modfr) {
        Lind = Lind_C, resp = resp_C, weights = weights_C)
 }
 
-split_modfr <- function(modfr) {
+find_factorization_terms <- function(modfr) {
   act <- find_active(modfr)
   cliques <- unname(unique(act))
-  n <- ncol(modfr$reTrms$Zt)
+  n_obs <- ncol(modfr$reTrms$Zt)
+  n_re <- nrow(modfr$reTrms$Zt)
   cliques_ext <- add_obs(cliques, act, 1:n)
-  lapply(cliques_ext, find_local_term, modfr = modfr)
-}
-
-lmodfr_to_oneline <- function(lmodfr, file = "") {
-  size_clique <- length(lmodfr$C)
-  nobs <- nrow(lmodfr$X)
-  nfixed <- ncol(lmodfr$X)
-  Lambdat_triplet <- as(lmodfr$Lambdat, "dgTMatrix")
-  nentries <- length(Lambdat_triplet@i)
-  Lambdat_print <- as.numeric(rbind(Lambdat_triplet@i, Lambdat_triplet@j,
-                                    Lambdat_triplet@x))
-  ret <- c("G", size_clique, lmodfr$C - 1, nobs, nfixed, lmodfr$X, lmodfr$Zt,
-           nentries, Lambdat_print,
-           lmodfr$Lind, lmodfr$resp, lmodfr$weights)
-  cat(cat(ret, file = file, append = TRUE),
-      "\n", sep = "", file = file, append = TRUE)
-}
-
-save_normal_terms <- function(q, file = "") {
-  for(i in 0:(q-1)){
-    cat("N", 1, i, 0, 1, "\n", sep = " ", file = file, append = TRUE)
+  factorization_terms <- rgraphpass:::factor_vector()
+  for(i in seq_along(cliques_ext)) {
+    lmodfr <- find_local_term(cliques_ext[[i]], modfr)
+    factorization_terms$append_glm_factor(items = lmodfr$C - 1,
+                                          X = lmodfr$X,
+                                          Zt = lmodfr$Zt,
+                                          Lambdat = lmodfr$Lambdat,
+                                          Lind = lmodfr$Lind,
+                                          response = lmodfr$resp,
+                                          weights = lmodfr$weights)
   }
-}
-
-save_lmodfrs <- function(lmodfrs, q, file = "") {
-  if(file.exists(file)) {
-    file.remove(file)
+  I1 <- matrix(1, nrow = 1, ncol = 1)
+  for(i in seq_len(n_re)) {
+    factorization_terms$append_normal_factor(items = c(i - 1),
+                                             mean = c(0),
+                                             precision = I1)
   }
-  a <- lapply(lmodfrs, lmodfr_to_oneline, file = file)
-  a <- save_normal_terms(q, file = file)
-}
-
-save_normal <- function(mean, precision, file = "") {
-  if(file.exists(file)) {
-    file.remove(file)
-  }
-  precision <- as(precision, "dgTMatrix")
-  nentries <- length(precision@i)
-  precision_print <- c(nentries, as.numeric(rbind(precision@i,
-                                                  precision@j,
-                                                  precision@x)))
-  cat(mean, "\n", file = file, append = TRUE)
-  cat(precision_print, "\n", file = file, append = TRUE)
+  return(factorization_terms)
 }
