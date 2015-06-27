@@ -1,6 +1,6 @@
 set.seed(1)
 
-n_clusters <- 5
+n_clusters <- 50
 n_in_cluster <- 2
 n <- n_clusters*n_in_cluster
 cluster <- rep(1:n_clusters, each = n_in_cluster)

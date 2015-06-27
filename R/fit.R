@@ -39,10 +39,20 @@ glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
         return(mkMerMod(environment(devfun), opt, modfr$reTrms, fr = modfr$fr))
       } else {
         p_beta <- ncol(modfr$X)
-        p_theta <- max(modfr$reTrms$Lind)
+        p_theta <- length(modfr$reTrms$theta)
         opt <- optimizeGlmerSR(devfun, p_beta = p_beta, p_theta = p_theta,
                                    verbose = verbose)
-        return(opt)
+        if(all(modfr$reTrms$lower == 0)) {
+          opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
+          result <- glmerSRMod(list(estim = opt$estim, Sigma = opt$Sigma,
+                                    devfun = devfun, modfr = modfr, k = k,
+                                    nAGQ = nAGQ))
+        }else{
+          warning("proper print and summary method not yet implemented ",
+                  "for correlated random effects")
+          result <- opt
+        }
+        return(result)
       }
 
     }
