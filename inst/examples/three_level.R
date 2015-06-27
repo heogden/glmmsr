@@ -1,35 +1,36 @@
 set.seed(1)
 
-n_clusters <- 25
-n_subclusters_in_cluster <- 2
-n_in_subcluster <- 2
-n <- n_clusters * n_subclusters_in_cluster * n_in_subcluster
+n_groups <- 25
+n_clusters_in_group <- 2
+n_in_cluster <- 2
+n <- n_groups * n_clusters_in_group * n_in_cluster
 
-n_subclusters <- n_clusters * n_in_subcluster
-subcluster <- rep(1:n_subclusters, each = n_in_subcluster)
-
-n_in_cluster <- n_in_subcluster * n_subcluster_in_cluster
+n_clusters <- n_groups * n_in_cluster
 cluster <- rep(1:n_clusters, each = n_in_cluster)
 
+n_in_group <- n_in_cluster * n_clusters_in_group
+group <- rep(1:n_groups, each = n_in_group)
+
 # simulate some data
-x <- rbinom(n, 1, 0.5)
+covariate <- rbinom(n, 1, 0.5)
 sigma0 <- c(0.5, 1)
 beta0 <- -0.5
-u0 <- rnorm(n_subclusters)
-v0 <- rnorm(n_clusters)
-eta <- beta0 * x + sigma0[1] * u0[subcluster] + sigma0[2] * v0[cluster]
+u0 <- rnorm(n_clusters)
+v0 <- rnorm(n_groups)
+eta <- beta0 * covariate + sigma0[1] * u0[cluster] + sigma0[2] * v0[group]
 p <- exp(eta) / (1 + exp(eta))
-y <- rbinom(p)
+response <- rbinom(p, 1, p)
 
-data = list(y = y, x = x, cluster = cluster, subcluster = subcluster)
+three_level = list(response = response, covariate = covariate, cluster = cluster,
+                   group = group)
 
-devfun_approx <- glmerSR(y ~ x + (1 | cluster) + (1 | subcluster),
-                         data = data, family = binomial,
+devfun_approx <- lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
+                         data = three_level, family = binomial,
                          devFunOnly = TRUE)
-devfun_10_4 <- glmerSR(y ~ x + (1 | cluster) + (1 | subcluster),
-                       data = data, family = binomial,
-                       nAGQ = 10, k = 4,
+devfun_10_3 <- glmerSR(response ~ covariate + (1 | cluster) + (1 | group),
+                       data = three_level, family = binomial,
+                       nAGQ = 10, k = 3,
                        devFunOnly = TRUE)
 
-devfun_approx(c(0.5, 1, -0.5))
-devfun_10_4(c(0.5, 1, -0.5))
+devfun_approx(c(0.5, 0.5, 1, -0.5))
+devfun_10_3(c(0.5, 0.5, 1, -0.5))
