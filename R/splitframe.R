@@ -61,8 +61,8 @@ find_factorization_terms <- function(modfr) {
   cliques <- unname(unique(act))
   n_obs <- ncol(modfr$reTrms$Zt)
   n_re <- nrow(modfr$reTrms$Zt)
-  cliques_ext <- add_obs(cliques, act, 1:n)
-  factorization_terms <- rgraphpass:::factor_vector()
+  cliques_ext <- add_obs(cliques, act, 1:n_obs)
+  factorization_terms <- rgraphpass::factor_vector()
   for(i in seq_along(cliques_ext)) {
     lmodfr <- find_local_term(cliques_ext[[i]], modfr)
     factorization_terms$append_glm_factor(items = lmodfr$C - 1,
