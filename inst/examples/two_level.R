@@ -26,3 +26,8 @@ devfun_10_sr <- glmerSR(y ~ x + (1 | cluster), data = two_level, family = binomi
 devfun_approx(c(1, 0, 1))
 devfun_10_lme4(c(1, 0, 1))
 devfun_10_sr(c(1, 0, 1))
+
+mod_10_lme4 <- lme4::glmer(y ~ x + (1 | cluster), data = two_level, family = binomial,
+                           nAGQ = 10)
+mod_10_sr <- glmerSR(y ~ x + (1 | cluster), data = two_level, family = binomial,
+                           nAGQ = 10, k = 1, verbose = 1)

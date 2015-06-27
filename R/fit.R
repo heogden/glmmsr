@@ -27,15 +27,24 @@ glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
     if(devFunOnly) {
       return(devfun)
     } else {
-      opt <- optimizeGlmer(devfun, optimizer = control$optimizer[[2]],
-                           restart_edge = control$restart_edge,
-                           boundary.tol = control$boundary.tol,
-                           control = control$optCtrl,
-                           verbose = verbose,
-                           stage = 2,
-                           calc.derivs = control$calc.derivs,
-                           use.last.params = control$use.last.params)
-      return(mkMerMod(environment(devfun), opt, modfr$reTrms, fr = modfr$fr))
+      if(k == 0L) {
+        opt <- optimizeGlmer(devfun, optimizer = control$optimizer[[2]],
+                             restart_edge = control$restart_edge,
+                             boundary.tol = control$boundary.tol,
+                             control = control$optCtrl,
+                             verbose = verbose,
+                             stage = 2,
+                             calc.derivs = control$calc.derivs,
+                             use.last.params = control$use.last.params)
+        return(mkMerMod(environment(devfun), opt, modfr$reTrms, fr = modfr$fr))
+      } else {
+        p_beta <- ncol(modfr$X)
+        p_theta <- max(modfr$reTrms$Lind)
+        opt <- optimizeGlmerSR(devfun, p_beta = p_beta, p_theta = p_theta,
+                                   verbose = verbose)
+        return(opt)
+      }
+
     }
   } else {
     stop("haven't yet implemented no random effects case")
