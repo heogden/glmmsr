@@ -87,3 +87,18 @@ test_that("random effects at observation level work OK", {
   fit_re_obs <- glmerSR(formula_re_obs, subform, data = data_re_obs,
                         family = binomial)
 })
+
+check_rgraphpass <- function() {
+  if(!requireNamespace("rgraphpass", quietly = TRUE)) {
+    skip("rgraphpass not available")
+  }
+}
+
+test_that("fits a two-level model correctly", {
+  check_rgraphpass()
+  mod_10 <- lme4::glmer(response ~ covariate + (1 | cluster),
+                        data = two_level, family = binomial, nAGQ = 10)
+  mod_10_SR <- glmerSR(response ~ covariate + (1 | cluster),
+                       data = two_level, family = binomial, nAGQ = 10, k = 1)
+  expect_true(sum(abs(mod_10_SR$estim - c(mod_10@theta, mod_10@beta))) < 0.001)
+})
