@@ -23,3 +23,11 @@
 #' @import lme4
 #' @name glmmsr
 NULL
+
+#' A dataset simulated from a two-level model
+#'
+"two_level"
+
+#' A dataset simulated from a three-level model
+#'
+"three_level"
