@@ -6,9 +6,9 @@ Generalized linear mixed models (GLMMs) are an important and widely-used model c
 
 The `glmmsr` package aims to offer progress on both of these problems.
 
-The sequential reduction approximation to the likelihood is controlled by a parameter (`k`) which allows the user to trade-off accuracy of the approximation against computation time. I am currently rewriting the code for the sequential reduction approximation, and it is not yet available in `glmmsr`. A previous version of the code is available as supplementary material to Ogden (2015).
+The sequential reduction approximation to the likelihood is controlled by a parameter (`k`) which allows the user to trade-off accuracy of the approximation against computation time.
 
-Currently, `glmmsr` provides an extended interface to `lme4`. This interface allows easy fitting of pairwise comparison and many other interesting models, which are difficult to fit directly with `lme4`.
+`glmmsr` also provides an extended interface to `lme4`. This interface allows easy fitting of pairwise comparison and many other interesting models, which are difficult to fit directly with `lme4`.
 
 The function used to fit a GLMM is `glmerSR`, which is based on `glmer` from `lme4`. A typical call would look like
 
@@ -25,13 +25,23 @@ The vignette gives more details and examples of how to use the subformula interf
 Installing `glmmsr`
 -------------------
 
-You will need the [devtools](https://github.com/hadley/devtools) package. Then run
+You will need the [devtools](https://github.com/hadley/devtools) package.
+
+Then run
 
 ``` r
 devtools::install_github("heogden/glmmsr", build_vignettes = TRUE)
 ```
 
-To view the vignette, use
+If you would like to use the sequential reduction approximation to the likelihood, you will need to install the [rgraphpass](https://github.com/heogden/rgraphpass) package. The `rgraphpass` package is still in development, and should be used with caution. It does not currently work in Windows. You can use `glmmsr` to give an extended interface to `lme4` without installing rgraphpass.
+
+To install rgraphpass, run
+
+``` r
+devtools::install_github("heogden/rgraphpass")
+```
+
+To view the vignette for `glmmsr`, use
 
 ``` r
 browseVignettes("glmmsr")
@@ -39,5 +49,3 @@ browseVignettes("glmmsr")
 
 References
 ----------
-
-Ogden, Helen. 2015. “A sequential reduction method for inference in generalized linear mixed models.” *Electronic Journal of Statistics* 9: 135–52. doi:[10.1214/15-EJS991](http://dx.doi.org/10.1214/15-EJS991).
