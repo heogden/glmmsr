@@ -4,3 +4,7 @@ sudo: required
 
 # Be strict when checking our package
 warnings_are_errors: true
+
+# Install rgraphpass
+r_github_packages:
+ - heogden/rgraphpass
