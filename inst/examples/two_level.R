@@ -1,33 +1,15 @@
-set.seed(1)
+# fit the two-level model using lme4
+# we can use the Laplace approximation
+mod_Laplace <- lme4::glmer(response ~ covariate + (1 | cluster),
+                           data = two_level, family = binomial)
+mod_Laplace
 
-n_clusters <- 50
-n_in_cluster <- 2
-n <- n_clusters*n_in_cluster
-cluster <- rep(1:n_clusters, each = n_in_cluster)
+# or increase the number of adaptive Gaussian quadrature points
+mod_10 <- lme4::glmer(response ~ covariate + (1 | cluster),
+                      data = two_level, family = binomial, nAGQ = 10)
+mod_10
 
-# simulate some data
-x <- rbinom(n, 1, 0.5)
-sigma0 <- 1
-beta0 <- -0.5
-u0 <- rnorm(n_clusters)
-eta <- beta0 * x + sigma0 * u0[cluster]
-p <- exp(eta) / (1 + exp(eta))
-y <- rbinom(p, 1, p)
-
-two_level = list(y = y, x = x, cluster = cluster)
-
-devfun_approx <- lme4::glmer(y ~ x + (1 | cluster), data = two_level, family = binomial,
-                         nAGQ = 1, devFunOnly = TRUE)
-devfun_10_lme4 <- lme4::glmer(y ~ x + (1 | cluster), data = two_level, family = binomial,
-                          nAGQ = 10, devFunOnly = TRUE)
-devfun_10_sr <- glmerSR(y ~ x + (1 | cluster), data = two_level, family = binomial,
-                        nAGQ = 10, k = 1, devFunOnly = TRUE)
-
-devfun_approx(c(1, 0, 1))
-devfun_10_lme4(c(1, 0, 1))
-devfun_10_sr(c(1, 0, 1))
-
-mod_10_lme4 <- lme4::glmer(y ~ x + (1 | cluster), data = two_level, family = binomial,
-                           nAGQ = 10)
-mod_10_sr <- glmerSR(y ~ x + (1 | cluster), data = two_level, family = binomial,
-                           nAGQ = 10, k = 1, verbose = 1)
+# we can fit the same model using the sequential reduciton approximation
+mod_10_SR <- glmerSR(response ~ covariate + (1 | cluster),
+                     data = two_level, family = binomial, nAGQ = 10, k = 1)
+mod_10_SR
