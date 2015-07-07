@@ -33,7 +33,7 @@ Then run
 devtools::install_github("heogden/glmmsr", build_vignettes = TRUE)
 ```
 
-If you would like to use the sequential reduction approximation to the likelihood, you will need to install the [rgraphpass](https://github.com/heogden/rgraphpass) package. The `rgraphpass` package is still in development, and should be used with caution. You can use `glmmsr` to give an extended interface to `lme4` without installing rgraphpass.
+If you would like to use the sequential reduction approximation to the likelihood, you will need to install the [rgraphpass](https://github.com/heogden/rgraphpass) package. The `rgraphpass` package is still in development, and should be used with caution. You can use `glmmsr` to give an extended interface to `lme4` without installing `rgraphpass`.
 
 To install rgraphpass, run
 
