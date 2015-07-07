@@ -66,7 +66,7 @@ If you would like to use the sequential reduction approximation to
 the likelihood, you will need to install the 
 [rgraphpass](https://github.com/heogden/rgraphpass) package.
 The `rgraphpass` package is still in development, and should be used with
-caution. It does not currently work in Windows. You can use `glmmsr` to give an 
+caution. You can use `glmmsr` to give an 
 extended interface to `lme4` without installing rgraphpass.
 
 To install rgraphpass, run
