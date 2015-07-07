@@ -42,7 +42,7 @@ containing control paramaters.}
     value of zero uses a faster but less exact form of parameter
     estimation for GLMMs by optimizing the random effects and the
     fixed-effects coefficients in the penalized iteratively reweighted
-    least squares step.}
+    least squares step. (See Details.)}
 
 \item{k}{integer scalar - the level of approximation used in the sequential
 reduction approximation to the likelihood.}

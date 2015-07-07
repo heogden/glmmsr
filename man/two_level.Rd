@@ -3,7 +3,7 @@
 \docType{data}
 \name{two_level}
 \alias{two_level}
-\title{A simulated two-level dataset}
+\title{A dataset simulated from a two-level model}
 \format{\preformatted{List of 3
  $ response : int [1:100] 1 1 0 0 1 0 0 0 1 1 ...
  $ covariate: int [1:100] 0 0 1 1 0 1 1 1 1 0 ...
@@ -13,7 +13,7 @@
 two_level
 }
 \description{
-A simulated two-level dataset
+A dataset simulated from a two-level model
 }
 \keyword{datasets}
 
