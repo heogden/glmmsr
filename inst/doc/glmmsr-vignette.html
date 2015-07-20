@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Helen Ogden" />
+
+
+<title>Fitting GLMMs with glmmsr</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%7D%0Apre%20%7B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div id="header">
+<h1 class="title">Fitting GLMMs with <code>glmmsr</code></h1>
+<h4 class="author"><em>Helen Ogden</em></h4>
+</div>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The <code>glmmsr</code> package is designed to fit generalized linear mixed models (GLMMs) using the sequential reduction approximation to the likelihood <span class="citation">(Ogden 2015)</span>. It is based on <code>lme4</code> <span class="citation">(Bates et al. 2015)</span>, but with an extended interface to allow easy fitting of a wider range of models.</p>
+</div>
+<div id="using-the-sequential-reduction-approximation" class="section level2">
+<h2>Using the sequential reduction approximation</h2>
+<p>The function used to fit a GLMM is <code>glmerSR</code>, which is based on <code>glmer</code> from <code>lme4</code>. There are two parameters which control the sequential reduction approximation.</p>
+<ol style="list-style-type: decimal">
+<li><code>nAGQ</code>, the number of adaptive Gaussian quadrature points used for one-dimensional integration. A non-negative integer, where the accuracy of the approximation In typical examples, <code>nAGQ = 10</code> is large enough to give an accurate likelihood approximation.</li>
+<li><code>k</code>, the level of sparse grid storage. A non-negative integer, where the special case <code>k = 0</code> corresponds to the Laplace approximation, in which case <code>glmerSR</code> passes to <code>lme4::glmer</code> to do the fitting. In typical examples, <code>k = 3</code> is large enough to give an accurate likelihood approximation.</li>
+</ol>
+<p>For example, the data <code>three_level</code>, available in <code>glmmsr</code>, is simulated from a binary three-level model. Each observation is contained with a cluster, and each of those clusters in contained within a group. In our simulated example, there are two observations per cluster, and two clusters per group, with <span class="math">\(50\)</span> groups in total.</p>
+<p>We could fit the model using <code>glmer</code>, which by default uses a Laplace approximation to the likelihood</p>
+<pre class="sourceCode r"><code class="sourceCode r">(mod_Laplace &lt;-<span class="st"> </span>lme4::<span class="kw">glmer</span>(response ~<span class="st"> </span>covariate +<span class="st"> </span>(<span class="dv">1</span> |<span class="st"> </span>cluster) +<span class="st"> </span>(<span class="dv">1</span> |<span class="st"> </span>group),
+                           <span class="dt">data =</span> three_level, <span class="dt">family =</span> binomial))</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
+##   Approximation) [glmerMod]
+##  Family: binomial  ( logit )
+## Formula: response ~ covariate + (1 | cluster) + (1 | group)
+##    Data: three_level
+##       AIC       BIC    logLik  deviance  df.resid 
+##  283.4225  296.6157 -137.7112  275.4225       196 
+## Random effects:
+##  Groups  Name        Std.Dev.
+##  cluster (Intercept) 0.3576  
+##  group   (Intercept) 0.4257  
+## Number of obs: 200, groups:  cluster, 100; group, 50
+## Fixed Effects:
+## (Intercept)    covariate  
+##     -0.1908       0.1198</code></pre>
+<p>The structure is sparse – there is little information provided by the data about the value of each random effect – so we might question whether the Laplace approximation is of sufficiently high quality.</p>
+<p>We try to increase the accuracy of the approximation by using a larger number of quadrature points</p>
+<pre class="sourceCode r"><code class="sourceCode r">lme4::<span class="kw">glmer</span>(response ~<span class="st"> </span>covariate +<span class="st"> </span>(<span class="dv">1</span> |<span class="st"> </span>cluster) +<span class="st"> </span>(<span class="dv">1</span> |<span class="st"> </span>group),
+                           <span class="dt">data =</span> three_level, <span class="dt">family =</span> binomial, <span class="dt">nAGQ =</span> <span class="dv">10</span>)</code></pre>
+<pre><code>## Error in updateGlmerDevfun(devfun, glmod$reTrms, nAGQ = nAGQ): nAGQ &gt; 1 is only available for models with a single, scalar random-effects term</code></pre>
+<p>We get an error message, because the likelihood does not reduce to a product of one-dimensional integrals in this case, as it does for a two-level model.</p>
+<p>Instead, we can use <code>glmerSR</code> to fit the model using the sequential reduction approximation, with <code>nAGQ = 10</code> quadrature points, and sparse grid storage level <code>k = 3</code></p>
+<pre class="sourceCode r"><code class="sourceCode r">(mod_SR &lt;-<span class="st"> </span><span class="kw">glmerSR</span>(response ~<span class="st"> </span>covariate +<span class="st"> </span>(<span class="dv">1</span> |<span class="st"> </span>cluster) +<span class="st"> </span>(<span class="dv">1</span> |<span class="st"> </span>group),
+                  <span class="dt">data =</span> three_level, <span class="dt">family =</span> binomial, <span class="dt">nAGQ =</span> <span class="dv">10</span>,
+                  <span class="dt">k =</span> <span class="dv">3</span>))</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Sequential Reduction Approximation, k = 3, nAGQ = 10) [glmerSRMod] 
+## Family: binomial ( logit ) 
+## Formula: response ~ covariate + (1 | cluster) + (1 | group)
+##   Groups  Name        Estimate
+## 1 cluster (Intercept) 0.6462  
+## 2 group   (Intercept) 0.4503  
+## Number of obs: 200, groups: cluster, 100; group, 50; 
+## Fixed effects: 
+## (Intercept)   covariate 
+##     -0.2077      0.1389</code></pre>
+<p>The estimates of the random effects standard deviations are larger than the corresponding estimates from the Laplace approximation.</p>
+</div>
+<div id="the-subformula-interface" class="section level2">
+<h2>The subformula interface</h2>
+<p>The interface of <code>glmerSR</code> also allows fitting of some more complex models which are not easy to fit using <code>lme4</code>.</p>
+<p>A typical call using this extended interface looks like <code>glmerSR(formula, subformula, data, family)</code> where</p>
+<ol style="list-style-type: decimal">
+<li><p><code>formula</code> may contain one or more terms surrounded with <code>Sub(.)</code>. We call the expression contained within <code>Sub(.)</code> a <strong>substitution expression</strong>. This is a mathematical expression dictating how the response depends on a <strong>substituted variable</strong>: a dummy variable not contained in <code>data</code>.</p></li>
+<li><p><code>subformula</code> contains a <strong>subformula</strong> for each substituted variable, which describes how the substituted variable depends on covariates.</p></li>
+</ol>
+<p>Next, we consider an example of the type of model we might want to fit using this interface.</p>
+</div>
+<div id="pairwise-competition-models" class="section level2">
+<h2>Pairwise competition models</h2>
+<p>Suppose that we observe the outcome of a set of matches played between pairs of players, and that we also observe some covariates <span class="math">\(x_{i}\)</span> for each player <span class="math">\(i\)</span>. We suppose that each player <span class="math">\(i\)</span> has an ‘ability’ <span class="math">\(\lambda_i\)</span>, and that <span class="math">\[Pr(\text{$i$ beats $j$} | \lambda_i, \lambda_j) = g(\lambda_i - \lambda_j),\]</span> where <span class="math">\(g(.)\)</span> is an inverse link function. If we are interested in how the ability depends on the covariates, we might model <span class="math">\[\lambda_i = \beta x_{i} + b_i, \]</span> where <span class="math">\(b_i \sim N(0, \sigma^2)\)</span>, and <span class="math">\(\beta\)</span> and <span class="math">\(\sigma\)</span> are unknown parameters.</p>
+<p>This is a structured pairwise competition model. The <code>BradleyTerry2</code> package <span class="citation">(Turner and Firth 2012)</span> provides a good interface to fit these models, but it uses Penalized Quasi Likelihood (PQL) for inference if there are random effects in the model. PQL is often a poor approximation to the true likelihood.</p>
+<p>We wrote down the structured pairwise competition model using a two-step approach: first we described how the response depends on the unknown abilities, then we wrote down how the abilities depend on covariates. This type of model can be written quite naturally using the subformula interface. We have a formula <code>response ~ 0 + Sub(ability[player1] - ability[player2])</code>, where <code>ability</code> is a substitution variable. We write down a corresponding subformula <code>ability[i] ~ 0 + x[i] + (1 | i)</code>. Here <code>player1</code> and <code>player2</code> are factors with common levels, and <code>x</code> is a vector of player-specific covariates, where the ordering of the players is given by the levels of <code>player1</code> and <code>player2</code>. The index <code>i</code> is arbitrary, and is deduced automatically from the levels of <code>player1</code> and <code>player2</code>.</p>
+</div>
+<div id="example-chameleons-data" class="section level2">
+<h2>Example: <code>chameleons</code> data</h2>
+<p><span class="citation">Stuart-Fox et al. (2006)</span> study contests between male Cape dwarf chameleons. The data are available in <code>BradleyTerry2</code>: see <code>?chameleons</code> for more details. The model suggested by <span class="citation">Stuart-Fox et al. (2006)</span> includes an experience effect: we allow the ability for each chameleon to change as the tournament progresses.</p>
+<p>In particular, for each chameleon <span class="math">\(i\)</span> at each match <span class="math">\(m\)</span>, we count the number of wins for that chameleon in its (at most) two previous matches. We start by constructing a matrix <code>prevwins2</code> to record these counts.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(BradleyTerry2)
+winner &lt;-<span class="st"> </span>chameleons$winner$ID
+loser &lt;-<span class="st"> </span>chameleons$loser$ID
+match &lt;-<span class="st"> </span><span class="dv">1</span>:<span class="kw">length</span>(winner)
+
+wins &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, <span class="dt">nrow =</span> <span class="kw">length</span>(<span class="kw">levels</span>(winner)), <span class="dt">ncol =</span> <span class="kw">length</span>(winner))
+wins[<span class="kw">cbind</span>(<span class="kw">as.numeric</span>(winner), match)] &lt;-<span class="st"> </span><span class="dv">1</span>
+
+losses &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, <span class="dt">nrow =</span> <span class="kw">length</span>(<span class="kw">levels</span>(winner)), <span class="dt">ncol =</span> <span class="kw">length</span>(winner))
+losses[<span class="kw">cbind</span>(<span class="kw">as.numeric</span>(loser), match)] &lt;-<span class="st"> </span><span class="dv">1</span>
+
+contests &lt;-<span class="st"> </span>wins +<span class="st"> </span>losses
+
+find_prev2 &lt;-<span class="st"> </span>function(wins_im, contests_im) {
+  m &lt;-<span class="st"> </span><span class="kw">min</span>(<span class="dv">2</span>, <span class="kw">sum</span>(contests_im))
+  if(m &gt;<span class="st"> </span><span class="dv">0</span>) {
+    res &lt;-<span class="st"> </span><span class="kw">sum</span>(wins_im[<span class="kw">rev</span>(<span class="kw">which</span>(contests_im &gt;<span class="st"> </span>0L))[<span class="dv">1</span>:m]])
+  } else{
+    res &lt;-<span class="st"> </span><span class="dv">0</span>
+  }
+  res
+}
+
+prevwins2 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, <span class="dt">nrow =</span> <span class="kw">nrow</span>(wins), <span class="dt">ncol =</span> <span class="kw">ncol</span>(wins))
+for(i in <span class="dv">1</span>:<span class="kw">nrow</span>(wins)) {
+  for(m in <span class="dv">2</span>:<span class="kw">ncol</span>(wins)) {
+    prevwins2[i, m] &lt;-<span class="st"> </span><span class="kw">find_prev2</span>(wins[i, <span class="dv">1</span>:(m<span class="dv">-1</span>)], contests[i, <span class="dv">1</span>:(m<span class="dv">-1</span>)])
+  }
+}</code></pre>
+<p>Then we fit the model</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(glmmsr)
+resp &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(winner))
+cham_dat &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">list</span>(<span class="dt">resp =</span> resp, <span class="dt">winner =</span> winner, <span class="dt">loser =</span> loser, 
+                  <span class="dt">match =</span> match, <span class="dt">prevwins2 =</span> prevwins2), 
+             <span class="kw">as.list</span>(chameleons$predictors))
+
+cham_mod &lt;-<span class="st"> </span><span class="kw">glmerSR</span>(resp ~<span class="st"> </span><span class="dv">0</span> +<span class="st"> </span><span class="kw">Sub</span>(ability[winner, match] -
+<span class="st">                                   </span>ability[loser, match]),
+                    ability[i, m] ~<span class="st"> </span><span class="dv">0</span> +<span class="st"> </span>prevwins2[i, m] +<span class="st"> </span>ch.res[i] 
+                                    +<span class="st"> </span>prop.main[i] +<span class="st"> </span>(<span class="dv">1</span> |<span class="st"> </span>i),
+                    <span class="dt">family =</span> binomial, <span class="dt">data =</span> cham_dat)
+
+<span class="kw">print</span>(<span class="kw">summary</span>(cham_mod), <span class="dt">correlation =</span> <span class="ot">FALSE</span>, <span class="dt">show.resids =</span> <span class="ot">FALSE</span>)</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
+##   Approximation) [glmerMod]
+##  Family: binomial  ( logit )
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##     93.4    104.0    -42.7     85.4      102 
+## 
+## Random effects:
+##  Groups Name        Variance Std.Dev.
+##  i      (Intercept) 0        0       
+## Number of obs: 106, groups:  i, 35
+## 
+## Fixed effects:
+##                        Estimate Std. Error z value Pr(&gt;|z|)    
+## prevwins2[cbind(i, m)]  2.38129    0.48495   4.910 9.09e-07 ***
+## ch.res[i]               0.60932    0.27773   2.194   0.0282 *  
+## prop.main[i]            0.08928    0.04382   2.037   0.0416 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+<p>We can fit the same model with <code>BradleyTerry2</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">cham_mod_BTm &lt;-<span class="st"> </span><span class="kw">BTm</span>(<span class="dt">player1 =</span> winner, <span class="dt">player2 =</span> loser,
+                    <span class="dt">formula =</span> ~<span class="st"> </span>prev.wins<span class="fl">.2</span> +<span class="st"> </span>ch.res[ID] +<span class="st"> </span>prop.main[ID] +<span class="st"> </span>(<span class="dv">1</span>|ID),
+                    <span class="dt">id =</span> <span class="st">&quot;ID&quot;</span>, <span class="dt">data =</span> chameleons)
+<span class="kw">summary</span>(cham_mod_BTm)</code></pre>
+<pre><code>## PQL algorithm converged to fixed effects model</code></pre>
+<pre><code>## 
+## Call:
+## BTm(player1 = winner, player2 = loser, formula = ~prev.wins.2 + 
+##     ch.res[ID] + prop.main[ID] + (1 | ID), id = &quot;ID&quot;, data = chameleons)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## 0.06415  0.34234  0.58244  1.07561  2.80562  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## prev.wins.2    2.38130    0.48495   4.910 9.09e-07 ***
+## ch.res[ID]     0.60931    0.27773   2.194   0.0282 *  
+## prop.main[ID]  0.08928    0.04382   2.037   0.0416 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 146.947  on 106  degrees of freedom
+## Residual deviance:  85.396  on 103  degrees of freedom
+## AIC: 91.396
+## 
+## Number of Fisher Scoring iterations: NA</code></pre>
+<p>In this case the two fits are the same, because in both cases the random effects variance is estimated to be zero.</p>
+<div class="references">
+<h2>References</h2>
+<p>Bates, Douglas, Martin Maechler, Benjamin M. Bolker, and Steven Walker. 2015. “Fitting Linear Mixed-Effects Models Using lme4.” <a href="http://arxiv.org/abs/1406.5823" class="uri">http://arxiv.org/abs/1406.5823</a>.</p>
+<p>Ogden, Helen. 2015. “A sequential reduction method for inference in generalized linear mixed models.” <em>Electronic Journal of Statistics</em> 9: 135–52. doi:<a href="http://dx.doi.org/10.1214/15-EJS991">10.1214/15-EJS991</a>.</p>
+<p>Stuart-Fox, Devi M., David Firth, Adnan Moussalli, and Martin J. Whiting. 2006. “Multiple signals in chameleon contests: designing and analysing animal contests as a tournament.” <em>Animal Behaviour</em> 71 (6): 1263–71. doi:<a href="http://dx.doi.org/10.1016/j.anbehav.2005.07.028">10.1016/j.anbehav.2005.07.028</a>.</p>
+<p>Turner, Heather, and David Firth. 2012. “Bradley-Terry Models in R: The BradleyTerry2 Package.” <em>Journal of Statistical Software</em> 48 (9): 1–21. <a href="http://www.jstatsoft.org/v48/i09/" class="uri">http://www.jstatsoft.org/v48/i09/</a>.</p>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

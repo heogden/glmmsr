@@ -2,5 +2,4 @@
 .Rhistory
 .RData
 /temp
-inst/doc
 *.bak

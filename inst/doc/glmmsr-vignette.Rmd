@@ -1,0 +1,199 @@
+---
+title: "Fitting GLMMs with `glmmsr`"
+author: "Helen Ogden"
+date: " "
+output: rmarkdown::html_vignette
+bibliography: glmmsr.bib
+vignette: >
+  %\VignetteIndexEntry{glmmsr}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+  
+---
+
+## Introduction
+
+The `glmmsr` package is designed to fit generalized linear mixed
+models (GLMMs) using the sequential reduction approximation to the likelihood
+[@Ogden2015]. It is based on `lme4` [@lme4], but with an extended interface
+to allow easy fitting of a wider range of models. 
+
+## Using the sequential reduction approximation
+The function used to fit a GLMM is `glmerSR`, which is based on `glmer` from
+`lme4`. There are two parameters which control the sequential reduction
+approximation. 
+
+ 1. `nAGQ`, the number of adaptive Gaussian quadrature points
+  used for one-dimensional integration. A non-negative integer,
+  where the accuracy of the approximation 
+  In typical examples, `nAGQ = 10` is large enough to
+  give an accurate likelihood approximation.
+ 2. `k`, the level of sparse grid storage. A non-negative integer, where the 
+  special case `k = 0` corresponds to the Laplace approximation, in
+  which case `glmerSR` passes to `lme4::glmer` to do the fitting.
+  In typical examples, `k = 3` is large enough to
+  give an accurate likelihood approximation.
+
+For example, the data `three_level`, available in
+`glmmsr`, is simulated from a binary three-level model.
+Each observation is contained with a cluster, and each of those clusters
+in contained within a group. In our simulated example, 
+there are two observations per cluster, and two clusters per group,
+with $50$ groups in total.  
+
+```{r, echo = FALSE}
+library(glmmsr)
+```
+We could fit the model using `glmer`, which by default uses a Laplace
+approximation to the likelihood
+```{r}
+(mod_Laplace <- lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
+                           data = three_level, family = binomial))
+```
+
+The structure is sparse -- there is little
+information provided by the data about the value of each random effect --
+so we might question whether the Laplace approximation is of
+sufficiently high quality.
+
+We try to increase the accuracy of the approximation by using a larger 
+number of quadrature points
+```{r, error = TRUE}
+lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
+                           data = three_level, family = binomial, nAGQ = 10)
+```
+We get an error message, because the likelihood does not reduce to a product
+of one-dimensional integrals in this case, as it does for a two-level model.
+
+Instead, we can use `glmerSR` to fit the model using the sequential reduction
+approximation, with `nAGQ = 10` quadrature points, and sparse grid storage level `k = 3`
+```{r}
+(mod_SR <- glmerSR(response ~ covariate + (1 | cluster) + (1 | group),
+                  data = three_level, family = binomial, nAGQ = 10,
+                  k = 3))
+```
+The estimates of the random effects standard deviations
+are larger than the corresponding estimates from the Laplace approximation.
+
+## The subformula interface
+The interface of `glmerSR` also allows fitting
+of some more complex models which are not easy to fit using `lme4`.
+
+A typical call using this extended interface looks like
+`glmerSR(formula, subformula, data, family)`
+where
+
+1. `formula` may contain one or more terms surrounded with `Sub(.)`. We call the
+expression contained within `Sub(.)` a **substitution expression**. This is a 
+mathematical expression dictating how the response depends on a
+**substituted variable**: a dummy variable not contained in `data`. 
+
+2. `subformula` contains a **subformula** for each substituted variable, which
+describes how the substituted variable depends on 
+covariates.
+
+Next, we consider an example of the type of model we might want to fit using 
+this interface.
+
+## Pairwise competition models
+Suppose that we observe the outcome of a set of matches played between pairs of 
+players, and that we also observe some covariates $x_{i}$ for each player $i$. 
+We suppose that each player $i$ has an 'ability' $\lambda_i$, and that
+\[Pr(\text{$i$ beats $j$} | \lambda_i, \lambda_j) = g(\lambda_i - \lambda_j),\]
+where $g(.)$ is an inverse link function. If we are interested in how the 
+ability depends on the covariates, we might model
+\[\lambda_i = \beta x_{i} + b_i, \]
+where $b_i \sim N(0, \sigma^2)$, and $\beta$ and $\sigma$ are unknown
+parameters.
+
+This is a structured pairwise competition model. The `BradleyTerry2` package 
+[@BradleyTerry2]
+provides a good interface to fit these models, but it uses Penalized Quasi 
+Likelihood (PQL) for inference if there are random effects in the model. PQL
+is often a poor approximation to the true likelihood. 
+
+We wrote down the structured pairwise competition model using a two-step 
+approach: first we described how the response depends on the unknown 
+abilities, then we wrote down how the abilities depend on covariates. This type 
+of model can be written quite naturally using the subformula interface. We have 
+a formula
+`response ~ 0 + Sub(ability[player1] - ability[player2])`, 
+where `ability` is a substitution variable. We write
+down a corresponding subformula
+`ability[i] ~ 0 + x[i] + (1 | i)`.
+Here `player1` and `player2` are factors with common levels, and `x`
+is a vector of player-specific covariates, where the ordering of the players is
+given by the levels of `player1` and `player2`. The index `i` is arbitrary, and 
+is deduced automatically from the levels of `player1` and `player2`.
+
+## Example: `chameleons` data
+
+@Stuart-Fox2006 study contests between male Cape dwarf chameleons.
+The data are available in `BradleyTerry2`: see `?chameleons` for
+more details. The model suggested by 
+@Stuart-Fox2006 includes an experience effect: we allow
+the ability for each chameleon to change as the tournament progresses.
+
+In particular, for each chameleon $i$ at each match $m$, we count the 
+number of wins for that chameleon in its (at most) two previous matches. 
+We start by constructing a matrix `prevwins2` to record these counts.
+```{r}
+library(BradleyTerry2)
+winner <- chameleons$winner$ID
+loser <- chameleons$loser$ID
+match <- 1:length(winner)
+
+wins <- matrix(0, nrow = length(levels(winner)), ncol = length(winner))
+wins[cbind(as.numeric(winner), match)] <- 1
+
+losses <- matrix(0, nrow = length(levels(winner)), ncol = length(winner))
+losses[cbind(as.numeric(loser), match)] <- 1
+
+contests <- wins + losses
+
+find_prev2 <- function(wins_im, contests_im) {
+  m <- min(2, sum(contests_im))
+  if(m > 0) {
+    res <- sum(wins_im[rev(which(contests_im > 0L))[1:m]])
+  } else{
+    res <- 0
+  }
+  res
+}
+
+prevwins2 <- matrix(0, nrow = nrow(wins), ncol = ncol(wins))
+for(i in 1:nrow(wins)) {
+  for(m in 2:ncol(wins)) {
+    prevwins2[i, m] <- find_prev2(wins[i, 1:(m-1)], contests[i, 1:(m-1)])
+  }
+}
+```
+
+Then we fit the model
+```{r}
+library(glmmsr)
+resp <- rep(1, length(winner))
+cham_dat <- c(list(resp = resp, winner = winner, loser = loser, 
+                  match = match, prevwins2 = prevwins2), 
+             as.list(chameleons$predictors))
+
+cham_mod <- glmerSR(resp ~ 0 + Sub(ability[winner, match] -
+                                   ability[loser, match]),
+                    ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i] 
+                                    + prop.main[i] + (1 | i),
+                    family = binomial, data = cham_dat)
+
+print(summary(cham_mod), correlation = FALSE, show.resids = FALSE)
+```
+We can fit the same model with `BradleyTerry2`.
+
+```{r}
+cham_mod_BTm <- BTm(player1 = winner, player2 = loser,
+                    formula = ~ prev.wins.2 + ch.res[ID] + prop.main[ID] + (1|ID),
+                    id = "ID", data = chameleons)
+summary(cham_mod_BTm)
+```
+In this case the two fits are the same, because in both
+cases the random effects variance is estimated to be zero.
+
+## References
