@@ -40,6 +40,8 @@ To view the vignette for `glmmsr`, use
 browseVignettes("glmmsr")
 ```
 
+or see [here](http://htmlpreview.github.io/?https://github.com/heogden/glmmsr/blob/master/inst/doc/glmmsr-vignette.html).
+
 References
 ----------
 
