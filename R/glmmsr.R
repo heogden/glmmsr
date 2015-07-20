@@ -30,4 +30,5 @@ NULL
 
 #' A dataset simulated from a three-level model
 #'
+#' @example inst/examples/three_level.R
 "three_level"

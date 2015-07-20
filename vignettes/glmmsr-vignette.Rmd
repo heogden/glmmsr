@@ -16,14 +16,70 @@ vignette: >
 The `glmmsr` package is designed to fit generalized linear mixed
 models (GLMMs) using the sequential reduction approximation to the likelihood
 [@Ogden2015]. It is based on `lme4` [@lme4], but with an extended interface
-to allow easy fitting of a wider range of models. At the moment, the sequential
-reduction approximation is not used, and the package is only an interface to
-lme4. This document explains how to use the subformula interface, demonstrated 
-with some examples from the `BradleyTerry2` package [@BradleyTerry2].
+to allow easy fitting of a wider range of models. 
+
+## Using the sequential reduction approximation
+The function used to fit a GLMM is `glmerSR`, which is based on `glmer` from
+`lme4`. There are two parameters which control the sequential reduction
+approximation. 
+
+ 1. `nAGQ`, the number of adaptive Gaussian quadrature points
+  used for one-dimensional integration. A non-negative integer,
+  where the accuracy of the approximation 
+  In typical examples, `nAGQ = 10` is large enough to
+  give an accurate likelihood approximation.
+ 2. `k`, the level of sparse grid storage. A non-negative integer, where the 
+  special case `k = 0` corresponds to the Laplace approximation, in
+  which case `glmerSR` passes to `lme4::glmer` to do the fitting.
+  In typical examples, `k = 3` is large enough to
+  give an accurate likelihood approximation.
+
+For example, the data `three_level`, available in
+`glmmsr`, is simulated from a binary three-level model.
+Each observation is contained with a cluster, and each of those clusters
+in contained within a group. In our simulated example, 
+there are two observations per cluster, and two clusters per group,
+with $50$ groups in total.  
+
+```{r, echo = FALSE}
+library(glmmsr)
+```
+We could fit the model using `glmer`, which by default uses a Laplace
+approximation to the likelihood
+```{r}
+(mod_Laplace <- lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
+                           data = three_level, family = binomial))
+```
+
+The structure is sparse -- there is little
+information provided by the data about the value of each random effect --
+so we might question whether the Laplace approximation is of
+sufficiently high quality.
+
+We try to increase the accuracy of the approximation by using a larger 
+number of quadrature points
+```{r, error = TRUE}
+lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
+                           data = three_level, family = binomial, nAGQ = 10)
+```
+We get an error message, because the likelihood does not reduce to a product
+of one-dimensional integrals in this case, as it does for a two-level model.
+
+Instead, we can use `glmerSR` to fit the model using the sequential reduction
+approximation, with `nAGQ = 10` quadrature points, and sparse grid storage level `k = 3`
+```{r}
+(mod_SR <- glmerSR(response ~ covariate + (1 | cluster) + (1 | group),
+                  data = three_level, family = binomial, nAGQ = 10,
+                  k = 3))
+```
+The estimates of the random effects standard deviations
+are larger than the corresponding estimates from the Laplace approximation.
 
 ## The subformula interface
-The function used to fit a GLMM is `glmerSR`, which is based on `glmer` from
-`lme4`. A typical call would look like
+The interface of `glmerSR` also allows fitting
+of some more complex models which are not easy to fit using `lme4`.
+
+A typical call using this extended interface looks like
 `glmerSR(formula, subformula, data, family)`
 where
 
@@ -51,6 +107,7 @@ where $b_i \sim N(0, \sigma^2)$, and $\beta$ and $\sigma$ are unknown
 parameters.
 
 This is a structured pairwise competition model. The `BradleyTerry2` package 
+[@BradleyTerry2]
 provides a good interface to fit these models, but it uses Penalized Quasi 
 Likelihood (PQL) for inference if there are random effects in the model. PQL
 is often a poor approximation to the true likelihood. 
