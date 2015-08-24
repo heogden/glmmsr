@@ -22,17 +22,16 @@ mkGlmerDevfunSR <- function(fr, X, reTrms, family, nAGQ = 1L, k = 0L,
       calibration_pars$family <- family$family
       calibration_pars$link <- family$link
       tree <- rgraphpass::cluster_tree(factorization_terms)
-      #beliefs_init <- rgraphpass::beliefs(factorization_terms, tree)
       devfun <- function(pars) {
-        beliefs <- rgraphpass::beliefs(factorization_terms, tree)
+        beliefs <- rgraphpass::tree_beliefs_continuous(tree, factorization_terms)
         theta_size <- length(pars) - n_fixed
         calibration_pars$theta <- pars[1:theta_size]
         calibration_pars$beta <- pars[-(1:theta_size)]
         normal_approx <- compute_normal_approx(pars, devfun_lme4)
-        beliefs$set_normal_approx(normal_approx$mean, normal_approx$precision)
-        beliefs$calibrate(calibration_pars, tree, TRUE)
-        beliefs$calibrate_forward(calibration_pars, tree, FALSE)
-        return(-2 * beliefs$log_normalizing_constant(calibration_pars, tree))
+        normal_beliefs <- rgraphpass::tree_beliefs_normal(tree, normal_approx$mean, normal_approx$precision)
+        normal_beliefs$calibrate(tree)
+        beliefs$calibrate_forward(tree, normal_beliefs, calibration_pars)
+        return(-2 * beliefs$log_normalizing_constant(tree, normal_beliefs, calibration_pars))
       }
       return(devfun)
     } else {

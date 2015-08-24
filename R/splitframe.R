@@ -62,20 +62,20 @@ find_factorization_terms <- function(modfr) {
   n_obs <- ncol(modfr$reTrms$Zt)
   n_re <- nrow(modfr$reTrms$Zt)
   cliques_ext <- add_obs(cliques, act, 1:n_obs)
-  factorization_terms <- rgraphpass::factor_vector()
+  factorization_terms <- rgraphpass::continuous_beliefs()
   for(i in seq_along(cliques_ext)) {
     lmodfr <- find_local_term(cliques_ext[[i]], modfr)
-    factorization_terms$append_glm_factor(items = lmodfr$C - 1,
-                                          X = lmodfr$X,
-                                          Zt = lmodfr$Zt,
-                                          Lambdat = lmodfr$Lambdat,
-                                          Lind = lmodfr$Lind,
-                                          response = lmodfr$resp,
-                                          weights = lmodfr$weights)
+    factorization_terms$append_glmm_belief(items = lmodfr$C - 1,
+                                           X = lmodfr$X,
+                                           Zt = lmodfr$Zt,
+                                           Lambdat = lmodfr$Lambdat,
+                                           Lind = lmodfr$Lind,
+                                           response = lmodfr$resp,
+                                           weights = lmodfr$weights)
   }
   I1 <- matrix(1, nrow = 1, ncol = 1)
   for(i in seq_len(n_re)) {
-    factorization_terms$append_normal_factor(items = c(i - 1),
+    factorization_terms$append_normal_belief(items = c(i - 1),
                                              mean = c(0),
                                              precision = I1)
   }
