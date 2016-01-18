@@ -7,15 +7,18 @@ Description: Fit a generalized linear mixed model with the sequential reduction
     more accurate approximation to the likelihood than the Laplace approximation
     (used in lme4). The interface is an extension to lme4, to allow some models
     (for examle pairwise comparison models) not easily specified with lme4.
-Depends: R (>= 3.1.2)
-Imports: lme4 (>= 1.1-8),
-         Matrix
+Depends:
+    R (>= 3.1.2)
+Imports:
+    lme4 (>= 1.1-8),
+    Matrix
 URL: http://github.com/heogden/glmmsr
 BugReports: http://github.com/heogden/glmmsr/issues
 License: GPL (>=2)
 LazyData: true
-Suggests: BradleyTerry2,
-          knitr,
-          rgraphpass,
-          testthat
+Suggests:
+    BradleyTerry2,
+    knitr,
+    testthat
 VignetteBuilder: knitr
+RoxygenNote: 5.0.1
