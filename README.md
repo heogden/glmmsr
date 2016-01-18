@@ -6,7 +6,7 @@ Generalized linear mixed models (GLMMs) are an important and widely-used model c
 
 The `glmmsr` package aims to offer progress on both of these problems.
 
-The sequential reduction approximation to the likelihood is controlled by a parameter (`k`) which allows the user to trade-off accuracy of the approximation against computation time. See Ogden (2015) for full details.
+The sequential reduction approximation to the likelihood is controlled by a parameter (`k`) which allows the user to trade-off accuracy of the approximation against computation time.
 
 `glmmsr` also provides an extended interface to `lme4`. This interface allows easy fitting of pairwise comparison and many other interesting models, which are difficult to fit directly with `lme4`.
 
@@ -45,4 +45,3 @@ or see [here](http://htmlpreview.github.io/?https://github.com/heogden/glmmsr/bl
 References
 ----------
 
-Ogden, Helen. 2015. “A sequential reduction method for inference in generalized linear mixed models.” *Electronic Journal of Statistics* 9: 135–52. doi:[10.1214/15-EJS991](http://dx.doi.org/10.1214/15-EJS991).

@@ -2,7 +2,6 @@
 output:
   md_document:
     variant: markdown_github
-bibliography: vignettes/glmmsr.bib
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -29,7 +28,7 @@ The `glmmsr` package aims to offer progress on both of these problems.
 The sequential reduction approximation to the likelihood 
 is controlled by a parameter (`k`) 
 which allows the user to trade-off accuracy of the approximation against 
-computation time. See @Ogden2015 for full details.
+computation time. 
 
 `glmmsr` also provides an extended interface to `lme4`. This
 interface allows easy fitting of pairwise comparison and many other interesting 
@@ -67,4 +66,3 @@ browseVignettes("glmmsr")
 ```
 or see [here](http://htmlpreview.github.io/?https://github.com/heogden/glmmsr/blob/master/inst/doc/glmmsr-vignette.html).
 
-## References
