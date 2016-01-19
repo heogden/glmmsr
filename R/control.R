@@ -7,36 +7,36 @@
 #'  \code{\link{glmerControl}} for more details.
 #' @inheritParams lme4::glmerControl
 #' @export
-glmmsrControl <- function(optimizer = c("bobyqa", "Nelder_Mead"),
-                          restart_edge = FALSE,
-                          boundary.tol = 1e-5,
-                          calc.derivs=TRUE,
-                          use.last.params=FALSE,
-                          sparseX = FALSE,
-                          tolPwrss=1e-7,
-                          compDev=TRUE,
-                          nAGQ0initStep=TRUE,
-                          ## input checking options
-                          check.nobs.vs.rankZ = "ignore",
-                          check.nobs.vs.nlev = "ignore",
-                          check.nlev.gtreq.5 = "ignore",
-                          check.nlev.gtr.1 = "ignore",
-                          check.nobs.vs.nRE="ignore",
-                          check.rankX = c("message+drop.cols",
-                                          "silent.drop.cols", "warn+drop.cols",
-                                          "stop.deficient", "ignore"),
-                          check.scaleX  = "warning",
-                          check.formula.LHS = "stop",
-                          check.response.not.const = "ignore",
-                          ## convergence checking options
-                          check.conv.grad = .makeCC("warning", tol = 1e-3,
-                                                    relTol = NULL),
-                          check.conv.singular = .makeCC(action = "ignore",
-                                                        tol = 1e-4),
-                          check.conv.hess = .makeCC(action = "warning",
-                                                    tol = 1e-6),
-                          ## optimizer args
-                          optCtrl = list())
+glmmControl <- function(optimizer = c("bobyqa", "Nelder_Mead"),
+                        restart_edge = FALSE,
+                        boundary.tol = 1e-5,
+                        calc.derivs=TRUE,
+                        use.last.params=FALSE,
+                        sparseX = FALSE,
+                        tolPwrss=1e-7,
+                        compDev=TRUE,
+                        nAGQ0initStep=TRUE,
+                        ## input checking options
+                        check.nobs.vs.rankZ = "ignore",
+                        check.nobs.vs.nlev = "ignore",
+                        check.nlev.gtreq.5 = "ignore",
+                        check.nlev.gtr.1 = "ignore",
+                        check.nobs.vs.nRE="ignore",
+                        check.rankX = c("message+drop.cols",
+                                        "silent.drop.cols", "warn+drop.cols",
+                                        "stop.deficient", "ignore"),
+                        check.scaleX  = "warning",
+                        check.formula.LHS = "stop",
+                        check.response.not.const = "ignore",
+                        ## convergence checking options
+                        check.conv.grad = .makeCC("warning", tol = 1e-3,
+                                                  relTol = NULL),
+                        check.conv.singular = .makeCC(action = "ignore",
+                                                      tol = 1e-4),
+                        check.conv.hess = .makeCC(action = "warning",
+                                                  tol = 1e-6),
+                        ## optimizer args
+                        optCtrl = list())
 {
   lme4::glmerControl(optimizer = optimizer,
                      restart_edge = restart_edge,

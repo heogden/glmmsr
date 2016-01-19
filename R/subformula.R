@@ -153,10 +153,10 @@ parse_sub <- function(sub, data, family, control)
 
 #' Parse a formula (and possibly subformulas)
 #'
-#' @inheritParams glmerSR
+#' @inheritParams glmm
 #' @export
 glFormulaSub <- function (formula, subformula = NULL, data = NULL,
-                          family = gaussian, control = glmmsrControl(),
+                          family = gaussian, control = glmmControl(),
                           weights = NULL, offset = NULL)
 {
   if(is.list(subformula) || length(subformula) == 0L){

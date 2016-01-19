@@ -10,8 +10,8 @@
 #'  dot is printed for each likelihood evaluation. If verbose=2, the values of
 #'  the parameters and the likelihood are printed for each evaluation.
 #' @return A list, containing the parameter estimate and variance matrix
-optimizeGlmerSR <- function(devfun, p_beta, p_theta, init_na = NULL,
-                            verbose = 0L){
+optimizeGlmm <- function(devfun, p_beta, p_theta, init_na = NULL,
+                         verbose = 0L){
   p <- p_theta + p_beta
   if(length(init_na) > 0){
     mu <- init_na$mu

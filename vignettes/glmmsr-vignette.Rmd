@@ -19,7 +19,7 @@ models (GLMMs) using the sequential reduction approximation to the likelihood
 to allow easy fitting of a wider range of models. 
 
 ## Using the sequential reduction approximation
-The function used to fit a GLMM is `glmerSR`, which is based on `glmer` from
+The function used to fit a GLMM is `glmm`, which is based on `glmer` from
 `lme4`. There are two parameters which control the sequential reduction
 approximation. 
 
@@ -30,7 +30,7 @@ approximation.
   give an accurate likelihood approximation.
  2. `k`, the level of sparse grid storage. A non-negative integer, where the 
   special case `k = 0` corresponds to the Laplace approximation, in
-  which case `glmerSR` passes to `lme4::glmer` to do the fitting.
+  which case `glmm` passes to `lme4::glmer` to do the fitting.
   In typical examples, `k = 3` is large enough to
   give an accurate likelihood approximation.
 
@@ -65,22 +65,22 @@ lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
 We get an error message, because the likelihood does not reduce to a product
 of one-dimensional integrals in this case, as it does for a two-level model.
 
-Instead, we can use `glmerSR` to fit the model using the sequential reduction
+Instead, we can use `glmm` to fit the model using the sequential reduction
 approximation, with `nAGQ = 10` quadrature points, and sparse grid storage level `k = 3`
 ```{r}
-(mod_SR <- glmerSR(response ~ covariate + (1 | cluster) + (1 | group),
-                  data = three_level, family = binomial, nAGQ = 10,
-                  k = 3))
+(mod_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                data = three_level, family = binomial, nAGQ = 10,
+                k = 3))
 ```
 The estimates of the random effects standard deviations
 are larger than the corresponding estimates from the Laplace approximation.
 
 ## The subformula interface
-The interface of `glmerSR` also allows fitting
+The interface of `glmm` also allows fitting
 of some more complex models which are not easy to fit using `lme4`.
 
 A typical call using this extended interface looks like
-`glmerSR(formula, subformula, data, family)`
+`glmm(formula, subformula, data, family)`
 where
 
 1. `formula` may contain one or more terms surrounded with `Sub(.)`. We call the
@@ -177,11 +177,11 @@ cham_dat <- c(list(resp = resp, winner = winner, loser = loser,
                   match = match, prevwins2 = prevwins2), 
              as.list(chameleons$predictors))
 
-cham_mod <- glmerSR(resp ~ 0 + Sub(ability[winner, match] -
-                                   ability[loser, match]),
-                    ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i] 
+cham_mod <- glmm(resp ~ 0 + Sub(ability[winner, match] -
+                                ability[loser, match]),
+                ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i] 
                                     + prop.main[i] + (1 | i),
-                    family = binomial, data = cham_dat)
+                family = binomial, data = cham_dat)
 
 print(summary(cham_mod), correlation = FALSE, show.resids = FALSE)
 ```

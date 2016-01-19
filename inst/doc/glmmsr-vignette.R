@@ -10,9 +10,9 @@ lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
                            data = three_level, family = binomial, nAGQ = 10)
 
 ## ------------------------------------------------------------------------
-(mod_SR <- glmerSR(response ~ covariate + (1 | cluster) + (1 | group),
-                  data = three_level, family = binomial, nAGQ = 10,
-                  k = 3))
+(mod_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                data = three_level, family = binomial, nAGQ = 10,
+                k = 3))
 
 ## ------------------------------------------------------------------------
 library(BradleyTerry2)
@@ -48,15 +48,15 @@ for(i in 1:nrow(wins)) {
 ## ------------------------------------------------------------------------
 library(glmmsr)
 resp <- rep(1, length(winner))
-cham_dat <- c(list(resp = resp, winner = winner, loser = loser, 
-                  match = match, prevwins2 = prevwins2), 
+cham_dat <- c(list(resp = resp, winner = winner, loser = loser,
+                  match = match, prevwins2 = prevwins2),
              as.list(chameleons$predictors))
 
-cham_mod <- glmerSR(resp ~ 0 + Sub(ability[winner, match] -
-                                   ability[loser, match]),
-                    ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i] 
-                                    + prop.main[i] + (1 | i),
-                    family = binomial, data = cham_dat)
+cham_mod <- glmm(resp ~ 0 + Sub(ability[winner, match] -
+                                ability[loser, match]),
+                 ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i]
+                                 + prop.main[i] + (1 | i),
+                 family = binomial, data = cham_dat)
 
 print(summary(cham_mod), correlation = FALSE, show.resids = FALSE)
 

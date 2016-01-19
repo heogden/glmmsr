@@ -10,7 +10,7 @@
 #' poor quality, and the sequential reduction approximation may be used to find
 #' an accurate approximation to the likelihood.
 #'
-#' The main function of the glmmsr package is \code{\link{glmerSR}}, which is
+#' The main function of the glmmsr package is \code{\link{glmm}}, which is
 #' used to fit the GLMM. Its interface is a generalization of
 #' \code{\link[lme4]{glmer}}, to allow a larger class of models, including
 #' structured pairwise comparison models.

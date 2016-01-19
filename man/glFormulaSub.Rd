@@ -5,7 +5,7 @@
 \title{Parse a formula (and possibly subformulas)}
 \usage{
 glFormulaSub(formula, subformula = NULL, data = NULL, family = gaussian,
-  control = glmmsrControl(), weights = NULL, offset = NULL)
+  control = glmmControl(), weights = NULL, offset = NULL)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -25,7 +25,7 @@ variables named in \code{formula}, and in any of the subformulas.}
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
 
-\item{control}{the output of a call to \code{\link{glmmsrControl}}, a list
+\item{control}{the output of a call to \code{\link{glmmControl}}, a list
 containing control paramaters.}
 
 \item{weights}{an optional vector of \sQuote{prior weights} to be used

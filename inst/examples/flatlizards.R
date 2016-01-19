@@ -16,7 +16,7 @@ flatlizardspred[is.na(flatlizardspred$throat.PC3), ] <- 0
 lizards <- c(list(result = result, winner = winner, loser = loser), flatlizardspred)
 lizards_BT <- list(contests = flatlizards$contests, predictors = flatlizardspred)
 
-lizards_mod <- glmerSR(result ~ 0 + Sub(ability[winner] - ability[loser]),
+lizards_mod <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
                ability[liz] ~ 0 + throat.PC1[liz] +
                       throat.PC3[liz] + head.length[liz] + SVL[liz] + (1 | liz),
                data = lizards, family = binomial(link = "probit"))

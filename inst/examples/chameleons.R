@@ -34,13 +34,12 @@ cham_dat <- c(list(resp = resp, winner = winner, loser = loser,
                    match = match, prevwins2 = prevwins2),
               as.list(chameleons$predictors))
 
-cham_mod <- glmerSR(resp ~ 0 + Sub(ability[winner, match] -
-                                     ability[loser, match]),
-                    ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i]
-                    + prop.main[i] + (1 | i),
-                    family = binomial, data = cham_dat)
+cham_mod <- glmm(resp ~ 0 + Sub(ability[winner, match] -
+                                ability[loser, match]),
+                ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i]
+                + prop.main[i] + (1 | i), family = binomial, data = cham_dat)
 
-summary(cham_mod), correlation = FALSE, show.resids = FALSE)
+summary(cham_mod, correlation = FALSE, show.resids = FALSE)
 
 # fit the same model with BradleyTerry2
 

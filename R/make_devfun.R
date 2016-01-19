@@ -1,9 +1,9 @@
 #' Make the deviance function
 #' @inheritParams lme4::mkGlmerDevfun
-#' @inheritParams glmerSR
+#' @inheritParams glmm
 #' @export
-mkGlmerDevfunSR <- function(fr, X, reTrms, family, nAGQ = 1L, k = 0L,
-                            verbose = 0L, control = glmmsrControl(), ...)
+mkGlmmDevfun <- function(fr, X, reTrms, family, nAGQ = 1L, k = 0L,
+                         verbose = 0L, control = glmmControl(), ...)
 {
   devfun_lme4 <- mkGlmerDevfun(fr = fr, X = X, reTrms = reTrms, family = family,
                           nAGQ = nAGQ, verbose = verbose,

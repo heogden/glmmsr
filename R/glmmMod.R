@@ -1,32 +1,32 @@
-#' Construct a glmerSRMod object
+#' Construct a glmmMod object
 #'
 #' @param x a list
-#' @return An object of class \code{glmerSRMod}
+#' @return An object of class \code{glmmMod}
 #' @export
-glmerSRMod <- function(x) {
-  structure(x, class = "glmerSRMod")
+glmmMod <- function(x) {
+  structure(x, class = "glmmMod")
 }
 
 
-#' Construct a summaryGlmerSRMod object
+#' Construct a summaryGlmmMod object
 #'
 #' @param x a list
-#' @return An object of class \code{summaryGlmerSRMod}
+#' @return An object of class \code{summaryGlmmMod}
 #' @export
-summaryGlmerSRMod <- function(x) {
-  structure(x, class = "summaryGlmerSRMod")
+summaryGlmmMod <- function(x) {
+  structure(x, class = "summaryGlmmMod")
 }
 
 
-#' Print glmerSRMod object
+#' Print glmmMod object
 #'
-#' @param x glmerSRMod object
+#' @param x glmmMod object
 #' @param ... ignored
-#' @method print glmerSRMod
+#' @method print glmmMod
 #' @export
-print.glmerSRMod <- function(x, ...){
+print.glmmMod <- function(x, ...){
   cat("Generalized linear mixed model fit by maximum likelihood ",
-      "(Sequential Reduction Approximation, k = ", x$k, ", nAGQ = ", x$nAGQ, ") [glmerSRMod] \n",
+      "(Sequential Reduction Approximation, k = ", x$k, ", nAGQ = ", x$nAGQ, ") [glmmMod] \n",
       sep = "")
   cat("Family:", x$modfr$family$family, "(", x$modfr$family$link, ") \n")
   cat("Formula: ")
@@ -57,32 +57,31 @@ print.glmerSRMod <- function(x, ...){
   print(estim_fixed, digits = 4)
 }
 
-#' Summarize a glmerSRMod fit
+#' Summarize a glmmMod fit
 #'
-#' @param object glmerSRMod object
+#' @param object glmmMod object
 #' @param ... ignored
-#' @return An object of class \code{summaryGlmerSRMod}
-#' @method summary glmerSRMod
+#' @return An object of class \code{summaryGlmmMod}
+#' @method summary glmmMod
 #' @export
-summary.glmerSRMod <- function(object, ...) {
+summary.glmmMod <- function(object, ...) {
   se <- sqrt(diag(object$Sigma))
   z <- abs(object$estim / se)
   p_value <- 2 * pnorm(z, lower.tail=FALSE)
-  result <- summaryGlmerSRMod(list(fit = object, se = se, z = z,
-                                   p_value = p_value))
+  result <- summaryGlmmMod(list(fit = object, se = se, z = z, p_value = p_value))
   return(result)
 }
 
-#' Print summaryGlmerSRMod object
+#' Print summaryGlmmMod object
 #'
-#' @param x summaryGlmerSRMod object
+#' @param x summaryGlmmMod object
 #' @param ... ignored
-#' @method print summaryGlmerSRMod
+#' @method print summaryGlmmMod
 #' @export
-print.summaryGlmerSRMod <- function(x, ...){
+print.summaryGlmmMod <- function(x, ...){
   fit <- x$fit
   cat("Generalized linear mixed model fit by maximum likelihood ",
-      "(Sequential Reduction Approximation, k = ", fit$k, ", nAGQ = ", fit$nAGQ, ") [glmerSRMod] \n",
+      "(Sequential Reduction Approximation, k = ", fit$k, ", nAGQ = ", fit$nAGQ, ") [glmmMod] \n",
       sep = "")
   cat("Family:", fit$modfr$family$family, "(", fit$modfr$family$link, ") \n")
   cat("Formula: ")

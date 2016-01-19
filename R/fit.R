@@ -5,21 +5,21 @@
 #'  than one \code{Sub()} term in \code{formula}.
 #' @param data an optional data frame, list or environment containing the
 #'  variables named in \code{formula}, and in any of the subformulas.
-#' @param control the output of a call to \code{\link{glmmsrControl}}, a list
+#' @param control the output of a call to \code{\link{glmmControl}}, a list
 #'  containing control paramaters.
 #' @param k integer scalar - the level of approximation used in the sequential
 #'  reduction approximation to the likelihood.
 #' @inheritParams lme4::glmer
 #' @export
-glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
-                    control = glmmsrControl(), verbose = 0L, nAGQ = 1L, k = 0L,
-                    weights = NULL, offset = NULL, devFunOnly = FALSE)
+glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
+                 control = glmmControl(), verbose = 0L, nAGQ = 1L, k = 0L,
+                 weights = NULL, offset = NULL, devFunOnly = FALSE)
 {
   modfr <- glFormulaSub(formula, subformula = subformula, data = data,
                         family = family, control = control, weights = weights,
                         offset = offset)
   if(has_reTrms(modfr)) {
-    devfun <- do.call(mkGlmerDevfunSR, c(modfr, list(verbose = verbose,
+    devfun <- do.call(mkGlmmDevfun, c(modfr, list(verbose = verbose,
                                                      control = control,
                                                      nAGQ = nAGQ,
                                                      k = k)))
@@ -40,13 +40,13 @@ glmerSR <- function(formula, subformula = NULL, data = NULL, family = gaussian,
       } else {
         p_beta <- ncol(modfr$X)
         p_theta <- length(modfr$reTrms$theta)
-        opt <- optimizeGlmerSR(devfun, p_beta = p_beta, p_theta = p_theta,
+        opt <- optimizeGlmm(devfun, p_beta = p_beta, p_theta = p_theta,
                                    verbose = verbose)
         if(all(modfr$reTrms$lower == 0)) {
           opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
-          result <- glmerSRMod(list(estim = opt$estim, Sigma = opt$Sigma,
-                                    devfun = devfun, modfr = modfr, k = k,
-                                    nAGQ = nAGQ))
+          result <- glmmMod(list(estim = opt$estim, Sigma = opt$Sigma,
+                                 devfun = devfun, modfr = modfr, k = k,
+                                 nAGQ = nAGQ))
         }else{
           warning("proper print and summary method not yet implemented ",
                   "for correlated random effects")
