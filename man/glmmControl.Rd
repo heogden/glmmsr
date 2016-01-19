@@ -4,7 +4,8 @@
 \alias{glmmControl}
 \title{Control of GLMM fitting}
 \usage{
-glmmControl(optimizer = c("bobyqa", "Nelder_Mead"), restart_edge = FALSE,
+glmmControl(method = "lme4", nAGQ = 1, k = 0, verbose = 0,
+  optimizer = c("bobyqa", "Nelder_Mead"), restart_edge = FALSE,
   boundary.tol = 1e-05, calc.derivs = TRUE, use.last.params = FALSE,
   sparseX = FALSE, tolPwrss = 1e-07, compDev = TRUE,
   nAGQ0initStep = TRUE, check.nobs.vs.rankZ = "ignore",
@@ -19,6 +20,17 @@ glmmControl(optimizer = c("bobyqa", "Nelder_Mead"), restart_edge = FALSE,
   optCtrl = list())
 }
 \arguments{
+\item{method}{the name of the method used for approximating the likelihood}
+
+\item{nAGQ}{the number of adaptive Gaussian quadrature points to use for integration}
+
+\item{k}{the level of sparse grid storage, used by method "SR"}
+
+\item{verbose}{integer scalar.  If \code{> 0} verbose output is
+    generated during the optimization of the parameter estimates.  If
+    \code{> 1} verbose output is generated during the individual PIRLS
+    steps.}
+
 \item{optimizer}{character - name of optimizing function(s). See
 \code{\link{glmerControl}} for more details.}
 

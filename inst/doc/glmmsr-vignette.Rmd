@@ -69,8 +69,8 @@ Instead, we can use `glmm` to fit the model using the sequential reduction
 approximation, with `nAGQ = 10` quadrature points, and sparse grid storage level `k = 3`
 ```{r}
 (mod_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
-                data = three_level, family = binomial, nAGQ = 10,
-                k = 3))
+                data = three_level, family = binomial, 
+                control = glmmControl(method = "SR", nAGQ = 10, k = 3)))
 ```
 The estimates of the random effects standard deviations
 are larger than the corresponding estimates from the Laplace approximation.

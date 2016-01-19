@@ -28,8 +28,8 @@ A dataset simulated from a three-level model
 # we can fit the same model using the sequential reduction approximation
 \dontrun{
   (mod_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
-                  data = three_level, family = binomial, nAGQ = 10,
-                  k = 3, verbose = 1))
+                  data = three_level, family = binomial,
+                  control = glmmControl(method = "SR", nAGQ = 10, k = 3, verbose = 1)))
 }
 
 # the estimates of the random effects standard deviations

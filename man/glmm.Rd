@@ -5,8 +5,8 @@
 \title{Fit a GLMM}
 \usage{
 glmm(formula, subformula = NULL, data = NULL, family = gaussian,
-  control = glmmControl(), verbose = 0L, nAGQ = 1L, k = 0L,
-  weights = NULL, offset = NULL, devFunOnly = FALSE)
+  control = glmmControl(), weights = NULL, offset = NULL,
+  devFunOnly = FALSE)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -27,25 +27,7 @@ variables named in \code{formula}, and in any of the subformulas.}
     \code{\link[stats]{family}}.}
 
 \item{control}{the output of a call to \code{\link{glmmControl}}, a list
-containing control paramaters.}
-
-\item{verbose}{integer scalar.  If \code{> 0} verbose output is
-    generated during the optimization of the parameter estimates.  If
-    \code{> 1} verbose output is generated during the individual PIRLS
-    steps.}
-
-\item{nAGQ}{integer scalar - the number of points per axis for
-    evaluating the adaptive Gauss-Hermite approximation to the
-    log-likelihood.  Defaults to 1, corresponding to the Laplace
-    approximation.  Values greater than 1 produce greater accuracy in
-    the evaluation of the log-likelihood at the expense of speed.  A
-    value of zero uses a faster but less exact form of parameter
-    estimation for GLMMs by optimizing the random effects and the
-    fixed-effects coefficients in the penalized iteratively reweighted
-    least squares step. (See Details.)}
-
-\item{k}{integer scalar - the level of approximation used in the sequential
-reduction approximation to the likelihood.}
+containing control parameters.}
 
 \item{weights}{an optional vector of \sQuote{prior weights} to be used
       in the fitting process.  Should be \code{NULL} or a numeric
@@ -63,6 +45,9 @@ reduction approximation to the likelihood.}
     variables stored in its environment, it may not return
     \emph{exactly} the same values on subsequent calls (but the results
     should always be within machine tolerance).}
+
+\item{k}{integer scalar - the level of approximation used in the sequential
+reduction approximation to the likelihood.}
 }
 \description{
 Fit a GLMM

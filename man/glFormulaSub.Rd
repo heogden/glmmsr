@@ -26,7 +26,7 @@ variables named in \code{formula}, and in any of the subformulas.}
     \code{\link[stats]{family}}.}
 
 \item{control}{the output of a call to \code{\link{glmmControl}}, a list
-containing control paramaters.}
+containing control parameters.}
 
 \item{weights}{an optional vector of \sQuote{prior weights} to be used
       in the fitting process.  Should be \code{NULL} or a numeric

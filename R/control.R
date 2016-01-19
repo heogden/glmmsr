@@ -3,11 +3,19 @@
 #' A version of \code{\link{glmerControl}}, from \code{lme4}, with different
 #' defaults.
 #'
+#' @param method the name of the method used for approximating the likelihood
+#' @param nAGQ the number of adaptive Gaussian quadrature points to use for integration
+#' @param k the level of sparse grid storage, used by method "SR"
 #' @param optimizer character - name of optimizing function(s). See
 #'  \code{\link{glmerControl}} for more details.
 #' @inheritParams lme4::glmerControl
+#' @inheritParams lme4::glmer
 #' @export
-glmmControl <- function(optimizer = c("bobyqa", "Nelder_Mead"),
+glmmControl <- function(method = "lme4",
+                        nAGQ = 1,
+                        k = 0,
+                        verbose = 0,
+                        optimizer = c("bobyqa", "Nelder_Mead"),
                         restart_edge = FALSE,
                         boundary.tol = 1e-5,
                         calc.derivs=TRUE,
@@ -38,25 +46,32 @@ glmmControl <- function(optimizer = c("bobyqa", "Nelder_Mead"),
                         ## optimizer args
                         optCtrl = list())
 {
-  lme4::glmerControl(optimizer = optimizer,
-                     restart_edge = restart_edge,
-                     boundary.tol = boundary.tol,
-                     use.last.params = use.last.params,
-                     sparseX = sparseX,
-                     tolPwrss = tolPwrss,
-                     compDev = compDev,
-                     nAGQ0initStep = nAGQ0initStep,
-                     check.nobs.vs.rankZ = check.nobs.vs.rankZ,
-                     check.nobs.vs.nlev = check.nobs.vs.nlev,
-                     check.nlev.gtreq.5 = check.nlev.gtreq.5,
-                     check.nlev.gtr.1 = check.nlev.gtr.1,
-                     check.nobs.vs.nRE = check.nobs.vs.nRE,
-                     check.rankX = check.rankX,
-                     check.scaleX = check.scaleX,
-                     check.formula.LHS = check.formula.LHS,
-                     check.response.not.const = check.response.not.const,
-                     check.conv.grad = check.conv.grad,
-                     check.conv.singular = check.conv.singular,
-                     check.conv.hess = check.conv.hess,
-                     optCtrl = optCtrl)
+  result <- lme4::glmerControl(optimizer = optimizer,
+                               restart_edge = restart_edge,
+                               boundary.tol = boundary.tol,
+                               use.last.params = use.last.params,
+                               sparseX = sparseX,
+                               tolPwrss = tolPwrss,
+                               compDev = compDev,
+                               nAGQ0initStep = nAGQ0initStep,
+                               check.nobs.vs.rankZ = check.nobs.vs.rankZ,
+                               check.nobs.vs.nlev = check.nobs.vs.nlev,
+                               check.nlev.gtreq.5 = check.nlev.gtreq.5,
+                               check.nlev.gtr.1 = check.nlev.gtr.1,
+                               check.nobs.vs.nRE = check.nobs.vs.nRE,
+                               check.rankX = check.rankX,
+                               check.scaleX = check.scaleX,
+                               check.formula.LHS = check.formula.LHS,
+                               check.response.not.const = check.response.not.const,
+                               check.conv.grad = check.conv.grad,
+                               check.conv.singular = check.conv.singular,
+                               check.conv.hess = check.conv.hess,
+                               optCtrl = optCtrl)
+  result$method <- method
+  result$nAGQ <- nAGQ
+  result$k <- k
+
+  result$verbose <- verbose
+
+  result
 }

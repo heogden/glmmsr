@@ -4,8 +4,7 @@
 \alias{mkGlmmDevfun}
 \title{Make the deviance function}
 \usage{
-mkGlmmDevfun(fr, X, reTrms, family, nAGQ = 1L, k = 0L, verbose = 0L,
-  control = glmmControl(), ...)
+mkGlmmDevfun(fr, X, reTrms, family, control = glmmControl(), ...)
 }
 \arguments{
 \item{fr}{A model frame containing the variables needed to create an
@@ -18,13 +17,6 @@ mkGlmmDevfun(fr, X, reTrms, family, nAGQ = 1L, k = 0L, verbose = 0L,
 
 \item{family}{a GLM family; see \code{\link[stats]{glm}}
     and \code{\link[stats]{family}}.}
-
-\item{nAGQ}{number of Gauss-Hermite quadrature points}
-
-\item{k}{integer scalar - the level of approximation used in the sequential
-reduction approximation to the likelihood.}
-
-\item{verbose}{print output?}
 
 \item{control}{a list giving
     \describe{
