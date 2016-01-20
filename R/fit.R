@@ -24,34 +24,22 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
     if(devFunOnly) {
       return(devfun)
     } else {
-      if(control$method == "lme4") {
-        opt <- optimizeGlmer(devfun, optimizer = control$optimizer[[2]],
-                             restart_edge = control$restart_edge,
-                             boundary.tol = control$boundary.tol,
-                             control = control$optCtrl,
-                             verbose = control$verbose,
-                             stage = 2,
-                             calc.derivs = control$calc.derivs,
-                             use.last.params = control$use.last.params)
-        return(mkMerMod(environment(devfun), opt, modfr$reTrms, fr = modfr$fr))
-      } else {
-        p_beta <- ncol(modfr$X)
-        p_theta <- length(modfr$reTrms$theta)
-        opt <- optimizeGlmm(devfun, p_beta = p_beta, p_theta = p_theta,
-                                   verbose = control$verbose)
-        if(all(modfr$reTrms$lower == 0)) {
-          opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
-          result <- glmmMod(list(estim = opt$estim, Sigma = opt$Sigma,
-                                 devfun = devfun, modfr = modfr, k = k,
-                                 nAGQ = nAGQ))
-        }else{
-          warning("proper print and summary method not yet implemented ",
-                  "for correlated random effects")
-          result <- opt
-        }
-        return(result)
+      # TODO: use control optimization arguments
+      p_beta <- ncol(modfr$X)
+      p_theta <- length(modfr$reTrms$theta)
+      opt <- optimizeGlmm(devfun, p_beta = p_beta, p_theta = p_theta,
+                          verbose = control$verbose)
+      if(all(modfr$reTrms$lower == 0)) {
+        opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
+        result <- glmmMod(list(estim = opt$estim, Sigma = opt$Sigma,
+                               devfun = devfun, modfr = modfr,
+                               control = control))
+      }else{
+        warning("proper print and summary method not yet implemented ",
+                "for correlated random effects")
+        result <- opt
       }
-
+      return(result)
     }
   } else {
     stop("haven't yet implemented no random effects case")
