@@ -19,17 +19,14 @@ subform <- ability[player] ~ 0 + x[player] + (1 | player)
 data <- list(y = y, x = x, player1 = player1, player2 = player2)
 
 fit <- glmm(formula, subform, data = data, family = binomial)
-s <- attr(VarCorr(fit)[[1]], "stddev")
 
 
 test_that("doesn't matter what name used for index", {
   subform_i <- ability[i] ~ 0 + x[i] + (1 | i)
   data_i <- list(x = x, player1 = player1, player2 = player2)
   fit_i <- glmm(formula, subform_i, data = data_i, family = binomial)
-  expect_equal(unname(fixef(fit)[[1]]), unname(fixef(fit_i)[[1]]))
-
-  s_i <- attr(VarCorr(fit_i)[[1]], "stddev")
-  expect_equal(s, s_i)
+  expect_equal(fit$estim, fit_i$estim)
+  expect_equal(fit$Sigma, fit_i$Sigma)
 })
 
 
@@ -39,10 +36,8 @@ test_that("different forms of indexing give same result", {
   data_num <- list(x = x, player1 = player1_num, player2 = player2_num)
 
   fit_num <- glmm(formula, subform, data = data_num, family = binomial)
-  expect_equal(unname(fixef(fit)[[1]]), unname(fixef(fit_num)[[1]]))
-
-  s_num <- attr(VarCorr(fit_num)[[1]], "stddev")
-  expect_equal(s, s_num)
+  expect_equal(fit$estim, fit_num$estim)
+  expect_equal(fit$Sigma, fit_num$Sigma)
 })
 
 test_that("OK if don't use all rows of X", {
@@ -57,16 +52,13 @@ test_that("OK if don't use all rows of X", {
                     player1 = player1_no_1_num, player2 = player2_no_1_num)
 
   fit_no_1 <- glmm(formula, subform, data = data_no_1, family = binomial)
-  expect_equal(unname(fixef(fit)[[1]]), unname(fixef(fit_no_1)[[1]]))
-  s_no_1 <- attr(VarCorr(fit_no_1)[[1]], "stddev")
-  expect_equal(s, s_no_1)
+  expect_equal(fit$estim, fit_no_1$estim)
+  expect_equal(fit$Sigma, fit_no_1$Sigma)
 
   fit_no_1_num <- glmm(formula, subform, data = data_no_1_num,
                        family = binomial)
-
-  expect_equal(unname(fixef(fit)[[1]]), unname(fixef(fit_no_1_num)[[1]]))
-  s_no_1_num <- attr(VarCorr(fit_no_1_num)[[1]], "stddev")
-  expect_equal(s, s_no_1_num)
+  expect_equal(fit$estim, fit_no_1_num$estim)
+  expect_equal(fit$Sigma, fit_no_1_num$Sigma)
 })
 
 test_that("includes offset", {
@@ -74,7 +66,7 @@ test_that("includes offset", {
   offset <- rnorm(length(y))
   fit_off <- glmm(formula, subform, data = data, family = binomial,
                   offset = offset)
-  expect_false(identical(coef(fit), coef(fit_off)))
+  expect_false(identical(fit$estim, fit_off$estim))
 })
 
 test_that("random effects at observation level work OK", {
@@ -88,17 +80,13 @@ test_that("random effects at observation level work OK", {
                         family = binomial)
 })
 
-check_rgraphpass <- function() {
-  if(!requireNamespace("rgraphpass", quietly = TRUE)) {
-    skip("rgraphpass not available")
-  }
-}
-
 test_that("fits a two-level model correctly", {
-  check_rgraphpass()
-  mod_10 <- lme4::glmer(response ~ covariate + (1 | cluster),
+  mod_10_glmer <- lme4::glmer(response ~ covariate + (1 | cluster),
                         data = two_level, family = binomial, nAGQ = 10)
-  mod_10_SR <- glmm(response ~ covariate + (1 | cluster),
-                    data = two_level, family = binomial, nAGQ = 10, k = 1)
-  expect_true(sum(abs(mod_10_SR$estim - c(mod_10@theta, mod_10@beta))) < 0.001)
+  estim_10_glmer <- c(mod_10_glmer@theta, mod_10_glmer@beta)
+  mod_10 <- glmm(response ~ covariate + (1 | cluster),
+                 data = two_level, family = binomial,
+                 control = glmmControl(method = "lme4", nAGQ = 10))
+  estim_10 <- mod_10$estim
+  expect_true(sum(abs(estim_10_glmer - estim_10)) < 0.001)
 })
