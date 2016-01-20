@@ -11,12 +11,13 @@ mkGlmmDevfun <- function(fr, X, reTrms, family, control = glmmControl(), ...)
   devfun_lme4 <- updateGlmerDevfun(devfun_lme4, reTrms, nAGQ = nAGQ_lme4)
   switch(control$method,
          lme4 = devfun_lme4,
-         SR = mkGlmmDevfunSR(fr, X, reTrms, family, devfun_lme4, control, ...),
+         SR = mkGlmmDevfunSR(fr, X, reTrms, family, devfun_lme4,
+                             k = control$k, nAGQ = control$nAGQ),
          stop(cat("method", method, "not available"))
          )
 }
 
-mkGlmmDevfunSR <- function(fr, X, reTrms, family, devfun_lme4, control, ...) {
+mkGlmmDevfunSR <- function(fr, X, reTrms, family, devfun_lme4, k, nAGQ) {
   modfr <- list(fr = fr, X = X, reTrms = reTrms, family = family)
   n_fixed <- ncol(X)
   factorization_terms <- find_factorization_terms(modfr)
