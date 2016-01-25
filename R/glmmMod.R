@@ -39,7 +39,7 @@ find_approximation_name_SR <- function(k) {
 
 #' Find the name of the likelihood approximation used for fitting
 #'
-#' @inheritsParams glmm
+#' @inheritParams glmm
 #' @return a string with the name of the likelihood approximation
 find_approximation_name <- function(control) {
   switch(control$method,
