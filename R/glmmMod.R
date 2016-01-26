@@ -29,11 +29,11 @@ find_approximation_name_lme4 <- function(nAGQ) {
   }
 }
 
-find_approximation_name_SR <- function(k) {
-  if(k == 1) {
+find_approximation_name_SR <- function(n_sparse_levels) {
+  if(n_sparse_levels == 1) {
     return("Laplace approximation (sequential reduction)")
   } else {
-    return(paste("Sequential reduction at level", k))
+    return(paste("Sequential reduction at level", n_sparse_levels))
   }
 }
 
@@ -44,7 +44,7 @@ find_approximation_name_SR <- function(k) {
 find_approximation_name <- function(control) {
   switch(control$method,
          "lme4" = find_approximation_name_lme4(control$nAGQ),
-         "SR" = find_approximation_name_SR(control$k),
+         "SR" = find_approximation_name_SR(control$n_sparse_levels),
          stop(cat("method", control$method, "not found")))
 }
 
@@ -111,7 +111,7 @@ summary.glmmMod <- function(object, ...) {
 print.summaryGlmmMod <- function(x, ...){
   fit <- x$fit
   cat("Generalized linear mixed model fit by maximum likelihood ",
-      "(Sequential Reduction Approximation, k = ", fit$k, ", nAGQ = ", fit$nAGQ, ") [glmmMod] \n",
+      "(Sequential Reduction Approximation, k = ", fit$n_sparse_levels, ", nAGQ = ", fit$nAGQ, ") [glmmMod] \n",
       sep = "")
   cat("Family:", fit$modfr$family$family, "(", fit$modfr$family$link, ") \n")
   cat("Formula: ")

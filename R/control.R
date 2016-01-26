@@ -13,7 +13,7 @@
 #' @export
 glmmControl <- function(method = "lme4",
                         nAGQ = 1,
-                        k = 0,
+                        n_sparse_levels = 0,
                         verbose = 0,
                         optimizer = c("bobyqa", "Nelder_Mead"),
                         restart_edge = FALSE,
@@ -69,7 +69,7 @@ glmmControl <- function(method = "lme4",
                                optCtrl = optCtrl)
   result$method <- method
   result$nAGQ <- nAGQ
-  result$k <- k
+  result$n_sparse_levels <- n_sparse_levels
 
   result$verbose <- verbose
 

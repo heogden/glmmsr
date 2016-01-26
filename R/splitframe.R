@@ -62,7 +62,7 @@ find_factorization_terms <- function(modfr) {
   n_obs <- ncol(modfr$reTrms$Zt)
   n_re <- nrow(modfr$reTrms$Zt)
   cliques_ext <- add_obs(cliques, act, 1:n_obs)
-  factorization_terms <- rgraphpass::continuous_beliefs()
+  factorization_terms <- graphpass::continuous_beliefs()
   for(i in seq_along(cliques_ext)) {
     lmodfr <- find_local_term(cliques_ext[[i]], modfr)
     factorization_terms$append_glmm_belief(items = lmodfr$C - 1,

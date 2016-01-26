@@ -92,7 +92,7 @@ test_that("fits a two-level model correctly", {
 
   mod_10_SR <- glmm(response ~ covariate + (1 | cluster),
                     data = two_level, family = binomial,
-                    control = glmmControl(method = "SR", k = 3,
+                    control = glmmControl(method = "SR", n_sparse_levels = 3,
                                           nAGQ = 10))
 
   estim_10_SR <- mod_10_SR$estim
