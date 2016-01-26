@@ -89,4 +89,14 @@ test_that("fits a two-level model correctly", {
                  control = glmmControl(method = "lme4", nAGQ = 10))
   estim_10 <- mod_10$estim
   expect_true(sum(abs(estim_10_glmer - estim_10)) < 0.001)
+
+  mod_10_SR <- glmm(response ~ covariate + (1 | cluster),
+                    data = two_level, family = binomial,
+                    control = glmmControl(method = "SR", k = 3,
+                                          nAGQ = 10))
+
+  estim_10_SR <- mod_10_SR$estim
+
+  expect_true(sum(abs(estim_10_SR - estim_10)) < 0.001)
+
 })
