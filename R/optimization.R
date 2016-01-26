@@ -32,7 +32,11 @@ optimizeGlmm <- function(devfun, p_beta, p_theta, init_na = NULL,
   A_inv <- hess_eigen_sqrt
   A <- solve(A_inv)
   devfun_ext <- function(param){
-    result <- devfun(param)
+    result <- tryCatch(devfun(param),
+                       error = function(e) {
+                         warning(e)
+                         Inf
+                       })
     if(verbose==1L){
       cat(".")
     }
