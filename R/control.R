@@ -6,6 +6,7 @@
 #' @param method the name of the method used for approximating the likelihood
 #' @param nAGQ the number of adaptive Gaussian quadrature points to use for integration
 #' @param k the level of sparse grid storage, used by method "SR"
+#' @param factorization_file a name of a file to save factorization terms to, if method "SR" is used
 #' @param optimizer character - name of optimizing function(s). See
 #'  \code{\link{glmerControl}} for more details.
 #' @inheritParams lme4::glmerControl
@@ -15,6 +16,7 @@ glmmControl <- function(method = "lme4",
                         nAGQ = 1,
                         n_sparse_levels = 0,
                         verbose = 0,
+                        factorization_file = NULL,
                         optimizer = c("bobyqa", "Nelder_Mead"),
                         restart_edge = FALSE,
                         boundary.tol = 1e-5,
@@ -70,6 +72,8 @@ glmmControl <- function(method = "lme4",
   result$method <- method
   result$nAGQ <- nAGQ
   result$n_sparse_levels <- n_sparse_levels
+
+  result$factorization_file <- factorization_file
 
   result$verbose <- verbose
 

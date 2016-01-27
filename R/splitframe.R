@@ -81,3 +81,37 @@ find_factorization_terms <- function(modfr) {
   }
   return(factorization_terms)
 }
+
+lmodfr_to_oneline <- function(lmodfr, file = "") {
+  size_clique <- length(lmodfr$C)
+  nobs <- nrow(lmodfr$X)
+  nfixed <- ncol(lmodfr$X)
+  Lambdat_triplet <- as(lmodfr$Lambdat, "dgTMatrix")
+  nentries <- length(Lambdat_triplet@i)
+  Lambdat_print <- as.numeric(rbind(Lambdat_triplet@i, Lambdat_triplet@j,
+                                    Lambdat_triplet@x))
+  ret <- c("G", size_clique, lmodfr$C - 1, nobs, nfixed, lmodfr$X, lmodfr$Zt,
+           nentries, Lambdat_print,
+           lmodfr$Lind, lmodfr$resp, lmodfr$weights)
+  cat(cat(ret, file = file, append = TRUE),
+      "\n", sep = "", file = file, append = TRUE)
+}
+
+save_factorization_to_file <- function(modfr, file = "") {
+  act <- find_active(modfr)
+  cliques <- unname(unique(act))
+  n_obs <- ncol(modfr$reTrms$Zt)
+  n_re <- nrow(modfr$reTrms$Zt)
+  cliques_ext <- add_obs(cliques, act, 1:n_obs)
+
+  # GLMM model frame terms
+  for(i in seq_along(cliques_ext)) {
+    lmodfr <- find_local_term(cliques_ext[[i]], modfr)
+    lmodfr_to_oneline(lmodfr, file)
+  }
+
+  # normal terms
+  for(i in seq_len(n_re)) {
+    cat("N", i - 1, 0, 1, "\n", sep = " ", file = file, append = TRUE)
+  }
+}

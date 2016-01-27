@@ -13,16 +13,20 @@ mkGlmmDevfun <- function(fr, X, reTrms, family, control = glmmControl(), ...)
          lme4 = devfun_lme4,
          SR = mkGlmmDevfunSR(fr, X, reTrms, family, devfun_lme4,
                              n_sparse_levels = control$n_sparse_levels,
-                             nAGQ = control$nAGQ),
+                             nAGQ = control$nAGQ,
+                             factorization_file = control$factorization_file),
          stop(cat("method", method, "not available"))
          )
 }
 
 mkGlmmDevfunSR <- function(fr, X, reTrms, family, devfun_lme4,
-                           n_sparse_levels, nAGQ) {
+                           n_sparse_levels, nAGQ, factorization_file) {
   modfr <- list(fr = fr, X = X, reTrms = reTrms, family = family)
   n_fixed <- ncol(X)
   factorization_terms <- find_factorization_terms(modfr)
+  if(length(factorization_file) > 0) {
+    save_factorization_to_file(modfr, factorization_file)
+  }
   calibration_pars <- graphpass::calibration_parameters()
   calibration_pars$n_quadrature_points <- nAGQ
   calibration_pars$n_sparse_levels <- n_sparse_levels
@@ -35,7 +39,6 @@ mkGlmmDevfunSR <- function(fr, X, reTrms, family, devfun_lme4,
     calibration_pars$theta <- pars[1:theta_size]
     calibration_pars$beta <- pars[-(1:theta_size)]
     beliefs$set_parameters(calibration_pars)
-
     normal_approx <- compute_normal_approx(pars, devfun_lme4)
     beliefs$set_normal_approx(normal_approx$mean, normal_approx$precision)
     beliefs$calibrate()
