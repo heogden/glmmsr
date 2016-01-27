@@ -33,13 +33,16 @@ mkGlmmDevfunSR <- function(fr, X, reTrms, family, devfun_lme4,
   calibration_pars$family <- family$family
   calibration_pars$link <- family$link
   beliefs_base <- graphpass::cluster_graph(factorization_terms)
-  devfun <- function(pars) {
+  devfun <- function(pars, normal_file = NULL) {
     beliefs <- graphpass::cluster_graph(factorization_terms)
     theta_size <- length(pars) - n_fixed
     calibration_pars$theta <- pars[1:theta_size]
     calibration_pars$beta <- pars[-(1:theta_size)]
     beliefs$set_parameters(calibration_pars)
     normal_approx <- compute_normal_approx(pars, devfun_lme4)
+    if(length(normal_file) > 0) {
+      save_normal(normal_approx$mean, normal_approx$precision, normal_file)
+    }
     beliefs$set_normal_approx(normal_approx$mean, normal_approx$precision)
     beliefs$calibrate()
     -2 * beliefs$log_normalizing_constant

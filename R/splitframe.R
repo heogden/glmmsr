@@ -115,3 +115,15 @@ save_factorization_to_file <- function(modfr, file = "") {
     cat("N", i - 1, 0, 1, "\n", sep = " ", file = file, append = TRUE)
   }
 }
+
+save_normal <- function(mean, precision, file = "") {
+  unlink(file)
+
+  precision <- as(precision, "dgTMatrix")
+  nentries <- length(precision@i)
+  precision_print <- c(nentries, as.numeric(rbind(precision@i,
+                                                  precision@j,
+                                                  precision@x)))
+  cat(mean, "\n", file = file, append = TRUE)
+  cat(precision_print, "\n", file = file, append = TRUE)
+}
