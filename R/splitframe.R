@@ -98,6 +98,8 @@ lmodfr_to_oneline <- function(lmodfr, file = "") {
 }
 
 save_factorization_to_file <- function(modfr, file = "") {
+  unlink(file)
+
   act <- find_active(modfr)
   cliques <- unname(unique(act))
   n_obs <- ncol(modfr$reTrms$Zt)
