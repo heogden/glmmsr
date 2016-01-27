@@ -114,7 +114,7 @@ save_factorization_to_file <- function(modfr, file = "") {
 
   # normal terms
   for(i in seq_len(n_re)) {
-    cat("N", i - 1, 0, 1, "\n", sep = " ", file = file, append = TRUE)
+    cat("N", 1, i - 1, 0, 1, "\n", sep = " ", file = file, append = TRUE)
   }
 }
 
