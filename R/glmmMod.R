@@ -110,9 +110,9 @@ summary.glmmMod <- function(object, ...) {
 #' @export
 print.summaryGlmmMod <- function(x, ...){
   fit <- x$fit
-  cat("Generalized linear mixed model fit by maximum likelihood ",
-      "(Sequential Reduction Approximation, k = ", fit$n_sparse_levels, ", nAGQ = ", fit$nAGQ, ") [glmmMod] \n",
-      sep = "")
+  name <- find_approximation_name(fit$control)
+  cat("Generalized linear mixed model fit by maximum likelihood [glmmMod] \n")
+  cat("Likelihood approximation:", name, "\n")
   cat("Family:", fit$modfr$family$family, "(", fit$modfr$family$link, ") \n")
   cat("Formula: ")
   print(fit$modfr$formula, showEnv=FALSE)
