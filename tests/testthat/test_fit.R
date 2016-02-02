@@ -100,3 +100,19 @@ test_that("fits a two-level model correctly", {
   expect_true(sum(abs(estim_10_SR - estim_10)) < 0.001)
 
 })
+
+test_that("factor response handled correctly", {
+  two_level_factor <- two_level
+  two_level_factor$response <- factor(c("N", "Y")[two_level$response + 1],
+                                      levels = c("N", "Y"))
+  mod_num <- glmm(response ~ covariate + (1 | cluster),
+                  data = two_level, family = binomial,
+                  control = glmmControl(method = "SR", n_sparse_levels = 3,
+                                          nAGQ = 10))
+  mod_fac <- glmm(response ~ covariate + (1 | cluster),
+                  data = two_level_factor, family = binomial,
+                  control = glmmControl(method = "SR", n_sparse_levels = 3,
+                                        nAGQ = 10))
+
+  expect_true(sum(abs(mod_num$estim - mod_fac$estim)) < 0.001)
+})

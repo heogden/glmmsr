@@ -37,6 +37,9 @@ find_local_term <- function(clique_ext, modfr) {
   Lind_mat@x <- as.numeric(modfr$reTrms$Lind)
   Lind_C <- as.integer(Lind_mat[C, C, drop = FALSE]@x) - 1
   resp <- model.response(modfr$fr)
+  if(is.factor(resp)) {
+    resp <- (resp != levels(resp)[1L])
+  }
   weights <- model.weights(modfr$fr)
   if(is.null(weights)) {
     weights_C <- rep(1, length(obs_C))
