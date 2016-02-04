@@ -130,3 +130,24 @@ test_that("warns about unused control parameters", {
     "parts of control were ignored"
   )
 })
+
+test_that("uses weights", {
+  two_level_double <- list(response = rep(two_level$response, 2),
+                           covariate = rep(two_level$covariate, 2),
+                           cluster = rep(two_level$cluster, 2))
+  mod_double_Laplace <-  glmm(response ~ covariate + (1 | cluster),
+                              data = two_level_double, family = binomial,
+                              method = "Laplace")
+  mod_w2_Laplace <- glmm(response ~ covariate + (1 | cluster),
+                         data = two_level, family = binomial,
+                         method = "Laplace", weights = rep(2, length(two_level$response)))
+  expect_equal(mod_double_Laplace$estim, mod_w2_Laplace$estim)
+
+  mod_double_SR <-  glmm(response ~ covariate + (1 | cluster),
+                              data = two_level_double, family = binomial,
+                              method = "SR")
+  mod_w2_SR <- glmm(response ~ covariate + (1 | cluster),
+                         data = two_level, family = binomial,
+                         method = "SR", weights = rep(2, length(two_level$response)))
+  expect_true(sum(abs(mod_double_SR$estim - mod_w2_SR$estim)) < 0.01)
+})

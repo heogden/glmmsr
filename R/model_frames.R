@@ -16,7 +16,7 @@ parse_formula <- function(formula, data, family, weights, off) {
         modfr <- lme4::glFormula(formula, data = data_vars, family = family,
                                  na.action = na.fail, offset = off)
       } else {
-        if(is.null(offset)) {
+        if(is.null(off)) {
           modfr <- lme4::glFormula(formula, data = data_vars, family = family,
                                    na.action = na.fail, weights = weights)
         } else {
