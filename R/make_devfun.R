@@ -4,10 +4,11 @@
 #' @export
 mkGlmmDevfun <- function(modfr, method, control)
 {
-  devfun_lme4 <- mkGlmerDevfun(fr = modfr$fr, X = modfr$X, reTrms = modfr$reTrms,
-                               family = modfr$family, control = lme4_control())
+  devfun_lme4 <- lme4::mkGlmerDevfun(fr = modfr$fr, X = modfr$X,
+                                     reTrms = modfr$reTrms, family = modfr$family,
+                                     control = lme4_control())
   nAGQ_lme4 <- ifelse(method == "AGQ", control$nAGQ, 1)
-  devfun_lme4 <- updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = nAGQ_lme4)
+  devfun_lme4 <- lme4::updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = nAGQ_lme4)
   switch(method,
          Laplace = devfun_lme4,
          AGQ = devfun_lme4,
