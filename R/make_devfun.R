@@ -13,34 +13,27 @@ mkGlmmDevfun <- function(fr, X, reTrms, family, control = glmmControl(), ...)
          lme4 = devfun_lme4,
          SR = mkGlmmDevfunSR(fr, X, reTrms, family, devfun_lme4,
                              n_sparse_levels = control$n_sparse_levels,
-                             nAGQ = control$nAGQ,
-                             factorization_file = control$factorization_file),
+                             nAGQ = control$nAGQ),
          stop(cat("method", method, "not available"))
          )
 }
 
 mkGlmmDevfunSR <- function(fr, X, reTrms, family, devfun_lme4,
-                           n_sparse_levels, nAGQ, factorization_file) {
+                           n_sparse_levels, nAGQ) {
   modfr <- list(fr = fr, X = X, reTrms = reTrms, family = family)
   n_fixed <- ncol(X)
   factorization_terms <- find_factorization_terms(modfr)
-  if(length(factorization_file) > 0) {
-    save_factorization_to_file(modfr, factorization_file)
-  }
   calibration_pars <- calibration_parameters()
   calibration_pars$n_quadrature_points <- nAGQ
   calibration_pars$n_sparse_levels <- n_sparse_levels
   calibration_pars$family <- family$family
   calibration_pars$link <- family$link
   beliefs <- cluster_graph(factorization_terms)
-  devfun <- function(pars, normal_file = NULL) {
+  devfun <- function(pars) {
     theta_size <- length(pars) - n_fixed
     calibration_pars$theta <- pars[1:theta_size]
     calibration_pars$beta <- pars[-(1:theta_size)]
     normal_approx <- compute_normal_approx(pars, devfun_lme4)
-    if(length(normal_file) > 0) {
-      save_normal(normal_approx$mean, normal_approx$precision, normal_file)
-    }
     -2 * beliefs$compute_log_normalizing_constant(normal_approx$mean,
                                                   normal_approx$precision,
                                                   calibration_pars)
