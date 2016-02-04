@@ -27,12 +27,12 @@ mkGlmmDevfunSR <- function(fr, X, reTrms, family, devfun_lme4,
   if(length(factorization_file) > 0) {
     save_factorization_to_file(modfr, factorization_file)
   }
-  calibration_pars <- graphpass::calibration_parameters()
+  calibration_pars <- calibration_parameters()
   calibration_pars$n_quadrature_points <- nAGQ
   calibration_pars$n_sparse_levels <- n_sparse_levels
   calibration_pars$family <- family$family
   calibration_pars$link <- family$link
-  beliefs <- graphpass::cluster_graph(factorization_terms)
+  beliefs <- cluster_graph(factorization_terms)
   devfun <- function(pars, normal_file = NULL) {
     theta_size <- length(pars) - n_fixed
     calibration_pars$theta <- pars[1:theta_size]

@@ -1,0 +1,38 @@
+calibration_parameters:
+  name_cpp: Parameters
+  constructor:
+    roxygen: |
+      Parameters needed to calibrate the cluster tree
+      @export
+    name_cpp: makeParametersR
+  active:
+    theta:
+      type: "Eigen::VectorXd"
+      name_cpp: GLMMTheta
+      access: field
+    beta:
+      type: "Eigen::VectorXd"
+      name_cpp: GLMMBeta
+      access: field
+    family:
+      type: "std::string"
+      name_cpp: getParametersFamily
+      name_cpp_set: setParametersFamily
+      access: function
+    link:
+      type: "std::string"
+      name_cpp: getParametersLink
+      name_cpp_set: setParametersLink
+      access: function
+    n_sparse_levels:
+      type: int
+      name_cpp: getParametersNSparseLevels
+      name_cpp_set: setParametersNSparseLevels
+      access: function
+    n_quadrature_points:
+      type: int
+      name_cpp: getParametersNQuadraturePoints
+      name_cpp_set: setParametersNQuadraturePoints
+      access: function
+
+

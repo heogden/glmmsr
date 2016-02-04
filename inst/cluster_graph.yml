@@ -1,0 +1,23 @@
+cluster_graph:
+  name_cpp: ClusterGraph
+  constructor:
+    roxygen: |
+      The beliefs for the clusters and sepsets of a cluster tree,
+      of mixed continuous types.
+      @param beliefs the vector of continuous beliefs to put on the cluster tree
+      @export
+    args:
+      - {beliefs: "std::vector<MixedContinuousBelief>"}
+  methods:
+    compute_log_normalizing_constant:
+      name_cpp: computeLogNormalizingConstant
+      return_type: double
+      access: function
+      args:
+        - {mean: "Eigen::VectorXd"}
+        - {precision: "Eigen::SparseMatrix<double>"}
+        - {parameters: "Parameters"}
+  active:
+    width:
+      type: int
+      access: member

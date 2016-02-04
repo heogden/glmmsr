@@ -1,0 +1,32 @@
+continuous_beliefs:
+  name_cpp: std::vector<MixedContinuousBelief>
+  constructor:
+    roxygen: |
+      A vector of terms in the factorization of a graphical model,
+      of mixed continuous types.
+      @export
+  methods:
+    append_glmm_belief:
+      name_cpp: appendGLMMBelief
+      args:
+        - {items: "std::vector<int>"}
+        - {X: "Eigen::MatrixXd"}
+        - {Zt: "Eigen::MatrixXd"}
+        - {Lambdat: "Eigen::SparseMatrix<double>"}
+        - {Lind: "Eigen::VectorXi"}
+        - {response: "Eigen::ArrayXd"}
+        - {weights: "Eigen::ArrayXd"}
+      access: function
+      return_type: void
+    append_normal_belief:
+      name_cpp: appendNormalBelief
+      args:
+        - {items: "std::vector<int>"}
+        - {mean: "Eigen::VectorXd"}
+        - {precision: "Eigen::MatrixXd"}
+      access: function
+      return_type: void
+    size:
+      return_type: int
+      access: member
+
