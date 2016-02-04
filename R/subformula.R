@@ -169,6 +169,7 @@ glFormulaSub <- function (formula, subformula = NULL, data = NULL,
   modfr_no_sub <- parse_formula(form_no_sub, data = data,
                                 family = family, weights = weights,
                                 off = offset)
+
   if(length(subexprs) == 0L) {
     return(modfr_no_sub)
   }
@@ -176,6 +177,10 @@ glFormulaSub <- function (formula, subformula = NULL, data = NULL,
 
   modfr_list <- lapply(subs, parse_sub, data = data, family = family)
 
-  attach_subframes(modfr_no_sub, modfr_list)
+  modfr <- attach_subframes(modfr_no_sub, modfr_list)
+  modfr$formula <- formula
+  modfr$subformula <- subformula
+
+  modfr
 }
 

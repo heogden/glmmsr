@@ -29,6 +29,23 @@ find_approximation_name <- function(method, control) {
          stop(cat("method", method, "not found")))
 }
 
+
+print_subformula <- function(subformula) {
+  if(length(subformula) > 0) {
+    if(is.list(subformula)) {
+      subform <- subformula
+    } else {
+      subform <- list(subformula)
+    }
+    if(length(subform) > 1) {
+      cat("Subformulas: \n")
+    } else {
+      cat("Subformula: ")
+    }
+    out <- lapply(subform, print, showEnv = FALSE)
+  }
+}
+
 #' Print glmmMod object
 #'
 #' @param x glmmMod object
@@ -42,6 +59,7 @@ print.glmmMod <- function(x, ...){
   cat("Family:", x$modfr$family$family, "(", x$modfr$family$link, ") \n")
   cat("Formula: ")
   print(x$modfr$formula, showEnv=FALSE)
+  print_subformula(x$modfr$subformula)
   names_beta <- attr(x$modfr$X,"dimnames")[[2]]
   group_names <- names(x$modfr$reTrms$cnms)
   names_theta <- unlist(unname(x$modfr$reTrms$cnms))
@@ -97,7 +115,9 @@ print.summaryGlmmMod <- function(x, ...){
   cat("Family:", fit$modfr$family$family, "(", fit$modfr$family$link, ") \n")
   cat("Formula: ")
   print(fit$modfr$formula, showEnv=FALSE)
+  print_subformula(fit$modfr$subformula)
   cat("\n")
+
   cat("Random effects:\n")
   names_beta <- attr(fit$modfr$X, "dimnames")[[2]]
   group_names <- names(fit$modfr$reTrms$cnms)
