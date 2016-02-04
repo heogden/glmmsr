@@ -22,6 +22,9 @@
 #' @docType package
 #' @import lme4
 #' @name glmmsr
+#' @useDynLib glmmsr
+#' @importFrom Rcpp sourceCpp
+#' @import Matrix
 NULL
 
 #' A dataset simulated from a two-level model

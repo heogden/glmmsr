@@ -4,11 +4,11 @@
 \alias{glmmControl}
 \title{Control of GLMM fitting}
 \usage{
-glmmControl(method = "lme4", nAGQ = 1, k = 0, verbose = 0,
-  optimizer = c("bobyqa", "Nelder_Mead"), restart_edge = FALSE,
-  boundary.tol = 1e-05, calc.derivs = TRUE, use.last.params = FALSE,
-  sparseX = FALSE, tolPwrss = 1e-07, compDev = TRUE,
-  nAGQ0initStep = TRUE, check.nobs.vs.rankZ = "ignore",
+glmmControl(method = "lme4", nAGQ = 1, n_sparse_levels = 0, verbose = 0,
+  factorization_file = NULL, optimizer = c("bobyqa", "Nelder_Mead"),
+  restart_edge = FALSE, boundary.tol = 1e-05, calc.derivs = TRUE,
+  use.last.params = FALSE, sparseX = FALSE, tolPwrss = 1e-07,
+  compDev = TRUE, nAGQ0initStep = TRUE, check.nobs.vs.rankZ = "ignore",
   check.nobs.vs.nlev = "ignore", check.nlev.gtreq.5 = "ignore",
   check.nlev.gtr.1 = "ignore", check.nobs.vs.nRE = "ignore",
   check.rankX = c("message+drop.cols", "silent.drop.cols", "warn+drop.cols",
@@ -24,12 +24,12 @@ glmmControl(method = "lme4", nAGQ = 1, k = 0, verbose = 0,
 
 \item{nAGQ}{the number of adaptive Gaussian quadrature points to use for integration}
 
-\item{k}{the level of sparse grid storage, used by method "SR"}
-
 \item{verbose}{integer scalar.  If \code{> 0} verbose output is
     generated during the optimization of the parameter estimates.  If
     \code{> 1} verbose output is generated during the individual PIRLS
     steps.}
+
+\item{factorization_file}{a name of a file to save factorization terms to, if method "SR" is used}
 
 \item{optimizer}{character - name of optimizing function(s). See
 \code{\link{glmerControl}} for more details.}
@@ -148,6 +148,8 @@ glmmControl(method = "lme4", nAGQ = 1, k = 0, verbose = 0,
     will try before giving up - in contrast to
     \code{\link{optim}} and \code{optimx}-wrapped optimizers,
     which use \code{maxit}.}
+
+\item{k}{the level of sparse grid storage, used by method "SR"}
 }
 \description{
 A version of \code{\link{glmerControl}}, from \code{lme4}, with different
