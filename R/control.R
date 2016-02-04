@@ -29,7 +29,7 @@ find_control_with_defaults <- function(control, method)
                 "Laplace" = conLaplace,
                 "AGQ" = conAGQ,
                 "SR" = conSR,
-                stop(paste("The method", method, "is not recognised")))
+                stop(paste("The method", method, "is not recognised"), call. = FALSE))
 
   are_known <- names(control) %in% names(con_tot)
   names_known <- names(control)[are_known]
