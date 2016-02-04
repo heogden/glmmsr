@@ -25,6 +25,10 @@ variables named in \code{formula}, and in any of the subformulas.}
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
 
+\item{method}{the method used to approximate the likelihood. The options
+are "Laplace", "AGQ" (the adaptive Gaussian quadrature approximation,
+from \code{lme4}), and "SR" (the sequential reduction approximation)}
+
 \item{control}{a list of extra parameters controlling the approximation
 to the likelihood}
 

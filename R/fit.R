@@ -5,6 +5,9 @@
 #'  than one \code{Sub()} term in \code{formula}.
 #' @param data an optional data frame, list or environment containing the
 #'  variables named in \code{formula}, and in any of the subformulas.
+#' @param method the method used to approximate the likelihood. The options
+#'  are "Laplace", "AGQ" (the adaptive Gaussian quadrature approximation,
+#'  from \code{lme4}), and "SR" (the sequential reduction approximation)
 #' @param control a list of extra parameters controlling the approximation
 #'  to the likelihood
 #' @inheritParams lme4::glmer
