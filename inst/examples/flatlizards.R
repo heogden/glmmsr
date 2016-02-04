@@ -22,6 +22,11 @@ lizards_mod <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
                data = lizards, family = binomial(link = "probit"))
 summary(lizards_mod)
 
+lizards_mod_SR <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
+                    ability[liz] ~ 0 + throat.PC1[liz] +
+                      throat.PC3[liz] + head.length[liz] + SVL[liz] + (1 | liz),
+                    data = lizards, family = binomial(link = "probit"),
+                    control = glmmControl(method = "SR", n_sparse_levels = 4, nAGQ = 10, verbose = TRUE))
 
 lizardsmod_BTm <- BTm(y, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
                       head.length[..] + SVL[..] + (1|..),

@@ -29,6 +29,15 @@ mkGlmmDevfunSR <- function(fr, X, reTrms, family, devfun_lme4,
   calibration_pars$family <- family$family
   calibration_pars$link <- family$link
   beliefs <- cluster_graph(factorization_terms)
+
+  complexity_limit <- 5e5
+  if(beliefs$width^(2 * n_sparse_levels) > complexity_limit) {
+    stop(paste("The sequential reduction approximation with", n_sparse_levels,
+               "sparse levels is too difficult to compute in this case.",
+               "Consider reducing n_sparse_levels, or using a different approximation method."),
+         call. = FALSE)
+  }
+
   devfun <- function(pars) {
     theta_size <- length(pars) - n_fixed
     calibration_pars$theta <- pars[1:theta_size]
