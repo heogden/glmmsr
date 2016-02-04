@@ -30,9 +30,9 @@ lizards_mod_SR <- glmm(formula = form, subformula = subform,
                        method = "SR")
 summary(lizards_mod_SR)
 
-lizardsmod_BTm <- BTm(y, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
-                      head.length[..] + SVL[..] + (1|..),
-                      family = binomial(link = "probit"), data = lizards_BT)
-summary(mod_BTm)
+lizards_mod_BTm <- BTm(result, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
+                       head.length[..] + SVL[..] + (1|..),
+                       family = binomial(link = "probit"), data = lizards_BT)
+summary(lizards_mod_BTm)
 
 
