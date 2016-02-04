@@ -10,8 +10,7 @@
 #' @inheritParams lme4::glmer
 #' @export
 glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
-                 method = NULL, control = list(), weights = NULL, offset = NULL,
-                 devFunOnly = FALSE)
+                 method = NULL, control = list(), weights = NULL, offset = NULL)
 {
   con <- find_control_with_defaults(control, method)
   check_weights(weights)
@@ -22,24 +21,21 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
   if(has_reTrms(modfr)) {
     devfun <- mkGlmmDevfun(modfr, method = method, control = con)
 
-    if(devFunOnly) {
-      return(devfun)
-    } else {
-      p_beta <- ncol(modfr$X)
-      p_theta <- length(modfr$reTrms$theta)
-      opt <- optimizeGlmm(devfun, p_beta = p_beta, p_theta = p_theta)
-      if(all(modfr$reTrms$lower == 0)) {
-        opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
-        result <- glmmMod(list(estim = opt$estim, Sigma = opt$Sigma,
-                               devfun = devfun, modfr = modfr,
-                               method = method, control = con))
-      }else{
-        warning("proper print and summary method not yet implemented ",
-                "for correlated random effects")
-        result <- opt
-      }
-      return(result)
+    p_beta <- ncol(modfr$X)
+    p_theta <- length(modfr$reTrms$theta)
+    opt <- optimizeGlmm(devfun, p_beta = p_beta, p_theta = p_theta)
+    if(all(modfr$reTrms$lower == 0)) {
+      opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
+      result <- glmmMod(list(estim = opt$estim, Sigma = opt$Sigma,
+                             devfun = devfun, modfr = modfr,
+                             method = method, control = con))
+    }else{
+      warning("proper print and summary method not yet implemented ",
+              "for correlated random effects")
+      result <- opt
     }
+    return(result)
+
   } else {
     stop("haven't yet implemented no random effects case")
   }
