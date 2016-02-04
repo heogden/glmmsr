@@ -4,6 +4,8 @@
 #include "ClusterGraph.h"
 #include "dependenceGraph.h"
 
+#include <RcppCommon.h>
+
 ClusterGraphEdge::ClusterGraphEdge()
 {
 }
@@ -35,7 +37,7 @@ void ClusterGraph::initialize (const Graph& dependenceGraph)
   auto dependenceGraphCopy = dependenceGraph;
   initializeInternal(dependenceGraphCopy, emptyIds);
 }
- 
+
 
 void ClusterGraph::populate
 (const std::vector<MixedContinuousBelief>& beliefs)
@@ -127,10 +129,10 @@ void ClusterGraph::calibrateInternal(bool forward, bool normalApproxOnly)
   for(auto& cluster : clusters_)
     cluster.fixNormalApprox();
 
-  for(auto& edge : edges_) 
+  for(auto& edge : edges_)
     edge.belief_.fixNormalApprox();
 
-  
+
 }
 
 
@@ -148,7 +150,7 @@ void ClusterGraph::passMessage(Edge& edge,
   }
 
   auto oldEdgeBelief = edge.belief_;
-  
+
   projectClusterOntoEdge(clusters_.at(i), edge, normalApproxOnly);
 
   clusters_.at(j) *= edge.belief_;
@@ -157,6 +159,7 @@ void ClusterGraph::passMessage(Edge& edge,
   if(!clusters_.at(j).isProper(parameters_)) {
     throw std::runtime_error("improper cluster belief after passing message");
   }
+  Rcpp::checkUserInterrupt();
 }
 
 
@@ -220,6 +223,8 @@ std::vector<MixedContinuousBelief> ClusterGraph::extractBeliefs() const
 void ClusterGraph::initializeInternal(Graph& dependenceGraph,
 				      const std::vector<int>& hangingEdgeIds)
 {
+  Rcpp::checkUserInterrupt();
+
   if(isComplete(dependenceGraph)) {
     for(auto edgeId : hangingEdgeIds)
       edges_.at(edgeId).secondClusterId_ = clusters_.size();
@@ -230,11 +235,11 @@ void ClusterGraph::initializeInternal(Graph& dependenceGraph,
 
     std::vector<int> candidates;
     candidates = remainingItems;
-      
+
     // choose an item to eliminate
     int minSeparatorSize = remainingItems.size();
     int itemToEliminate = candidates.at(0);
-    
+
     for(auto candidate : candidates) {
       auto candidateSeparator = dependenceGraph.findNeighbours(candidate);
       int separatorSize = candidateSeparator.size();
@@ -268,7 +273,7 @@ void ClusterGraph::initializeInternal(Graph& dependenceGraph,
     dependenceGraph.connect(separator);
     dependenceGraph.removeNode(itemToEliminate);
 
-    initializeInternal(dependenceGraph, newHangingEdgeIds);			 
+    initializeInternal(dependenceGraph, newHangingEdgeIds);
   }
 }
 
@@ -285,8 +290,8 @@ void ClusterGraph::populateClusters
 {
   for(auto& cluster : clusters_)
     populateBelief(cluster, multiply, beliefs);
-  
-  
+
+
   isCalibrated_ = false;
 }
 
@@ -311,13 +316,13 @@ void populateBelief(MixedContinuousBelief& cluster,
   auto isContained = [&cluster](MixedContinuousBelief& belief) {
     return isSubset(belief, cluster);
   };
-  
+
   std::copy_if(beliefs.begin(), beliefs.end(),
 	       back_inserter(containedBeliefs), isContained);
   auto newEnd = std::remove_if(beliefs.begin(), beliefs.end(), isContained);
   beliefs.resize(newEnd - beliefs.begin());
 
-  
+
   for(const auto& belief : containedBeliefs) {
     if(multiply)
       cluster *= belief;
