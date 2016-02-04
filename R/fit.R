@@ -19,15 +19,15 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                         family = family, weights = weights, offset = offset)
 
   if(has_reTrms(modfr)) {
-    devfun <- mkGlmmDevfun(modfr, method = method, control = con)
+    lfun <- find_lfun_glmm(modfr, method = method, control = con)
 
     p_beta <- ncol(modfr$X)
     p_theta <- length(modfr$reTrms$theta)
-    opt <- optimizeGlmm(devfun, p_beta = p_beta, p_theta = p_theta)
+    opt <- optimizeGlmm(lfun, p_beta = p_beta, p_theta = p_theta)
     if(all(modfr$reTrms$lower == 0)) {
       opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
       result <- glmmMod(list(estim = opt$estim, Sigma = opt$Sigma,
-                             devfun = devfun, modfr = modfr,
+                             lfun = lfun, modfr = modfr,
                              method = method, control = con))
     }else{
       warning("proper print and summary method not yet implemented ",

@@ -2,7 +2,7 @@
 #'
 #' Find the approximate maximum likelihood estimate, and finds
 #' a normal approximation to the likelihood surface
-#' @param devfun -2*loglikelihood
+#' @param lfun the approximated loglikelihood function
 #' @param p_beta the number of covariates
 #' @param p_theta the number of random effects
 #' @param init_na a normal approximation to the log-likelihood surface
@@ -10,7 +10,7 @@
 #'  dot is printed for each likelihood evaluation. If verbose=2, the values of
 #'  the parameters and the likelihood are printed for each evaluation.
 #' @return A list, containing the parameter estimate and variance matrix
-optimizeGlmm <- function(devfun, p_beta, p_theta, init_na = NULL,
+optimizeGlmm <- function(lfun, p_beta, p_theta, init_na = NULL,
                          verbose = 0L){
   p <- p_theta + p_beta
   if(length(init_na) > 0){
@@ -32,7 +32,7 @@ optimizeGlmm <- function(devfun, p_beta, p_theta, init_na = NULL,
   A_inv <- hess_eigen_sqrt
   A <- solve(A_inv)
   devfun_ext <- function(param){
-    result <- tryCatch(devfun(param),
+    result <- tryCatch(-2 * lfun(param),
                        error = function(e) {
                          warning(e)
                          Inf

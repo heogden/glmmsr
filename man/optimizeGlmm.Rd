@@ -4,10 +4,10 @@
 \alias{optimizeGlmm}
 \title{Maximize the approximated log-likelihood}
 \usage{
-optimizeGlmm(devfun, p_beta, p_theta, init_na = NULL, verbose = 0L)
+optimizeGlmm(lfun, p_beta, p_theta, init_na = NULL, verbose = 0L)
 }
 \arguments{
-\item{devfun}{-2*loglikelihood}
+\item{lfun}{the approximated loglikelihood function}
 
 \item{p_beta}{the number of covariates}
 

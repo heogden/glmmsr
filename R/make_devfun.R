@@ -1,25 +1,26 @@
-#' Make the deviance function
-#' @inheritParams lme4::mkGlmerDevfun
+#' Find the log-likelihood function
+#' @param modfr a model frame, the output of find_modfr_glmm
 #' @inheritParams glmm
 #' @export
-mkGlmmDevfun <- function(modfr, method, control)
+find_lfun_glmm <- function(modfr, method, control)
 {
   devfun_lme4 <- lme4::mkGlmerDevfun(fr = modfr$fr, X = modfr$X,
                                      reTrms = modfr$reTrms, family = modfr$family,
                                      control = lme4_control())
   nAGQ_lme4 <- ifelse(method == "AGQ", control$nAGQ, 1)
   devfun_lme4 <- lme4::updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = nAGQ_lme4)
+  lfun_lme4 <- function(x) { -devfun_lme4(x) / 2 }
   switch(method,
-         Laplace = devfun_lme4,
-         AGQ = devfun_lme4,
-         SR = mkGlmmDevfunSR(modfr, devfun_lme4,
-                             nSL = control$nSL,
-                             nAGQ = control$nAGQ),
+         Laplace = lfun_lme4,
+         AGQ = lfun_lme4,
+         SR = find_lfun_SR(modfr, devfun_lme4,
+                           nSL = control$nSL,
+                           nAGQ = control$nAGQ),
          stop(cat("method", method, "not available"))
          )
 }
 
-mkGlmmDevfunSR <- function(modfr, devfun_lme4, nSL, nAGQ) {
+find_lfun_SR <- function(modfr, devfun_lme4, nSL, nAGQ) {
   n_fixed <- ncol(modfr$X)
   factorization_terms <- find_factorization_terms(modfr)
   calibration_pars <- calibration_parameters()
@@ -37,16 +38,16 @@ mkGlmmDevfunSR <- function(modfr, devfun_lme4, nSL, nAGQ) {
          call. = FALSE)
   }
 
-  devfun <- function(pars) {
+  lfun <- function(pars) {
     theta_size <- length(pars) - n_fixed
     calibration_pars$theta <- pars[1:theta_size]
     calibration_pars$beta <- pars[-(1:theta_size)]
     normal_approx <- compute_normal_approx(pars, devfun_lme4)
-    -2 * beliefs$compute_log_normalizing_constant(normal_approx$mean,
-                                                  normal_approx$precision,
-                                                  calibration_pars)
+    beliefs$compute_log_normalizing_constant(normal_approx$mean,
+                                             normal_approx$precision,
+                                             calibration_pars)
   }
-  devfun
+  lfun
 }
 
 compute_normal_approx <- function(pars, devfun_lme4)

@@ -4,8 +4,8 @@
 \alias{glmm}
 \title{Fit a GLMM}
 \usage{
-glmm(formula, subformula = NULL, data = NULL, family = gaussian, method,
-  control = list(), weights = NULL, offset = NULL, devFunOnly = FALSE)
+glmm(formula, subformula = NULL, data = NULL, family = gaussian,
+  method = NULL, control = list(), weights = NULL, offset = NULL)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -38,12 +38,6 @@ to the likelihood}
     equal to the number of cases.  One or more \code{\link{offset}}
     terms can be included in the formula instead or as well, and if more
     than one is specified their sum is used.  See \code{\link{model.offset}}.}
-
-\item{devFunOnly}{logical - return only the deviance evaluation
-    function. Note that because the deviance function operates on
-    variables stored in its environment, it may not return
-    \emph{exactly} the same values on subsequent calls (but the results
-    should always be within machine tolerance).}
 }
 \description{
 Fit a GLMM
