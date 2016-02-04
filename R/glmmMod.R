@@ -55,11 +55,13 @@ print_subformula <- function(subformula) {
 print.glmmMod <- function(x, ...){
   name <- find_approximation_name(x$method, x$control)
   cat("Generalized linear mixed model fit by maximum likelihood [glmmMod] \n")
-  cat("Likelihood approximation:", name, "\n")
+  cat("Likelihood approximation:", name, "\n \n")
   cat("Family:", x$modfr$family$family, "(", x$modfr$family$link, ") \n")
   cat("Formula: ")
   print(x$modfr$formula, showEnv=FALSE)
   print_subformula(x$modfr$subformula)
+  cat("\n")
+
   names_beta <- attr(x$modfr$X,"dimnames")[[2]]
   group_names <- names(x$modfr$reTrms$cnms)
   names_theta <- unlist(unname(x$modfr$reTrms$cnms))
@@ -72,6 +74,8 @@ print.glmmMod <- function(x, ...){
   estim_random_df <- data.frame("Groups" = group_names,
                                 "Name" = names_theta,
                                 "Estimate" = estim_random)
+
+  cat("Random effects:\n")
   print(estim_random_df, digits = 4,right = FALSE, row_names = FALSE)
   nlevels_each <- sapply(x$modfr$reTrms$flist, nlevels)
   y <- model.response(x$modfr$fr)
@@ -81,7 +85,7 @@ print.glmmMod <- function(x, ...){
     cat(group_names[i], nlevels_each[i], sep=", ")
     cat("; ")
   }
-  cat("\n")
+  cat("\n \n")
   cat("Fixed effects: \n")
   print(estim_fixed, digits = 4)
 }
@@ -111,7 +115,7 @@ print.summaryGlmmMod <- function(x, ...){
   fit <- x$fit
   name <- find_approximation_name(fit$method, fit$control)
   cat("Generalized linear mixed model fit by maximum likelihood [glmmMod] \n")
-  cat("Likelihood approximation:", name, "\n")
+  cat("Likelihood approximation:", name, "\n \n")
   cat("Family:", fit$modfr$family$family, "(", fit$modfr$family$link, ") \n")
   cat("Formula: ")
   print(fit$modfr$formula, showEnv=FALSE)
