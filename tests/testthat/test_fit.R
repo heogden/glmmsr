@@ -88,7 +88,7 @@ test_that("fits a two-level model correctly", {
   estim_8_glmer <- c(mod_8_glmer@theta, mod_8_glmer@beta)
   mod_8 <- glmm(response ~ covariate + (1 | cluster),
                  data = two_level, family = binomial, method = "AGQ",
-                 control = list(AGQ = 8))
+                 control = list(nAGQ = 8))
   estim_8 <- mod_8$estim
   expect_true(sum(abs(estim_8_glmer - estim_8)) < 0.001)
 
@@ -114,4 +114,19 @@ test_that("factor response handled correctly", {
                   control = list(nSL = 3))
 
   expect_true(sum(abs(mod_num$estim - mod_fac$estim)) < 0.001)
+})
+
+test_that("warns about unused control parameters", {
+  expect_warning(
+    glmm(response ~ covariate + (1 | cluster),
+         data = two_level, family = binomial, method = "SR",
+         control = list(nSR = 3)),
+    "unknown names"
+  )
+  expect_warning(
+    glmm(response ~ covariate + (1 | cluster),
+         data = two_level, family = binomial, method = "Laplace",
+         control = list(nAGQ = 10)),
+    "parts of control were ignored"
+  )
 })

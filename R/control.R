@@ -31,18 +31,20 @@ find_control_with_defaults <- function(control, method)
                 "SR" = conSR,
                 stop(paste("The method", method, "is not recognised")))
 
-  which_known <- which(names(control) %in% names(con_tot))
-  names_known <- names(control)[which_known]
-  names_unknown <- names(control)[!which_known]
+  are_known <- names(control) %in% names(con_tot)
+  names_known <- names(control)[are_known]
+  names_unknown <- names(control)[!are_known]
 
-  which_needed <- which(names(control[which_known]) %in% names(con))
-  names_not_needed <- names_known[!which_needed]
+  are_needed <- names(control[are_known]) %in% names(con)
+  names_not_needed <- names_known[!are_needed]
 
   if ( length(names_unknown) > 0 )
-    warning("unknown names in control: ", paste(names_unknown, collapse = ", "))
+    warning("unknown names in control: ", paste(names_unknown, collapse = ", "),
+            call. = FALSE)
 
   if ( length(names_not_needed) > 0 )
-    warning("For method = ", method, "parts of control were ignored: ", paste(names_not_needed, collapse = ", "))
+    warning("For method = ", method, "parts of control were ignored: ",
+            paste(names_not_needed, collapse = ", "), call. = FALSE)
 
   con[names(control)] <- control
   if(method == "SR") {
