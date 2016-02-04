@@ -150,4 +150,9 @@ test_that("uses weights", {
                          data = two_level, family = binomial,
                          method = "SR", weights = rep(2, length(two_level$response)))
   expect_true(sum(abs(mod_double_SR$estim - mod_w2_SR$estim)) < 0.01)
+
+  expect_error(glmm(response ~ covariate + (1 | cluster),
+                    data = two_level, family = binomial,
+                    method = "SR", weights = rep(2.1, length(two_level$response))),
+               "non-integer weights")
 })

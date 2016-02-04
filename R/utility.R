@@ -72,3 +72,12 @@ find_pairs <- function(set) {
     return(NULL)
   }
 }
+
+check_weights <- function(weights) {
+  tol <- .Machine$double.eps^0.5
+  if(length(weights) > 0) {
+    weights_are_integers <- all(abs(weights - round(weights)) < tol)
+    if(!weights_are_integers)
+      stop("Cannot currently handle non-integer weights", call. = FALSE)
+  }
+}

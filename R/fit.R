@@ -14,6 +14,7 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                  devFunOnly = FALSE)
 {
   con <- find_control_with_defaults(control, method)
+  check_weights(weights)
 
   modfr <- glFormulaSub(formula, subformula = subformula, data = data,
                         family = family, weights = weights, offset = offset)
