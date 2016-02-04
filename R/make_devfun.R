@@ -2,39 +2,37 @@
 #' @inheritParams lme4::mkGlmerDevfun
 #' @inheritParams glmm
 #' @export
-mkGlmmDevfun <- function(fr, X, reTrms, family, control = glmmControl(), ...)
+mkGlmmDevfun <- function(modfr, method, control)
 {
-  devfun_lme4 <- mkGlmerDevfun(fr = fr, X = X, reTrms = reTrms, family = family,
-                               verbose = control$verbose,
-                               control = control, ...)
-  nAGQ_lme4 <- ifelse(control$method == "lme4", control$nAGQ, 1)
-  devfun_lme4 <- updateGlmerDevfun(devfun_lme4, reTrms, nAGQ = nAGQ_lme4)
-  switch(control$method,
-         lme4 = devfun_lme4,
-         SR = mkGlmmDevfunSR(fr, X, reTrms, family, devfun_lme4,
-                             n_sparse_levels = control$n_sparse_levels,
+  devfun_lme4 <- mkGlmerDevfun(fr = modfr$fr, X = modfr$X, reTrms = modfr$reTrms,
+                               family = modfr$family, control = lme4_control())
+  nAGQ_lme4 <- ifelse(method == "AGQ", control$nAGQ, 1)
+  devfun_lme4 <- updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = nAGQ_lme4)
+  switch(method,
+         Laplace = devfun_lme4,
+         AGQ = devfun_lme4,
+         SR = mkGlmmDevfunSR(modfr, devfun_lme4,
+                             nSL = control$nSL,
                              nAGQ = control$nAGQ),
          stop(cat("method", method, "not available"))
          )
 }
 
-mkGlmmDevfunSR <- function(fr, X, reTrms, family, devfun_lme4,
-                           n_sparse_levels, nAGQ) {
-  modfr <- list(fr = fr, X = X, reTrms = reTrms, family = family)
-  n_fixed <- ncol(X)
+mkGlmmDevfunSR <- function(modfr, devfun_lme4, nSL, nAGQ) {
+  n_fixed <- ncol(modfr$X)
   factorization_terms <- find_factorization_terms(modfr)
   calibration_pars <- calibration_parameters()
   calibration_pars$n_quadrature_points <- nAGQ
-  calibration_pars$n_sparse_levels <- n_sparse_levels
-  calibration_pars$family <- family$family
-  calibration_pars$link <- family$link
+  calibration_pars$n_sparse_levels <- nSL
+  calibration_pars$family <- modfr$family$family
+  calibration_pars$link <- modfr$family$link
   beliefs <- cluster_graph(factorization_terms)
 
   complexity_limit <- 5e5
-  if(beliefs$width^(2 * n_sparse_levels) > complexity_limit) {
-    stop(paste("The sequential reduction approximation with", n_sparse_levels,
+  if(beliefs$width^(2 * nSL) > complexity_limit) {
+    stop(paste("The sequential reduction approximation with", nSL,
                "sparse levels is too difficult to compute in this case.",
-               "Consider reducing n_sparse_levels, or using a different approximation method."),
+               "Consider reducing nSL, or using a different approximation method."),
          call. = FALSE)
   }
 

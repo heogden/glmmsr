@@ -37,7 +37,8 @@ cham_dat <- c(list(resp = resp, winner = winner, loser = loser,
 cham_mod <- glmm(resp ~ 0 + Sub(ability[winner, match] -
                                 ability[loser, match]),
                 ability[i, m] ~ 0 + prevwins2[i, m] + ch.res[i]
-                + prop.main[i] + (1 | i), family = binomial, data = cham_dat)
+                + prop.main[i] + (1 | i), family = binomial, data = cham_dat,
+                method = "Laplace")
 
 summary(cham_mod, correlation = FALSE, show.resids = FALSE)
 

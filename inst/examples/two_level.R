@@ -5,13 +5,13 @@ mod_Laplace <- glmm(response ~ covariate + (1 | cluster),
 mod_Laplace
 
 # or increase the number of adaptive Gaussian quadrature points
-mod_10 <- glmm(response ~ covariate + (1 | cluster),
+mod_8 <- glmm(response ~ covariate + (1 | cluster),
                data = two_level, family = binomial,
-               control = glmmControl(method = "lme4", nAGQ = 10))
-mod_10
+               method = "AGQ", control = list(nAGQ = 8))
+mod_8
 
 # we can fit the same model using the sequential reduction approximation
-mod_10_SR <- glmm(response ~ covariate + (1 | cluster),
-                  data = two_level, family = binomial,
-                  control = glmmControl(method = "SR", nAGQ = 10, k = 1))
-mod_10_SR
+mod_SR <- glmm(response ~ covariate + (1 | cluster),
+               data = two_level, family = binomial,
+               method = "SR", control = list(nSL = 3))
+mod_SR

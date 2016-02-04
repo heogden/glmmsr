@@ -16,17 +16,19 @@ flatlizardspred[is.na(flatlizardspred$throat.PC3), ] <- 0
 lizards <- c(list(result = result, winner = winner, loser = loser), flatlizardspred)
 lizards_BT <- list(contests = flatlizards$contests, predictors = flatlizardspred)
 
-lizards_mod <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
-               ability[liz] ~ 0 + throat.PC1[liz] +
-                      throat.PC3[liz] + head.length[liz] + SVL[liz] + (1 | liz),
-               data = lizards, family = binomial(link = "probit"))
-summary(lizards_mod)
+form <- as.formula(result ~ 0 + Sub(ability[winner] - ability[loser]))
+subform <- as.formula(ability[liz] ~ 0 + throat.PC1[liz] +
+                     throat.PC3[liz] + head.length[liz] + SVL[liz] + (1 | liz))
 
-lizards_mod_SR <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
-                    ability[liz] ~ 0 + throat.PC1[liz] +
-                      throat.PC3[liz] + head.length[liz] + SVL[liz] + (1 | liz),
-                    data = lizards, family = binomial(link = "probit"),
-                    control = glmmControl(method = "SR", n_sparse_levels = 4, nAGQ = 10, verbose = TRUE))
+lizards_mod_Laplace <- glmm(formula = form, subformula = subform,
+                            data = lizards, family = binomial(link = "probit"),
+                            method = "Laplace")
+summary(lizards_mod_Laplace)
+
+lizards_mod_SR <- glmm(formula = form, subformula = subform,
+                       data = lizards, family = binomial(link = "probit"),
+                       method = "SR")
+summary(lizards_mod_SR)
 
 lizardsmod_BTm <- BTm(y, winner, loser, ~ throat.PC1[..] + throat.PC3[..] +
                       head.length[..] + SVL[..] + (1|..),

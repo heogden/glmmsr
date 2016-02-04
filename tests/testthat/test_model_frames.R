@@ -12,10 +12,8 @@ modfr_lme4 <- parse_formula(y ~ x + (1 | cluster), data = data,
                             family = binomial, weights = NULL, off = NULL)
 
 
-modfr_sub_fixed  <- parse_subformula(y ~ x, data = data,
-                                     control = glmmControl())
-modfr_sub_random <- parse_subformula(y ~ x + (1 | cluster), data = data,
-                                     control = glmmControl())
+modfr_sub_fixed  <- parse_subformula(y ~ x, data = data)
+modfr_sub_random <- parse_subformula(y ~ x + (1 | cluster), data = data)
 
 subset <- c(2, 5, 5, 6)
 modfr_sub_fixed_subset <- `[fr`(modfr_sub_fixed, subset)

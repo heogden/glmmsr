@@ -4,9 +4,8 @@
 \alias{glmm}
 \title{Fit a GLMM}
 \usage{
-glmm(formula, subformula = NULL, data = NULL, family = gaussian,
-  control = glmmControl(), weights = NULL, offset = NULL,
-  devFunOnly = FALSE)
+glmm(formula, subformula = NULL, data = NULL, family = gaussian, method,
+  control = list(), weights = NULL, offset = NULL, devFunOnly = FALSE)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -26,8 +25,8 @@ variables named in \code{formula}, and in any of the subformulas.}
 \item{family}{a GLM family, see \code{\link[stats]{glm}} and
     \code{\link[stats]{family}}.}
 
-\item{control}{the output of a call to \code{\link{glmmControl}}, a list
-containing control parameters.}
+\item{control}{a list of extra parameters controlling the approximation
+to the likelihood}
 
 \item{weights}{an optional vector of \sQuote{prior weights} to be used
       in the fitting process.  Should be \code{NULL} or a numeric
@@ -45,9 +44,6 @@ containing control parameters.}
     variables stored in its environment, it may not return
     \emph{exactly} the same values on subsequent calls (but the results
     should always be within machine tolerance).}
-
-\item{k}{integer scalar - the level of approximation used in the sequential
-reduction approximation to the likelihood.}
 }
 \description{
 Fit a GLMM

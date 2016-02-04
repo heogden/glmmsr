@@ -17,35 +17,16 @@ summaryGlmmMod <- function(x) {
   structure(x, class = "summaryGlmmMod")
 }
 
-find_approximation_name_lme4 <- function(nAGQ) {
-  if(nAGQ == 0) {
-    return(paste("lme4 with nAGQ = 0"))
-  }
-  if(nAGQ == 1) {
-    return(paste("Laplace approximation (lme4)"))
-  }
-  if(nAGQ > 1) {
-    return(paste("Adaptive Gaussian quadrature with", nAGQ, "points (lme4)"))
-  }
-}
-
-find_approximation_name_SR <- function(n_sparse_levels) {
-  if(n_sparse_levels == 1) {
-    return("Laplace approximation (sequential reduction)")
-  } else {
-    return(paste("Sequential reduction at level", n_sparse_levels))
-  }
-}
-
 #' Find the name of the likelihood approximation used for fitting
 #'
 #' @inheritParams glmm
 #' @return a string with the name of the likelihood approximation
-find_approximation_name <- function(control) {
-  switch(control$method,
-         "lme4" = find_approximation_name_lme4(control$nAGQ),
-         "SR" = find_approximation_name_SR(control$n_sparse_levels),
-         stop(cat("method", control$method, "not found")))
+find_approximation_name <- function(method, control) {
+  switch(method,
+         "Laplace" = "Laplace approximation (lme4)",
+         "AGQ" = paste("Adaptive Gaussian Quadrature with", control$nAGQ, "point (lme4)"),
+         "SR" = paste("Sequential reduction at level", control$nSL),
+         stop(cat("method", method, "not found")))
 }
 
 #' Print glmmMod object
@@ -55,7 +36,7 @@ find_approximation_name <- function(control) {
 #' @method print glmmMod
 #' @export
 print.glmmMod <- function(x, ...){
-  name <- find_approximation_name(x$control)
+  name <- find_approximation_name(x$method, x$control)
   cat("Generalized linear mixed model fit by maximum likelihood [glmmMod] \n")
   cat("Likelihood approximation:", name, "\n")
   cat("Family:", x$modfr$family$family, "(", x$modfr$family$link, ") \n")
@@ -110,7 +91,7 @@ summary.glmmMod <- function(object, ...) {
 #' @export
 print.summaryGlmmMod <- function(x, ...){
   fit <- x$fit
-  name <- find_approximation_name(fit$control)
+  name <- find_approximation_name(fit$method, fit$control)
   cat("Generalized linear mixed model fit by maximum likelihood [glmmMod] \n")
   cat("Likelihood approximation:", name, "\n")
   cat("Family:", fit$modfr$family$family, "(", fit$modfr$family$link, ") \n")

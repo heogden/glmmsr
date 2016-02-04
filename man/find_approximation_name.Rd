@@ -4,11 +4,11 @@
 \alias{find_approximation_name}
 \title{Find the name of the likelihood approximation used for fitting}
 \usage{
-find_approximation_name(control)
+find_approximation_name(method, control)
 }
 \arguments{
-\item{control}{the output of a call to \code{\link{glmmControl}}, a list
-containing control parameters.}
+\item{control}{a list of extra parameters controlling the approximation
+to the likelihood}
 }
 \value{
 a string with the name of the likelihood approximation

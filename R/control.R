@@ -1,77 +1,53 @@
-#' Control of GLMM fitting
-#'
-#' A version of \code{\link{glmerControl}}, from \code{lme4}, with different
-#' defaults.
-#'
-#' @param method the name of the method used for approximating the likelihood
-#' @param nAGQ the number of adaptive Gaussian quadrature points to use for integration
-#' @param k the level of sparse grid storage, used by method "SR"
-#' @param optimizer character - name of optimizing function(s). See
-#'  \code{\link{glmerControl}} for more details.
-#' @inheritParams lme4::glmerControl
-#' @inheritParams lme4::glmer
-#' @export
-glmmControl <- function(method = "lme4",
-                        nAGQ = 1,
-                        n_sparse_levels = 0,
-                        verbose = 0,
-                        optimizer = c("bobyqa", "Nelder_Mead"),
-                        restart_edge = FALSE,
-                        boundary.tol = 1e-5,
-                        calc.derivs=TRUE,
-                        use.last.params=FALSE,
-                        sparseX = FALSE,
-                        tolPwrss=1e-7,
-                        compDev=TRUE,
-                        nAGQ0initStep=TRUE,
-                        ## input checking options
-                        check.nobs.vs.rankZ = "ignore",
-                        check.nobs.vs.nlev = "ignore",
-                        check.nlev.gtreq.5 = "ignore",
-                        check.nlev.gtr.1 = "ignore",
-                        check.nobs.vs.nRE="ignore",
-                        check.rankX = c("message+drop.cols",
-                                        "silent.drop.cols", "warn+drop.cols",
-                                        "stop.deficient", "ignore"),
-                        check.scaleX  = "warning",
-                        check.formula.LHS = "stop",
-                        check.response.not.const = "ignore",
-                        ## convergence checking options
-                        check.conv.grad = .makeCC("warning", tol = 1e-3,
-                                                  relTol = NULL),
-                        check.conv.singular = .makeCC(action = "ignore",
-                                                      tol = 1e-4),
-                        check.conv.hess = .makeCC(action = "warning",
-                                                  tol = 1e-6),
-                        ## optimizer args
-                        optCtrl = list())
+# A version of glmerControl, from lme4,
+# with some options changed from their defaults
+lme4_control <- function()
 {
-  result <- lme4::glmerControl(optimizer = optimizer,
-                               restart_edge = restart_edge,
-                               boundary.tol = boundary.tol,
-                               use.last.params = use.last.params,
-                               sparseX = sparseX,
-                               tolPwrss = tolPwrss,
-                               compDev = compDev,
-                               nAGQ0initStep = nAGQ0initStep,
-                               check.nobs.vs.rankZ = check.nobs.vs.rankZ,
-                               check.nobs.vs.nlev = check.nobs.vs.nlev,
-                               check.nlev.gtreq.5 = check.nlev.gtreq.5,
-                               check.nlev.gtr.1 = check.nlev.gtr.1,
-                               check.nobs.vs.nRE = check.nobs.vs.nRE,
-                               check.rankX = check.rankX,
-                               check.scaleX = check.scaleX,
-                               check.formula.LHS = check.formula.LHS,
-                               check.response.not.const = check.response.not.const,
-                               check.conv.grad = check.conv.grad,
-                               check.conv.singular = check.conv.singular,
-                               check.conv.hess = check.conv.hess,
-                               optCtrl = optCtrl)
-  result$method <- method
-  result$nAGQ <- nAGQ
-  result$n_sparse_levels <- n_sparse_levels
+  lme4::glmerControl(check.nobs.vs.rankZ = "ignore",
+                     check.nobs.vs.nlev = "ignore",
+                     check.nlev.gtreq.5 = "ignore",
+                     check.nlev.gtr.1 = "ignore",
+                     check.nobs.vs.nRE = "ignore",
+                     check.rankX = c("message+drop.cols","silent.drop.cols", "warn+drop.cols",
+                                     "stop.deficient", "ignore"),
+                     check.scaleX  = "warning",
+                     check.formula.LHS = "stop",
+                     check.response.not.const = "ignore")
+}
 
-  result$verbose <- verbose
+# code modified from use of control in optim
+find_control_with_defaults <- function(control, method)
+{
+  if( length(method) == 0 )
+    stop("You must specify which method to use for likelihood approximation", call. = FALSE)
 
-  result
+  conLaplace <- list()
+  conAGQ <- list(nAGQ = 8)
+  conSR <- list(nSL = 3)
+  con_tot <- c(conAGQ, conSR)
+
+  con <- switch(method,
+                "Laplace" = conLaplace,
+                "AGQ" = conAGQ,
+                "SR" = conSR,
+                stop(paste("The method", method, "is not recognised")))
+
+  which_known <- which(names(control) %in% names(con_tot))
+  names_known <- names(control)[which_known]
+  names_unknown <- names(control)[!which_known]
+
+  which_needed <- which(names(control[which_known]) %in% names(con))
+  names_not_needed <- names_known[!which_needed]
+
+  if ( length(names_unknown) > 0 )
+    warning("unknown names in control: ", paste(names_unknown, collapse = ", "))
+
+  if ( length(names_not_needed) > 0 )
+    warning("For method = ", method, "parts of control were ignored: ", paste(names_not_needed, collapse = ", "))
+
+  con[names(control)] <- control
+  if(method == "SR") {
+    con$nAGQ <- 2^(con$nSL)
+  }
+
+  con
 }
