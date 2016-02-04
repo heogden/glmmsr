@@ -24,7 +24,7 @@ summaryGlmmMod <- function(x) {
 find_approximation_name <- function(method, control) {
   switch(method,
          "Laplace" = "Laplace approximation (lme4)",
-         "AGQ" = paste("Adaptive Gaussian Quadrature with", control$nAGQ, "point (lme4)"),
+         "AGQ" = paste("Adaptive Gaussian Quadrature with", control$nAGQ, "points (lme4)"),
          "SR" = paste("Sequential reduction at level", control$nSL),
          stop(cat("method", method, "not found")))
 }
