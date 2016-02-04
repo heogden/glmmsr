@@ -22,7 +22,7 @@ data <- list(x = x, player1 = player1, player2 = player2)
 test_that("passes to glFormula if no Sub() terms", {
     form <- y ~ 0 + (1 | player1) + (1 | player2)
     data <- list(y = y, player1 = player1, player2 = player2)
-    modfr1 <- glFormulaSub(form, data = data, family = binomial)
+    modfr1 <- find_modfr_glmm(form, data = data, family = binomial)
     modfr2 <- lme4::glFormula(form, data = data, family = binomial)
     expect_equal(modfr1$reTrms, modfr2$reTrms)
 })

@@ -1,5 +1,5 @@
 #' Find the log-likelihood function
-#' @param modfr a model frame, the output of find_modfr_glmm
+#' @param modfr a model frame, the output of \code{find_modfr_glmm}
 #' @inheritParams glmm
 #' @export
 find_lfun_glmm <- function(modfr, method, control)

@@ -7,7 +7,7 @@
 find_lfun_glmm(modfr, method, control)
 }
 \arguments{
-\item{modfr}{a model frame, the output of find_modfr_glmm}
+\item{modfr}{a model frame, the output of \code{find_modfr_glmm}}
 
 \item{control}{a list of extra parameters controlling the approximation
 to the likelihood}

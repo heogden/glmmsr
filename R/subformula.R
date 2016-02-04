@@ -155,8 +155,8 @@ parse_sub <- function(sub, data, family)
 #'
 #' @inheritParams glmm
 #' @export
-glFormulaSub <- function (formula, subformula = NULL, data = NULL,
-                          family = gaussian, weights = NULL, offset = NULL)
+find_modfr_glmm <- function (formula, subformula = NULL, data = NULL,
+                             family = gaussian, weights = NULL, offset = NULL)
 {
   if(is.list(subformula) || length(subformula) == 0L){
     subforms <- subformula
