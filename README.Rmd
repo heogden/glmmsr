@@ -22,37 +22,35 @@ limitations. First, except in very simple cases, `lme4` uses a Laplace
 approximation to the likelihood for inference, which may be of poor quality in 
 some cases. Second, it is difficult to fit some GLMMs, such as pairwise 
 comparison models, with `lme4`. 
-
 The `glmmsr` package aims to offer progress on both of these problems. 
 
-The sequential reduction approximation to the likelihood 
-is controlled by a parameter (`k`) 
-which allows the user to trade-off accuracy of the approximation against 
-computation time. 
+A user must choose which method to use to approximate
+the likelihood. In addition
+the the Laplace and adaptive Gaussian quadrature approximations,
+which are borrowed from `lme4`, the likelihood may
+be approximated by the sequential reduction approximation, which
+gives an accurate approximation to the likelihood in some situations
+where it is not possible to use adaptive Gaussian quadrature.
+The vignette provides more information about the different
+approximations.
 
-`glmmsr` also provides an extended interface to `lme4`. This
-interface allows easy fitting of pairwise comparison and many other interesting 
-models, which are difficult to fit directly with `lme4`.
-
-The vignette gives more details and examples of how to use 
-the sequential reduction approximation and the subformula 
-interface.
+The interface of `glmmsr` allows easy fitting of pairwise comparison 
+and many other interesting 
+models, which are difficult to fit with `lme4`.
+See the vignette for some examples.
 
 ## Installing `glmmsr`
 
-You will need the [devtools](https://github.com/hadley/devtools) package.
-
-Then run
+You can install this development version of `glmmsr` 
+by running
 ```{r, eval = FALSE}
 devtools::install_github("heogden/glmmsr", build_vignettes = TRUE)
 ```
 
-```
 ## Documentation
 
 To view the vignette for `glmmsr`, use
 ```{r, eval = FALSE}
 browseVignettes("glmmsr")
 ```
-or see [here](http://htmlpreview.github.io/?https://github.com/heogden/glmmsr/blob/master/inst/doc/glmmsr-vignette.html).
 
