@@ -33,10 +33,7 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, init_na = NULL,
   A <- solve(A_inv)
   devfun_ext <- function(param){
     result <- tryCatch(-2 * lfun(param),
-                       error = function(e) {
-                         warning(e)
-                         Inf
-                       })
+                       error = function(e) { Inf })
     if(verbose==1L){
       cat(".")
     }
