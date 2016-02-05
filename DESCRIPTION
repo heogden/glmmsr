@@ -1,5 +1,5 @@
 Package: glmmsr
-Title: Fit a Generalized Linear Mixed Model with Sequential Reduction
+Title: Fit a Generalized Linear Mixed Model
 Version: 0.0.0.9000
 Authors@R: person("Helen", "Ogden", , "heogden12@gmail.com", role = c("aut", "cre"))
 Description: Fit a generalized linear mixed model with the sequential reduction

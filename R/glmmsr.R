@@ -1,4 +1,4 @@
-#' glmmsr: fit GLMMs with the sequential reduction approximation
+#' glmmsr: fit GLMMs with various approximation methods
 #'
 #' The glmmsr package provides functions to do inference on generalized linear
 #' mixed models, using the sequential reduction approximation to the likelihood.
