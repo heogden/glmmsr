@@ -24,7 +24,7 @@ The `glmmsr` package aims to offer progress on both of these problems.
 
 A user must choose which method to use to approximate
 the likelihood. In addition
-the the Laplace and adaptive Gaussian quadrature approximations,
+to the Laplace and adaptive Gaussian quadrature approximations,
 which are borrowed from `lme4`, the likelihood may
 be approximated by the sequential reduction approximation [@Ogden2015], which
 gives an accurate approximation to the likelihood in some situations
