@@ -4,22 +4,22 @@
 \name{glmmsr}
 \alias{glmmsr}
 \alias{glmmsr-package}
-\title{glmmsr: fit GLMMs with the sequential reduction approximation}
+\title{glmmsr: fit GLMMs with various approximation methods}
 \description{
-The glmmsr package provides functions to do inference on generalized linear
-mixed models, using the sequential reduction approximation to the likelihood.
-The interface and output are designed to look similar to lme4.
+The glmmsr package provides functions to conduct inference about generalized linear
+mixed models, giving the user a choice about which method to use to
+approximate the likelihood.
 }
 \details{
-The \code{lme4} package uses the Laplace approximation to the likelihood,
-except in the special case of two-level models, where adapative Gaussian
-quadrature may be used. In some situations, this Laplace approximation may be
-poor quality, and the sequential reduction approximation may be used to find
-an accurate approximation to the likelihood.
+In addition to the Laplace and adaptive Gaussian quadrature approximations,
+which are borrowed from \code{lme4}, the likelihood may
+be approximated by the sequential reduction approximation, which
+gives an accurate approximation to the likelihood in some situations
+where it is not possible to use adaptive Gaussian quadrature.
 
 The main function of the glmmsr package is \code{\link{glmm}}, which is
-used to fit the GLMM. Its interface is a generalization of
-\code{\link[lme4]{glmer}}, to allow a larger class of models, including
+used to fit the GLMM. Its interface allows a larger class of models than
+those allowed by \code{lme4}, including
 structured pairwise comparison models.
 }
 \references{
