@@ -5,7 +5,8 @@
 \title{Fit a GLMM}
 \usage{
 glmm(formula, subformula = NULL, data = NULL, family = gaussian,
-  method = NULL, control = list(), weights = NULL, offset = NULL)
+  method = NULL, control = list(), weights = NULL, offset = NULL,
+  verbose = 1L)
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -42,6 +43,10 @@ to the likelihood}
     equal to the number of cases.  One or more \code{\link{offset}}
     terms can be included in the formula instead or as well, and if more
     than one is specified their sum is used.  See \code{\link{model.offset}}.}
+
+\item{verbose}{controls how much detail to print out while fitting the model.
+For verbose = 0, print nothing. For verbose = 1 (the default), print
+output approximately once a second during model fitting.}
 }
 \description{
 Fit a GLMM

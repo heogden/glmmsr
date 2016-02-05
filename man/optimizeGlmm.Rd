@@ -4,7 +4,7 @@
 \alias{optimizeGlmm}
 \title{Maximize the approximated log-likelihood}
 \usage{
-optimizeGlmm(lfun, p_beta, p_theta, init_na = NULL, verbose = 0L)
+optimizeGlmm(lfun, p_beta, p_theta, init_na = NULL, verbose = 1L)
 }
 \arguments{
 \item{lfun}{the approximated loglikelihood function}
@@ -15,9 +15,9 @@ optimizeGlmm(lfun, p_beta, p_theta, init_na = NULL, verbose = 0L)
 
 \item{init_na}{a normal approximation to the log-likelihood surface}
 
-\item{verbose}{integer. If verbose=0, nothing is printed. If verbose=1, a
-dot is printed for each likelihood evaluation. If verbose=2, the values of
-the parameters and the likelihood are printed for each evaluation.}
+\item{verbose}{controls how much detail to print out while fitting the model.
+For verbose = 0, print nothing. For verbose = 1 (the default), print
+output approximately once a second during model fitting.}
 }
 \value{
 A list, containing the parameter estimate and variance matrix

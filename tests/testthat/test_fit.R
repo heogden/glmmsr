@@ -19,13 +19,14 @@ subform <- ability[player] ~ 0 + x[player] + (1 | player)
 data <- list(y = y, x = x, player1 = player1, player2 = player2)
 
 fit <- glmm(formula, subform, data = data, family = binomial,
-            method = "Laplace")
+            method = "Laplace", verbose = 0)
 
 
 test_that("doesn't matter what name used for index", {
   subform_i <- ability[i] ~ 0 + x[i] + (1 | i)
   data_i <- list(x = x, player1 = player1, player2 = player2)
-  fit_i <- glmm(formula, subform_i, data = data_i, family = binomial, method = "Laplace")
+  fit_i <- glmm(formula, subform_i, data = data_i, family = binomial,
+                method = "Laplace", verbose = 0)
   expect_equal(fit$estim, fit_i$estim)
   expect_equal(fit$Sigma, fit_i$Sigma)
 })
@@ -36,7 +37,8 @@ test_that("different forms of indexing give same result", {
   player2_num <- rep(1:9, 10)
   data_num <- list(x = x, player1 = player1_num, player2 = player2_num)
 
-  fit_num <- glmm(formula, subform, data = data_num, family = binomial, method = "Laplace")
+  fit_num <- glmm(formula, subform, data = data_num, family = binomial,
+                  method = "Laplace", verbose = 0)
   expect_equal(fit$estim, fit_num$estim)
   expect_equal(fit$Sigma, fit_num$Sigma)
 })
@@ -53,12 +55,12 @@ test_that("OK if don't use all rows of X", {
                     player1 = player1_no_1_num, player2 = player2_no_1_num)
 
   fit_no_1 <- glmm(formula, subform, data = data_no_1,
-                   family = binomial, method = "Laplace")
+                   family = binomial, method = "Laplace", verbose = 0)
   expect_equal(fit$estim, fit_no_1$estim)
   expect_equal(fit$Sigma, fit_no_1$Sigma)
 
   fit_no_1_num <- glmm(formula, subform, data = data_no_1_num,
-                       family = binomial, method = "Laplace")
+                       family = binomial, method = "Laplace", verbose = 0)
   expect_equal(fit$estim, fit_no_1_num$estim)
   expect_equal(fit$Sigma, fit_no_1_num$Sigma)
 })
@@ -67,7 +69,7 @@ test_that("includes offset", {
   set.seed(1)
   offset <- rnorm(length(y))
   fit_off <- glmm(formula, subform, data = data, family = binomial,
-                  offset = offset, method = "Laplace")
+                  offset = offset, method = "Laplace", verbose = 0)
   expect_false(identical(fit$estim, fit_off$estim))
 })
 
@@ -79,7 +81,7 @@ test_that("random effects at observation level work OK", {
   data_re_obs$gr <- gr
   formula_re_obs <- y ~ 0 + (1 | gr) + Sub(ability[player1] - ability[player2])
   fit_re_obs <- glmm(formula_re_obs, subform, data = data_re_obs,
-                     family = binomial, method = "Laplace")
+                     family = binomial, method = "Laplace", verbose = 0)
 })
 
 test_that("fits a two-level model correctly", {
@@ -88,13 +90,13 @@ test_that("fits a two-level model correctly", {
   estim_8_glmer <- c(mod_8_glmer@theta, mod_8_glmer@beta)
   mod_8 <- glmm(response ~ covariate + (1 | cluster),
                  data = two_level, family = binomial, method = "AGQ",
-                 control = list(nAGQ = 8))
+                 control = list(nAGQ = 8), verbose = 0)
   estim_8 <- mod_8$estim
   expect_true(sum(abs(estim_8_glmer - estim_8)) < 0.001)
 
   mod_8_SR <- glmm(response ~ covariate + (1 | cluster),
                     data = two_level, family = binomial, method = "SR",
-                    control = list(nSL = 3))
+                    control = list(nSL = 3), verbose = 0)
 
   estim_8_SR <- mod_8_SR$estim
 
@@ -108,10 +110,10 @@ test_that("factor response handled correctly", {
                                       levels = c("N", "Y"))
   mod_num <- glmm(response ~ covariate + (1 | cluster),
                   data = two_level, family = binomial, method = "SR",
-                  control = list(nSL = 3))
+                  control = list(nSL = 3), verbose = 0)
   mod_fac <- glmm(response ~ covariate + (1 | cluster),
                   data = two_level_factor, family = binomial, method = "SR",
-                  control = list(nSL = 3))
+                  control = list(nSL = 3), verbose = 0)
 
   expect_true(sum(abs(mod_num$estim - mod_fac$estim)) < 0.001)
 })
@@ -120,13 +122,13 @@ test_that("warns about unused control parameters", {
   expect_warning(
     glmm(response ~ covariate + (1 | cluster),
          data = two_level, family = binomial, method = "SR",
-         control = list(nSR = 3)),
+         control = list(nSR = 3), verbose = 0),
     "unknown names"
   )
   expect_warning(
     glmm(response ~ covariate + (1 | cluster),
          data = two_level, family = binomial, method = "Laplace",
-         control = list(nAGQ = 10)),
+         control = list(nAGQ = 10), verbose = 0),
     "parts of control were ignored"
   )
 })
@@ -137,32 +139,35 @@ test_that("uses weights", {
                            cluster = rep(two_level$cluster, 2))
   mod_double_Laplace <-  glmm(response ~ covariate + (1 | cluster),
                               data = two_level_double, family = binomial,
-                              method = "Laplace")
+                              method = "Laplace", verbose = 0)
   mod_w2_Laplace <- glmm(response ~ covariate + (1 | cluster),
                          data = two_level, family = binomial,
-                         method = "Laplace", weights = rep(2, length(two_level$response)))
+                         method = "Laplace", weights = rep(2, length(two_level$response)),
+                         verbose = 0)
   expect_equal(mod_double_Laplace$estim, mod_w2_Laplace$estim)
 
   mod_double_SR <-  glmm(response ~ covariate + (1 | cluster),
-                              data = two_level_double, family = binomial,
-                              method = "SR")
+                         data = two_level_double, family = binomial,
+                          method = "SR", verbose = 0)
   mod_w2_SR <- glmm(response ~ covariate + (1 | cluster),
-                         data = two_level, family = binomial,
-                         method = "SR", weights = rep(2, length(two_level$response)))
+                    data = two_level, family = binomial,
+                    method = "SR", weights = rep(2, length(two_level$response)),
+                    verbose = 0)
   expect_true(sum(abs(mod_double_SR$estim - mod_w2_SR$estim)) < 0.01)
 
   expect_error(glmm(response ~ covariate + (1 | cluster),
                     data = two_level, family = binomial,
-                    method = "SR", weights = rep(2.1, length(two_level$response))),
+                    method = "SR", weights = rep(2.1, length(two_level$response)),
+                    verbose = 0),
                "non-integer weights")
 })
 
 test_that("checks family", {
   expect_error(glmm(response ~ covariate + (1 | cluster),
-                    data = two_level, family = poisson, method = "SR"),
+                    data = two_level, family = poisson, method = "SR", verbose = 0),
                "Only binomial family currently implemented")
   expect_error(glmm(response ~ covariate + (1 | cluster),
                     data = two_level, family = binomial(link = "cauchit"),
-                    method = "SR"),
+                    method = "SR", verbose = 0),
                "Only logit and probit links")
 })

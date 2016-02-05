@@ -6,12 +6,10 @@
 #' @param p_beta the number of covariates
 #' @param p_theta the number of random effects
 #' @param init_na a normal approximation to the log-likelihood surface
-#' @param verbose integer. If verbose=0, nothing is printed. If verbose=1, a
-#'  dot is printed for each likelihood evaluation. If verbose=2, the values of
-#'  the parameters and the likelihood are printed for each evaluation.
+#' @inheritParams glmm
 #' @return A list, containing the parameter estimate and variance matrix
 optimizeGlmm <- function(lfun, p_beta, p_theta, init_na = NULL,
-                         verbose = 0L){
+                         verbose = 1L){
   p <- p_theta + p_beta
   if(length(init_na) > 0){
     mu <- init_na$mu
@@ -31,14 +29,18 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, init_na = NULL,
                          diag(sqrt(eigen_hess$values), nrow = p, ncol = p))
   A_inv <- hess_eigen_sqrt
   A <- solve(A_inv)
+
+
+
   devfun_ext <- function(param){
-    result <- tryCatch(-2 * lfun(param),
-                       error = function(e) { Inf })
-    if(verbose==1L){
-      cat(".")
-    }
-    if(verbose>1L){
-      cat(sprintf("%7.4f",param), " : ", sprintf("%7.4f",result), "\n")
+    result <- tryCatch(-2 * lfun(param), error = function(e) { Inf })
+
+    if(verbose > 0L){
+      count <<- count + 1
+       if(count > print_gap) {
+         cat(".")
+         count <<- 0
+       }
     }
     result
   }
@@ -46,11 +48,28 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, init_na = NULL,
     param <- as.numeric(A %*% param_std + mu)
     return(devfun_ext(param))
   }
+
+  time_threshold <- 0.1
+  time_interval <- 1
+  print_gap <- 100
+  count <- 0
+
   par0 <- rep(0, p)
+  t0 <- system.time(d0 <- devfun_std(par0))[[1]]
+  print_gap <- floor(time_interval / t0)
+
+  if(verbose > 0L && t0 > time_threshold)
+    cat("Approximating the likelihood at each point takes", t0, "seconds. \n")
+  if(!is.finite(d0))
+    stop("Could not approximate the likelihood at the starting parameters for optimization",
+         call. = FALSE)
+
+  if(verbose > 0L)
+    cat("Fitting the model .")
   out_std <- optim(par0, devfun_std, hessian=TRUE, method="BFGS",
                    control = list(maxit = 500))
   if(verbose > 0L){
-    cat("\n")
+    cat(" done.\n")
   }
   hess_std <- out_std$hessian
   estim_std <- out_std$par
