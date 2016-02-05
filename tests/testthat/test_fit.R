@@ -171,3 +171,12 @@ test_that("checks family", {
                     method = "SR", verbose = 0),
                "Only logit and probit links")
 })
+
+test_that("prev_fit doesn't affect the result", {
+  fit_SR <- glmm(formula, subform, data = data, family = binomial,
+                 method = "SR", verbose = 0)
+  fit_SR_prev_fit <- glmm(formula, subform, data = data, family = binomial,
+                          method = "SR", prev_fit = fit, verbose = 0)
+  expect_true(sum(abs(fit_SR$estim - fit_SR_prev_fit$estim)) < 0.01)
+})
+

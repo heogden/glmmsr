@@ -4,7 +4,7 @@
 \alias{optimizeGlmm}
 \title{Maximize the approximated log-likelihood}
 \usage{
-optimizeGlmm(lfun, p_beta, p_theta, init_na = NULL, verbose = 1L)
+optimizeGlmm(lfun, p_beta, p_theta, prev_fit = NULL, verbose = 1L)
 }
 \arguments{
 \item{lfun}{the approximated loglikelihood function}
@@ -13,7 +13,7 @@ optimizeGlmm(lfun, p_beta, p_theta, init_na = NULL, verbose = 1L)
 
 \item{p_theta}{the number of random effects}
 
-\item{init_na}{a normal approximation to the log-likelihood surface}
+\item{prev_fit}{a glmmMod object, the result of a previous model fit}
 
 \item{verbose}{controls how much detail to print out while fitting the model.
 For verbose = 0, print nothing. For verbose = 1 (the default), print

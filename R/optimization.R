@@ -5,15 +5,14 @@
 #' @param lfun the approximated loglikelihood function
 #' @param p_beta the number of covariates
 #' @param p_theta the number of random effects
-#' @param init_na a normal approximation to the log-likelihood surface
 #' @inheritParams glmm
 #' @return A list, containing the parameter estimate and variance matrix
-optimizeGlmm <- function(lfun, p_beta, p_theta, init_na = NULL,
+optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
                          verbose = 1L){
   p <- p_theta + p_beta
-  if(length(init_na) > 0){
-    mu <- init_na$mu
-    Sigma <- init_na$Sigma
+  if(length(prev_fit) > 0){
+    mu <- prev_fit$estim
+    Sigma <- prev_fit$Sigma
     if(any(eigen(Sigma, only.values = TRUE)$values < 1e-5)) {
       Sigma <- matrix(0, nrow = p, ncol = p)
       Sigma[row(Sigma) == col(Sigma)] <- 1

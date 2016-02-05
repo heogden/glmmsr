@@ -10,6 +10,7 @@
 #'  from \code{lme4}), and "SR" (the sequential reduction approximation)
 #' @param control a list of extra parameters controlling the approximation
 #'  to the likelihood
+#' @param prev_fit a glmmMod object, the result of a previous model fit
 #' @param verbose controls how much detail to print out while fitting the model.
 #'  For verbose = 0, print nothing. For verbose = 1 (the default), print
 #'  output approximately once a second during model fitting.
@@ -17,7 +18,7 @@
 #' @export
 glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                  method = NULL, control = list(), weights = NULL, offset = NULL,
-                 verbose = 1L)
+                 prev_fit = NULL, verbose = 1L)
 {
   con <- find_control_with_defaults(control, method)
   check_weights(weights)
@@ -30,7 +31,8 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
 
     p_beta <- ncol(modfr$X)
     p_theta <- length(modfr$reTrms$theta)
-    opt <- optimizeGlmm(lfun, p_beta = p_beta, p_theta = p_theta, verbose = verbose)
+    opt <- optimizeGlmm(lfun, p_beta = p_beta, p_theta = p_theta,
+                        prev_fit = prev_fit, verbose = verbose)
     if(all(modfr$reTrms$lower == 0)) {
       opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
       result <- glmmMod(list(estim = opt$estim, Sigma = opt$Sigma,
