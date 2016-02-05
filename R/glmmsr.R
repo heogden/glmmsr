@@ -35,3 +35,7 @@ NULL
 #'
 #' @example inst/examples/three_level.R
 "three_level"
+
+.onUnload <- function (libpath) {
+  library.dynam.unload("glmmsr", libpath)
+}
