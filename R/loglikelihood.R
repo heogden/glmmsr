@@ -21,6 +21,8 @@ find_lfun_glmm <- function(modfr, method, control)
 }
 
 find_lfun_SR <- function(modfr, devfun_lme4, nSL, nAGQ) {
+  check_modfr_SR(modfr)
+
   n_fixed <- ncol(modfr$X)
   factorization_terms <- find_factorization_terms(modfr)
   calibration_pars <- calibration_parameters()

@@ -81,3 +81,14 @@ check_weights <- function(weights) {
       stop("Cannot currently handle non-integer weights", call. = FALSE)
   }
 }
+
+check_modfr_SR <- function(modfr) {
+  family <- modfr$family$family
+  link <- modfr$family$link
+  if(family != "binomial")
+    stop("Only binomial family currently implemented for sequential reduction approximation",
+         call. = FALSE)
+  if(!link %in% c("logit", "probit"))
+    stop("Only logit and probit links currently implemented for sequential reduction approximation",
+         call. = FALSE)
+}

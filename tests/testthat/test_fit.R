@@ -156,3 +156,13 @@ test_that("uses weights", {
                     method = "SR", weights = rep(2.1, length(two_level$response))),
                "non-integer weights")
 })
+
+test_that("checks family", {
+  expect_error(glmm(response ~ covariate + (1 | cluster),
+                    data = two_level, family = poisson, method = "SR"),
+               "Only binomial family currently implemented")
+  expect_error(glmm(response ~ covariate + (1 | cluster),
+                    data = two_level, family = binomial(link = "cauchit"),
+                    method = "SR"),
+               "Only logit and probit links")
+})
