@@ -13,14 +13,27 @@ vignette: >
 
 ## Introduction
 
-The `glmmsr` package is designed to fit generalized linear mixed
-models (GLMMs). It is based on `lme4` [@lme4], but with 
-with more choices for the type of approximation to the likelihood used,
-and an extended interface
-to allow easy fitting of a wider range of models.
+Generalized linear mixed models (GLMMs) are an important and widely-used model 
+class. In R, we can fit these models with the 
+`lme4` package [@lme4], but there are some
+limitations. First, except in very simple cases, `lme4` uses a Laplace 
+approximation to the likelihood for inference, which may be of poor quality in 
+some cases. Second, it is difficult to fit some GLMMs, such as pairwise 
+comparison models, with `lme4`. 
+The `glmmsr` package aims to offer progress on both of these problems. 
 
-The function used to fit a GLMM is `glmm`, which is based on `glmer` from
-`lme4`.
+A user must choose which method to use to approximate
+the likelihood. In addition
+the the Laplace and adaptive Gaussian quadrature approximations,
+which are borrowed from `lme4`, the likelihood may
+be approximated by the sequential reduction approximation [@Ogden2015], which
+gives an accurate approximation to the likelihood in some situations
+where it is not possible to use adaptive Gaussian quadrature.
+
+The interface of `glmmsr` allows easy fitting of pairwise comparison 
+and many other interesting 
+models, which are difficult to fit with `lme4`.
+
 
 
 ## Approximations to the likelihood
@@ -32,19 +45,11 @@ The function used to fit a GLMM is `glmm`, which is based on `glmer` from
 ### The sequential reduction approximation
 The sequential reduction approximation to the likelihood is described in
 [@Ogden2015]. 
- There are two parameters which control the sequential reduction
-approximation. 
 
- 1. `nAGQ`, the number of adaptive Gaussian quadrature points
-  used for one-dimensional integration. A non-negative integer,
-  where the accuracy of the approximation 
-  In typical examples, `nAGQ = 10` is large enough to
-  give an accurate likelihood approximation.
- 2. `k`, the level of sparse grid storage. A non-negative integer, where the 
-  special case `k = 0` corresponds to the Laplace approximation, in
-  which case `glmm` passes to `lme4::glmer` to do the fitting.
-  In typical examples, `k = 3` is large enough to
-  give an accurate likelihood approximation.
+The approximation is controlled by a parameter `nSL`, the 
+level of sparse grid storage. `nSL` is a non-negative integer, 
+In typical examples, `nSL = 3` is large enough to
+give an accurate likelihood approximation.
 
 For example, the data `three_level`, available in
 `glmmsr`, is simulated from a binary three-level model.
@@ -78,11 +83,11 @@ We get an error message, because the likelihood does not reduce to a product
 of one-dimensional integrals in this case, as it does for a two-level model.
 
 Instead, we can use `glmm` to fit the model using the sequential reduction
-approximation, with `nAGQ = 10` quadrature points, and sparse grid storage level `k = 3`
-```{r, eval = FALSE}
+approximation, with 3 sparse grid levels.
+```{r}
 (mod_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
-                data = three_level, family = binomial, 
-                control = glmmControl(method = "SR", nAGQ = 10, k = 3)))
+                data = three_level, family = binomial, method = "SR",
+                control = list(nSL = 3)))
 ```
 The estimates of the random effects standard deviations
 are larger than the corresponding estimates from the Laplace approximation.
@@ -92,7 +97,7 @@ The interface of `glmm` also allows fitting
 of some more complex models which are not easy to fit using `lme4`.
 
 A typical call using this extended interface looks like
-`glmm(formula, subformula, data, family)`
+`glmm(formula, subformula, data, family, method, control)`
 where
 
 1. `formula` may contain one or more terms surrounded with `Sub(.)`. We call the
@@ -107,7 +112,7 @@ covariates.
 Next, we consider an example of the type of model we might want to fit using 
 this interface.
 
-## Pairwise competition models
+### Pairwise competition models
 Suppose that we observe the outcome of a set of matches played between pairs of 
 players, and that we also observe some covariates $x_{i}$ for each player $i$. 
 We suppose that each player $i$ has an 'ability' $\lambda_i$, and that
