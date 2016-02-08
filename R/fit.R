@@ -7,14 +7,23 @@
 #'  variables named in \code{formula}, and in any of the subformulas.
 #' @param method the method used to approximate the likelihood. The options
 #'  are "Laplace", "AGQ" (the adaptive Gaussian quadrature approximation,
-#'  from \code{lme4}), and "SR" (the sequential reduction approximation)
+#'  from \code{lme4}), and "SR" (the sequential reduction approximation).
 #' @param control a list of extra parameters controlling the approximation
-#'  to the likelihood
+#'  to the likelihood. See 'Details' for more information.
 #' @param prev_fit a glmmMod object, the result of a previous model fit
 #' @param verbose controls how much detail to print out while fitting the model.
 #'  For verbose = 0, print nothing. For verbose = 1 (the default), print
 #'  output approximately once a second during model fitting.
 #' @inheritParams lme4::glmer
+#' @details The \code{control} argument is a list, used to specify further
+#'  arguments controlling the approximation to the likelihood:
+#'  \describe{
+#'   \item{\code{nAGQ}}{the number of adaptive Gaussian quadrature points.
+#'   Only used if \code{method = "AGQ"}. Defaults to 8.}
+#'   \item{\code{nSL}}{the level of sparse grid storage.
+#'   Only used if \code{method = "SR"}. Defaults to 3.}
+#'  }
+#' @return An object of the class \code{glmmMod}
 #' @export
 glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                  method = NULL, control = list(), weights = NULL, offset = NULL,

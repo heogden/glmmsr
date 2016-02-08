@@ -28,10 +28,10 @@ variables named in \code{formula}, and in any of the subformulas.}
 
 \item{method}{the method used to approximate the likelihood. The options
 are "Laplace", "AGQ" (the adaptive Gaussian quadrature approximation,
-from \code{lme4}), and "SR" (the sequential reduction approximation)}
+from \code{lme4}), and "SR" (the sequential reduction approximation).}
 
 \item{control}{a list of extra parameters controlling the approximation
-to the likelihood}
+to the likelihood. See 'Details' for more information.}
 
 \item{weights}{an optional vector of \sQuote{prior weights} to be used
       in the fitting process.  Should be \code{NULL} or a numeric
@@ -50,7 +50,20 @@ to the likelihood}
 For verbose = 0, print nothing. For verbose = 1 (the default), print
 output approximately once a second during model fitting.}
 }
+\value{
+An object of the class \code{glmmMod}
+}
 \description{
 Fit a GLMM
+}
+\details{
+The \code{control} argument is a list, used to specify further
+ arguments controlling the approximation to the likelihood:
+ \describe{
+  \item{\code{nAGQ}}{the number of adaptive Gaussian quadrature points.
+  Only used if \code{method = "AGQ"}. Defaults to 8.}
+  \item{\code{nSL}}{the level of sparse grid storage.
+  Only used if \code{method = "SR"}. Defaults to 3.}
+ }
 }
 

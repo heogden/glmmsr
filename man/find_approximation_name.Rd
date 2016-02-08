@@ -9,10 +9,10 @@ find_approximation_name(method, control)
 \arguments{
 \item{method}{the method used to approximate the likelihood. The options
 are "Laplace", "AGQ" (the adaptive Gaussian quadrature approximation,
-from \code{lme4}), and "SR" (the sequential reduction approximation)}
+from \code{lme4}), and "SR" (the sequential reduction approximation).}
 
 \item{control}{a list of extra parameters controlling the approximation
-to the likelihood}
+to the likelihood. See 'Details' for more information.}
 }
 \value{
 a string with the name of the likelihood approximation

@@ -11,10 +11,10 @@ find_lfun_glmm(modfr, method, control)
 
 \item{method}{the method used to approximate the likelihood. The options
 are "Laplace", "AGQ" (the adaptive Gaussian quadrature approximation,
-from \code{lme4}), and "SR" (the sequential reduction approximation)}
+from \code{lme4}), and "SR" (the sequential reduction approximation).}
 
 \item{control}{a list of extra parameters controlling the approximation
-to the likelihood}
+to the likelihood. See 'Details' for more information.}
 }
 \description{
 Find the log-likelihood function
