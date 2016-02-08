@@ -157,3 +157,31 @@ print.summaryGlmmMod <- function(x, ...){
   colnames(fixed_mat) <- c("Estimate", "Std. Error", "z value", "Pr(>|z|)")
   print(fixed_mat, digits = 4)
 }
+
+coef_random.glmmMod <- function(x) {
+  p_theta <- length(x$modfr$reTrms$theta)
+
+  names_theta <- unlist(unname(x$modfr$reTrms$cnms))
+  estim_random <- x$estim[1:p_theta]
+  names(estim_random) <- names_theta
+
+  estim_random
+}
+
+coef_fixed.glmmMod <- function(x) {
+  p_theta <- length(x$modfr$reTrms$theta)
+  p_beta <- ncol(x$modfr$X)
+  p <- p_beta + p_theta
+
+  names_beta <- attr(x$modfr$X,"dimnames")[[2]]
+  which_fixed <- (p_theta+1):p
+  estim_fixed <- x$estim[which_fixed]
+  names(estim_fixed) <- names_beta
+
+  estim_fixed
+}
+
+
+coef.glmmMod <- function(x) {
+  list(fixed = coef_fixed.glmmMod(x), random = coef_random.glmmMod(x))
+}
