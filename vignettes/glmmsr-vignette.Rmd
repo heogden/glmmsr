@@ -11,10 +11,10 @@ vignette: >
   
 ---
 
-## Introduction
+# Introduction
 
 Generalized linear mixed models (GLMMs) are an important and widely-used model 
-class. In R, we can fit these models with the 
+class. In R, it is possible to these models with the 
 `lme4` package [@lme4], but there are some
 limitations. First, except in very simple cases, `lme4` uses a Laplace 
 approximation to the likelihood for inference, which may be of poor quality in 
@@ -34,65 +34,149 @@ The interface of `glmmsr` allows easy fitting of pairwise comparison
 and many other interesting 
 models, which are difficult to fit with `lme4`.
 
+# Approximations to the likelihood
 
+##  Example: a two-level model
+Suppose that our data are clustered, so that we observe $y_{ij}$
+for $i=1, \ldots, m$ and $j = 1, \ldots, m_i$,
+where $y_{ij}$ is the $j$th obervation from the
+$i$th cluster.
+We model $Y_{ij} \sim \text{Bernoulli}(p_{ij})$
+where $\log(p_{ij} / 1 - p_{ij}) = \alpha + \beta x_{ij} + \sigma u_i,$
+and $b_i \sim N(0, \sigma^2)$.
+The data `two_level`, available in
+`glmmsr`, is simulated from a binary two-level model
+with $m_i = 2$ observations per cluster, and 
+with $m = 50$ clusters in total.  
 
-## Approximations to the likelihood
+We want to infer the parameters
+$\theta = (\alpha, \beta, \sigma)$ of the model. 
+The likelihood may be written as
+$$L(\theta) = \int g(u; \theta) du,$$
+where $$g(u; \theta) = \prod_{i=1}^n \prod_{j=1}^{m_i} Pr(Y_{ij} = y_{ij} | u_i, \theta) \phi(u_i).$$
 
-### The Laplace approximation
+For this model, and for other GLMMs, 
+the likelihood function is an integral over the latent variables.
+It is not possible to compute this integral exactly, except in the
+case of a linear mixed model.
+In \code{glmmsr}, the interface for fitting this model is
+```{r, eval = FALSE}
+glmm(response ~ covariate + (1 | cluster), data = two_level,
+     family = binomial, method = method)
+```
+where the choice of `method` determines the approximation
+to the likelihood. There is no default for `method`. This is a deliberate
+choice, to highlight to the user that some approximation must be used, and
+that the choice of this approximation might affect the resulting inference.
 
-### Adaptive Gaussian quadrature
+### The Laplace approximation (`method = "Laplace"`)
+The Laplace approximation works by approximating the integrand
+by a function proportional to a Gaussian density.
 
-### The sequential reduction approximation
+```{r}
+library(glmmsr)
+(mod_Laplace <- glmm(response ~ covariate + (1 | cluster), data = two_level,
+                     family = binomial, method = "Laplace"))
+```
+We have obtained some parameter estimates, but do not know if these
+are close to the maximum likelihood estimates. Typically the structure
+of the data gives some hints about the quality of the Laplace approximation:
+if the data are `sparse`, in that there is only a small number
+of observations per random effect, the Laplace approximation may be a poor
+approximation to the likelihood. This is certainly the case here, since
+we only have two observations per cluster, and we would like to try
+using a more accurate approximation to the likelihood.
+
+### Adaptive Gaussian quadrature (`method = "AGQ"`)
+For a two-level model, where each observation is contained within
+a single cluster, the likelihood simplifies into a product of
+one-dimensional integrals. 
+$$L(\theta) = \prod_{i=1}^m  \prod_{j=1}^{m_i} Pr(Y_{ij} = y_{ij} | u_i, \theta) \phi(u_i) \int  du_i.$$
+In that case, we can use adaptive Gaussian
+quadrature with `nAGQ` points to approximate each of the one-dimensional 
+integrals.
+```{r}
+glmm(response ~ covariate + (1 | cluster), data = two_level,
+     family = binomial, method = "AGQ", control = list(nAGQ = 16),
+     prev_fit = mod_Laplace)
+```
+The estimate of the random effect standard deviation is significantly
+larger than that obtained using the Laplace approximation to the likelihood.
+
+Unfortunately, we can only use this method for a simple two-level model.
+Next, we consider a situation where we cannot use this method.
+
+## Example: three-level model
+
+Now suppose that each of the clusters is itself
+contained within a larger group, so that we observe $y_{ijk}$
+for $i=1, \ldots, m,$ $j = 1, \ldots, m_i$ and $k = 1, \ldots, m_{ij}$,
+where $y_{ijk}$ represents the $k$th observation in the $j$th cluster
+of the $i$th group.
+We have $Y_{ijk} \sim \text{Bernoulli}(p_{ijk})$
+where $\log(p_{ijk} / 1 - p_{ijk}) = \alpha + \beta x_{ijk} + b_i + c_j,$
+$b_i \sim N(0, \sigma_b^2)$ and $c_j \sim N(0, \sigma_c^2)$.
+
+The data `three_level`, available in
+`glmmsr`, is simulated from a binary two-level model
+with $m_{ij} = 2$ observations per cluster, $m_i = 2$ clusters
+per group, and $m = 50$ clusters in total.  
+
+We may fit the model with the Laplace approximation to the likelihood
+```{r}
+(mod_3_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                       data = three_level, family = binomial, method = "Laplace"))
+```
+The structure is sparse -- there is little
+information provided by the data about the value of each random effect --
+so we might again question whether the Laplace approximation is of
+sufficiently high quality.
+
+We could try to increase the accuracy of the approximation by using 
+adaptive Gaussian quadrature to approximation the integral.
+```{r, error = TRUE}
+glmm(response ~ covariate + (1 | cluster) + (1 | group), data = three_level,
+     family = binomial, method = "AGQ", control = list(nAGQ = 16))
+```
+We get an error message, because the likelihood does not reduce to a product
+of one-dimensional integrals in this case, as it does for a two-level model.
+
+### The sequential reduction approximation (`method = "SR"`)
 The sequential reduction approximation to the likelihood is described in
 [@Ogden2015]. 
 
 The approximation is controlled by a parameter `nSL`, the 
 level of sparse grid storage. `nSL` is a non-negative integer, 
+where `nSL = 0` corresponds to the Laplace approximation, 
+and increasing `nSL` gives a more accurate approximation to the likelihood.
+In the special case of a two-level model, sequential reduction is equivalent
+to adaptive Gaussian quadrature with $2^{n_{SL}}$.
 In typical examples, `nSL = 3` is large enough to
 give an accurate likelihood approximation.
 
-For example, the data `three_level`, available in
-`glmmsr`, is simulated from a binary three-level model.
-Each observation is contained with a cluster, and each of those clusters
-in contained within a group. In our simulated example, 
-there are two observations per cluster, and two clusters per group,
-with $50$ groups in total.  
-
-```{r, echo = FALSE}
-library(glmmsr)
-```
-We could fit the model using `glmer`, which by default uses a Laplace
-approximation to the likelihood
-```{r}
-(mod_Laplace <- lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
-                           data = three_level, family = binomial))
-```
-
-The structure is sparse -- there is little
-information provided by the data about the value of each random effect --
-so we might question whether the Laplace approximation is of
-sufficiently high quality.
-
-We try to increase the accuracy of the approximation by using a larger 
-number of quadrature points
-```{r, error = TRUE}
-lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
-                           data = three_level, family = binomial, nAGQ = 10)
-```
-We get an error message, because the likelihood does not reduce to a product
-of one-dimensional integrals in this case, as it does for a two-level model.
-
-Instead, we can use `glmm` to fit the model using the sequential reduction
+In the three-level example,
+can use `glmm` to fit the model using the sequential reduction
 approximation, with 3 sparse grid levels.
 ```{r}
-(mod_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+(mod_3_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
                 data = three_level, family = binomial, method = "SR",
-                control = list(nSL = 3)))
+                control = list(nSL = 3), prev_fit = mod_3_Laplace))
 ```
 The estimates of the random effects standard deviations
 are larger than the corresponding estimates from the Laplace approximation.
 
-## The subformula interface
+To check the quality of the approximation, we could increase the level
+of sparse grid storage
+```{r}
+(mod_3_SR_4 <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                data = three_level, family = binomial, method = "SR",
+                control = list(nSL = 4), prev_fit = mod_3_SR))
+```
+We see that the parameter estimates are very close to those obtained with
+the lower level of sparse grid storage, and conclude that we are likely
+to have estimates close to the exact maximum likelihood estimates.
+
+# The subformula interface
 The interface of `glmm` also allows fitting
 of some more complex models which are not easy to fit using `lme4`.
 
