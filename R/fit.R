@@ -6,11 +6,11 @@
 #' @param data an optional data frame, list or environment containing the
 #'  variables named in \code{formula}, and in any of the subformulas.
 #' @param method the method used to approximate the likelihood. The options
-#'  are "Laplace", "AGQ" (the adaptive Gaussian quadrature approximation,
-#'  from \code{lme4}), and "SR" (the sequential reduction approximation).
+#'  are \code{"Laplace"}, \code{"AGQ"} (the adaptive Gaussian quadrature approximation,
+#'  from \code{lme4}), and \code{"SR"} (the sequential reduction approximation).
 #' @param control a list of extra parameters controlling the approximation
 #'  to the likelihood. See 'Details' for more information.
-#' @param prev_fit a glmmMod object, the result of a previous model fit
+#' @param prev_fit a \code{glmmMod} object, the result of a previous model fit.
 #' @param verbose controls how much detail to print out while fitting the model.
 #'  For verbose = 0, print nothing. For verbose = 1 (the default), print
 #'  output approximately once a second during model fitting.
