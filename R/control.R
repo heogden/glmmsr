@@ -21,7 +21,7 @@ find_control_with_defaults <- function(control, method)
     stop("You must specify which method to use for likelihood approximation", call. = FALSE)
 
   conLaplace <- list()
-  conAGQ <- list(nAGQ = 8)
+  conAGQ <- list(nAGQ = 15)
   conSR <- list(nSL = 3)
   con_tot <- c(conAGQ, conSR)
 
@@ -48,7 +48,7 @@ find_control_with_defaults <- function(control, method)
 
   con[names(control)] <- control
   if(method == "SR") {
-    con$nAGQ <- 2^(con$nSL)
+    con$nAGQ <- 2^(con$nSL + 1) - 1
   }
 
   con

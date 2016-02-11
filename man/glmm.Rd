@@ -61,7 +61,7 @@ The \code{control} argument is a list, used to specify further
  arguments controlling the approximation to the likelihood:
  \describe{
   \item{\code{nAGQ}}{the number of adaptive Gaussian quadrature points.
-  Only used if \code{method = "AGQ"}. Defaults to 8.}
+  Only used if \code{method = "AGQ"}. Defaults to 15.}
   \item{\code{nSL}}{the level of sparse grid storage.
   Only used if \code{method = "SR"}. Defaults to 3.}
  }

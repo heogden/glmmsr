@@ -150,9 +150,10 @@ level of sparse grid storage. `nSL` is a non-negative integer,
 where `nSL = 0` corresponds to the Laplace approximation, 
 and increasing `nSL` gives a more accurate approximation to the likelihood.
 In the special case of a two-level model, sequential reduction is equivalent
-to adaptive Gaussian quadrature with $2^{n_{SL}}$ quadrature points.
-In typical examples, `nSL = 3` is large enough to
-give an accurate likelihood approximation.
+to adaptive Gaussian quadrature with $2^{n_{SL} + 1} - 1$ quadrature points.
+Typically `nSL = 3` is large enough to give inference fairly
+close to the exact likelihood inference, although this
+varies according to the structure of the model.
 
 In the three-level example,
 can use `glmm` to fit the model using the sequential reduction

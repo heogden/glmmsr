@@ -85,22 +85,22 @@ test_that("random effects at observation level work OK", {
 })
 
 test_that("fits a two-level model correctly", {
-  mod_8_glmer <- lme4::glmer(response ~ covariate + (1 | cluster),
-                        data = two_level, family = binomial, nAGQ = 8)
-  estim_8_glmer <- c(mod_8_glmer@theta, mod_8_glmer@beta)
-  mod_8 <- glmm(response ~ covariate + (1 | cluster),
+  mod_15_glmer <- lme4::glmer(response ~ covariate + (1 | cluster),
+                        data = two_level, family = binomial, nAGQ = 15)
+  estim_15_glmer <- c(mod_15_glmer@theta, mod_15_glmer@beta)
+  mod_15 <- glmm(response ~ covariate + (1 | cluster),
                  data = two_level, family = binomial, method = "AGQ",
-                 control = list(nAGQ = 8), verbose = 0)
-  estim_8 <- mod_8$estim
-  expect_true(sum(abs(estim_8_glmer - estim_8)) < 0.001)
+                 control = list(nAGQ = 15), verbose = 0)
+  estim_15 <- mod_15$estim
+  expect_true(sum(abs(estim_15_glmer - estim_15)) < 0.001)
 
-  mod_8_SR <- glmm(response ~ covariate + (1 | cluster),
-                    data = two_level, family = binomial, method = "SR",
-                    control = list(nSL = 3), verbose = 0)
+  mod_3_SR <- glmm(response ~ covariate + (1 | cluster),
+                   data = two_level, family = binomial, method = "SR",
+                   control = list(nSL = 3), verbose = 0)
 
-  estim_8_SR <- mod_8_SR$estim
+  estim_3_SR <- mod_3_SR$estim
 
-  expect_true(sum(abs(estim_8_SR - estim_8)) < 0.001)
+  expect_true(sum(abs(estim_3_SR - estim_15)) < 0.001)
 
 })
 
