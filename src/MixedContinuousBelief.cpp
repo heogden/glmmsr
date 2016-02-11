@@ -73,7 +73,7 @@ MixedContinuousBelief MixedContinuousBelief::integrate
   };
   IntegratedFunction integratedBelief(relativeItem, eval, 
 				      deriv, secondDeriv, 
-				      normalApprox.getMean());
+				      normalApprox);
 
   auto integral = [&integratedBelief, &parameters]
     (const Eigen::VectorXd& x) {

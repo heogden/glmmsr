@@ -16,7 +16,7 @@ class IntegratedFunction
 
  public:
   IntegratedFunction(int, ScalarFun, VectorFun, MatrixFun, 
-		     const Vector&);
+		     const MultiNormal&);
 
   double evaluate(const Vector&, const QuadratureRule&) const;
   Vector evaluateDerivative(const Vector&,
@@ -40,7 +40,7 @@ class IntegratedFunction
   Vector cross_;
   double sigmaConditional_;
   
-  void initializeNormal(const Vector&);
+  void initializeNormal();
   void initializeConditionalTerms();
 
   double findConditionalMean(const Vector&) const;

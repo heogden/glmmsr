@@ -104,6 +104,21 @@ test_that("fits a two-level model correctly", {
 
 })
 
+test_that("nSL = 0 gives similar result to Laplace", {
+  mod_SR_0 <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                   data = three_level, family = binomial, method = "SR",
+                   control = list(nSL = 0), verbose = 0)
+  mod_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                      data = three_level, family = binomial,
+                      method = "Laplace", verbose = 0)
+
+  estim_SR_0 <- mod_SR_0$estim
+  estim_Laplace <- mod_Laplace$estim
+
+  expect_true(sum(abs(estim_SR_0 - estim_Laplace)) < 1e-6)
+
+})
+
 test_that("factor response handled correctly", {
   two_level_factor <- two_level
   two_level_factor$response <- factor(c("N", "Y")[two_level$response + 1],
@@ -174,9 +189,9 @@ test_that("checks family", {
 
 test_that("prev_fit doesn't affect the result", {
   fit_SR <- glmm(formula, subform, data = data, family = binomial,
-                 method = "SR", verbose = 0)
+                 method = "SR", prev_fit = fit, verbose = 0)
   fit_SR_prev_fit <- glmm(formula, subform, data = data, family = binomial,
-                          method = "SR", prev_fit = fit, verbose = 0)
+                          method = "SR", prev_fit = fit_SR, verbose = 0)
   expect_true(sum(abs(fit_SR$estim - fit_SR_prev_fit$estim)) < 0.01)
 })
 

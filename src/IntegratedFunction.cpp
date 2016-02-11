@@ -9,18 +9,18 @@ IntegratedFunction::IntegratedFunction(int integrateOver,
 				       ScalarFun function,
 				       VectorFun derivativeFunction,
 				       MatrixFun secondDerivativeFunction,
-				       const Vector& location): 
+				       const MultiNormal& normal): 
   integrateOver_(integrateOver), 
   function_(function), 
   derivativeFunction_(derivativeFunction),
   secondDerivativeFunction_(secondDerivativeFunction),
-  normal_(location.size()),
+  normal_(normal),
   mean1_(0),
-  mean2_(location.size() - 1),
-  cross_(location.size() - 1),
+  mean2_(normal.getMean().size() - 1),
+  cross_(normal.getMean().size() - 1),
   sigmaConditional_(0)
 {
-  initializeNormal(location);
+  initializeNormal();
   initializeConditionalTerms();
 }
 
@@ -56,14 +56,11 @@ Matrix IntegratedFunction::evaluateSecondDerivative(const Vector& x,
   return numerator / pow(integral, 2);
 }
 
-void IntegratedFunction::initializeNormal(const Vector& location)
+void IntegratedFunction::initializeNormal()
 {
-  auto derivative = derivativeFunction_(location);
-  auto secondDerivative = secondDerivativeFunction_(location);
-  normal_.initializeFromDerivatives(location, derivative,
-				    secondDerivative);
   if(!normal_.isProper()) {
-    normal_.setPrecision(Eigen::MatrixXd::Identity(location.size(), location.size()));
+    auto d = normal_.getMean().size();
+    normal_.setPrecision(Eigen::MatrixXd::Identity(d, d));
   }
 
   logValueAtMean_ = function_(normal_.getMean());
