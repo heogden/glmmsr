@@ -10,7 +10,7 @@
 #'  from \code{lme4}), and \code{"SR"} (the sequential reduction approximation).
 #' @param control a list of extra parameters controlling the approximation
 #'  to the likelihood. See 'Details' for more information.
-#' @param prev_fit a \code{glmmMod} object, the result of a previous model fit.
+#' @param prev_fit a \code{glmmFit} object, the result of a previous model fit.
 #' @param verbose controls how much detail to print out while fitting the model.
 #'  For verbose = 0, print nothing. For verbose = 1 (the default), print
 #'  output approximately once a second during model fitting. For verbose = 2,
@@ -25,7 +25,7 @@
 #'   \item{\code{nSL}}{the level of sparse grid storage.
 #'   Only used if \code{method = "SR"}. Defaults to 3.}
 #'  }
-#' @return An object of the class \code{glmmMod}
+#' @return An object of the class \code{glmmFit}
 #' @export
 glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                  method = NULL, control = list(), weights = NULL, offset = NULL,
@@ -46,7 +46,7 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                         prev_fit = prev_fit, verbose = verbose)
     if(all(modfr$reTrms$lower == 0)) {
       opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
-      result <- glmmMod(list(estim = opt$estim, Sigma = opt$Sigma,
+      result <- glmmFit(list(estim = opt$estim, Sigma = opt$Sigma,
                              lfun = lfun, modfr = modfr,
                              method = method, control = con))
     }else{

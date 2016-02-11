@@ -13,7 +13,7 @@ optimizeGlmm(lfun, p_beta, p_theta, prev_fit = NULL, verbose = 1L)
 
 \item{p_theta}{the number of random effects}
 
-\item{prev_fit}{a \code{glmmMod} object, the result of a previous model fit.}
+\item{prev_fit}{a \code{glmmFit} object, the result of a previous model fit.}
 
 \item{verbose}{controls how much detail to print out while fitting the model.
 For verbose = 0, print nothing. For verbose = 1 (the default), print

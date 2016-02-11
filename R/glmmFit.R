@@ -1,20 +1,20 @@
-#' Construct a glmmMod object
+#' Construct a glmmFit object
 #'
 #' @param x a list
-#' @return An object of class \code{glmmMod}
+#' @return An object of class \code{glmmFit}
 #' @export
-glmmMod <- function(x) {
-  structure(x, class = "glmmMod")
+glmmFit <- function(x) {
+  structure(x, class = "glmmFit")
 }
 
 
-#' Construct a summaryGlmmMod object
+#' Construct a summaryGlmmFit object
 #'
 #' @param x a list
-#' @return An object of class \code{summaryGlmmMod}
+#' @return An object of class \code{summaryGlmmFit}
 #' @export
-summaryGlmmMod <- function(x) {
-  structure(x, class = "summaryGlmmMod")
+summaryGlmmFit <- function(x) {
+  structure(x, class = "summaryGlmmFit")
 }
 
 #' Find the name of the likelihood approximation used for fitting
@@ -46,15 +46,15 @@ print_subformula <- function(subformula) {
   }
 }
 
-#' Print glmmMod object
+#' Print glmmFit object
 #'
-#' @param x glmmMod object
+#' @param x glmmFit object
 #' @param ... ignored
-#' @method print glmmMod
+#' @method print glmmFit
 #' @export
-print.glmmMod <- function(x, ...){
+print.glmmFit <- function(x, ...){
   name <- find_approximation_name(x$method, x$control)
-  cat("Generalized linear mixed model fit by maximum likelihood [glmmMod] \n")
+  cat("Generalized linear mixed model fit by maximum likelihood [glmmFit] \n")
   cat("Likelihood approximation:", name, "\n \n")
   cat("Family:", x$modfr$family$family, "(", x$modfr$family$link, ") \n")
   cat("Formula: ")
@@ -90,31 +90,31 @@ print.glmmMod <- function(x, ...){
   print(estim_fixed, digits = 4)
 }
 
-#' Summarize a glmmMod fit
+#' Summarize a glmmFit object
 #'
-#' @param object glmmMod object
+#' @param object glmmFit object
 #' @param ... ignored
-#' @return An object of class \code{summaryGlmmMod}
-#' @method summary glmmMod
+#' @return An object of class \code{summaryGlmmFit}
+#' @method summary glmmFit
 #' @export
-summary.glmmMod <- function(object, ...) {
+summary.glmmFit <- function(object, ...) {
   se <- sqrt(diag(object$Sigma))
   z <- abs(object$estim / se)
   p_value <- 2 * pnorm(z, lower.tail=FALSE)
-  result <- summaryGlmmMod(list(fit = object, se = se, z = z, p_value = p_value))
+  result <- summaryGlmmFit(list(fit = object, se = se, z = z, p_value = p_value))
   return(result)
 }
 
-#' Print summaryGlmmMod object
+#' Print summaryGlmmFit object
 #'
-#' @param x summaryGlmmMod object
+#' @param x summaryGlmmFit object
 #' @param ... ignored
-#' @method print summaryGlmmMod
+#' @method print summaryGlmmFit
 #' @export
-print.summaryGlmmMod <- function(x, ...){
+print.summaryGlmmFit <- function(x, ...){
   fit <- x$fit
   name <- find_approximation_name(fit$method, fit$control)
-  cat("Generalized linear mixed model fit by maximum likelihood [glmmMod] \n")
+  cat("Generalized linear mixed model fit by maximum likelihood [glmmFit] \n")
   cat("Likelihood approximation:", name, "\n \n")
   cat("Family:", fit$modfr$family$family, "(", fit$modfr$family$link, ") \n")
   cat("Formula: ")
@@ -158,7 +158,7 @@ print.summaryGlmmMod <- function(x, ...){
   print(fixed_mat, digits = 4)
 }
 
-coef_random.glmmMod <- function(x) {
+coef_random.glmmFit <- function(x) {
   p_theta <- length(x$modfr$reTrms$theta)
 
   names_theta <- unlist(unname(x$modfr$reTrms$cnms))
@@ -168,7 +168,7 @@ coef_random.glmmMod <- function(x) {
   estim_random
 }
 
-coef_fixed.glmmMod <- function(x) {
+coef_fixed.glmmFit <- function(x) {
   p_theta <- length(x$modfr$reTrms$theta)
   p_beta <- ncol(x$modfr$X)
   p <- p_beta + p_theta
@@ -182,6 +182,6 @@ coef_fixed.glmmMod <- function(x) {
 }
 
 
-coef.glmmMod <- function(x) {
-  list(fixed = coef_fixed.glmmMod(x), random = coef_random.glmmMod(x))
+coef.glmmFit <- function(x) {
+  list(fixed = coef_fixed.glmmFit(x), random = coef_random.glmmFit(x))
 }

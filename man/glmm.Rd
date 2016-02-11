@@ -44,7 +44,7 @@ to the likelihood. See 'Details' for more information.}
     terms can be included in the formula instead or as well, and if more
     than one is specified their sum is used.  See \code{\link{model.offset}}.}
 
-\item{prev_fit}{a \code{glmmMod} object, the result of a previous model fit.}
+\item{prev_fit}{a \code{glmmFit} object, the result of a previous model fit.}
 
 \item{verbose}{controls how much detail to print out while fitting the model.
 For verbose = 0, print nothing. For verbose = 1 (the default), print
@@ -53,7 +53,7 @@ print out the parameter value and log-likelihood at every stage of
 optimization.}
 }
 \value{
-An object of the class \code{glmmMod}
+An object of the class \code{glmmFit}
 }
 \description{
 Fit a GLMM
