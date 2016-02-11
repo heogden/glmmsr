@@ -2,20 +2,22 @@
 #' @param modfr a model frame, the output of \code{find_modfr_glmm}
 #' @inheritParams glmm
 #' @export
-find_lfun_glmm <- function(modfr, method, control)
+find_lfun_glmm <- function(modfr, method, control = NULL)
 {
+  con <- find_control_with_defaults(control, method)
+
   devfun_lme4 <- lme4::mkGlmerDevfun(fr = modfr$fr, X = modfr$X,
                                      reTrms = modfr$reTrms, family = modfr$family,
                                      control = lme4_control())
-  nAGQ_lme4 <- ifelse(method == "AGQ", control$nAGQ, 1)
+  nAGQ_lme4 <- ifelse(method == "AGQ", con$nAGQ, 1)
   devfun_lme4 <- lme4::updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = nAGQ_lme4)
   lfun_lme4 <- function(x) { -devfun_lme4(x) / 2 }
   switch(method,
          Laplace = lfun_lme4,
          AGQ = lfun_lme4,
          SR = find_lfun_SR(modfr, devfun_lme4,
-                           nSL = control$nSL,
-                           nAGQ = control$nAGQ),
+                           nSL = con$nSL,
+                           nAGQ = con$nAGQ),
          stop(cat("method", method, "not available"))
          )
 }

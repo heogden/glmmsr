@@ -4,7 +4,7 @@
 \alias{find_lfun_glmm}
 \title{Find the log-likelihood function}
 \usage{
-find_lfun_glmm(modfr, method, control)
+find_lfun_glmm(modfr, method, control = NULL)
 }
 \arguments{
 \item{modfr}{a model frame, the output of \code{find_modfr_glmm}}
