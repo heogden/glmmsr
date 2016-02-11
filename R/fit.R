@@ -30,12 +30,13 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                  prev_fit = NULL, verbose = 1L)
 {
   check_weights(weights)
+  con <- find_control_with_defaults(control, method)
 
   modfr <- find_modfr_glmm(formula, subformula = subformula, data = data,
                            family = family, weights = weights, offset = offset)
 
   if(has_reTrms(modfr)) {
-    lfun <- find_lfun_glmm(modfr, method = method, control = control)
+    lfun <- find_lfun_glmm_internal(modfr, method = method, control = con)
 
     p_beta <- ncol(modfr$X)
     p_theta <- length(modfr$reTrms$theta)
@@ -45,7 +46,7 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
       opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
       result <- glmmMod(list(estim = opt$estim, Sigma = opt$Sigma,
                              lfun = lfun, modfr = modfr,
-                             method = method, control = control))
+                             method = method, control = con))
     }else{
       warning("proper print and summary method not yet implemented ",
               "for correlated random effects")
