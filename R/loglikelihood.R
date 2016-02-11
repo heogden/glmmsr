@@ -31,6 +31,8 @@ find_lfun_SR <- function(modfr, devfun_lme4, nSL, nAGQ) {
   check_modfr_SR(modfr)
 
   n_fixed <- ncol(modfr$X)
+  n_random <- length(modfr$reTrms$theta)
+
   factorization_terms <- find_factorization_terms(modfr)
   calibration_pars <- calibration_parameters()
   calibration_pars$n_quadrature_points <- nAGQ
@@ -48,9 +50,13 @@ find_lfun_SR <- function(modfr, devfun_lme4, nSL, nAGQ) {
   }
 
   lfun <- function(pars) {
-    theta_size <- length(pars) - n_fixed
-    calibration_pars$theta <- pars[1:theta_size]
-    calibration_pars$beta <- pars[-(1:theta_size)]
+    if(length(pars) != (n_fixed + n_random)) {
+      stop("cannot compute loglikelihood for parameter of length ",
+           length(pars), " != ", n_fixed + n_random,
+           call. = FALSE)
+    }
+    calibration_pars$theta <- pars[1:n_random]
+    calibration_pars$beta <- pars[-(1:n_random)]
     normal_approx <- compute_normal_approx(pars, devfun_lme4)
     beliefs$compute_log_normalizing_constant(normal_approx$mean,
                                              normal_approx$precision,
