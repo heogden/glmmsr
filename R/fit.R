@@ -13,7 +13,9 @@
 #' @param prev_fit a \code{glmmMod} object, the result of a previous model fit.
 #' @param verbose controls how much detail to print out while fitting the model.
 #'  For verbose = 0, print nothing. For verbose = 1 (the default), print
-#'  output approximately once a second during model fitting.
+#'  output approximately once a second during model fitting. For verbose = 2,
+#'  print out the parameter value and log-likelihood at every stage of
+#'  optimization.
 #' @inheritParams lme4::glmer
 #' @details The \code{control} argument is a list, used to specify further
 #'  arguments controlling the approximation to the likelihood:

@@ -48,7 +48,9 @@ to the likelihood. See 'Details' for more information.}
 
 \item{verbose}{controls how much detail to print out while fitting the model.
 For verbose = 0, print nothing. For verbose = 1 (the default), print
-output approximately once a second during model fitting.}
+output approximately once a second during model fitting. For verbose = 2,
+print out the parameter value and log-likelihood at every stage of
+optimization.}
 }
 \value{
 An object of the class \code{glmmMod}

@@ -17,7 +17,9 @@ optimizeGlmm(lfun, p_beta, p_theta, prev_fit = NULL, verbose = 1L)
 
 \item{verbose}{controls how much detail to print out while fitting the model.
 For verbose = 0, print nothing. For verbose = 1 (the default), print
-output approximately once a second during model fitting.}
+output approximately once a second during model fitting. For verbose = 2,
+print out the parameter value and log-likelihood at every stage of
+optimization.}
 }
 \value{
 A list, containing the parameter estimate and variance matrix

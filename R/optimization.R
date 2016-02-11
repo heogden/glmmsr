@@ -33,13 +33,15 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
 
   devfun_ext <- function(param){
     result <- tryCatch(-2 * lfun(param), error = function(e) { Inf })
-
-    if(verbose > 0L){
+    if(verbose == 1L) {
       count <<- count + 1
        if(count > print_gap) {
          cat(".")
          count <<- 0
        }
+    }
+    if(verbose == 2L & started) {
+      cat(sprintf("%7.4f", param), " : ", sprintf("%7.4f", -result / 2), "\n")
     }
     result
   }
@@ -52,6 +54,7 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
   time_interval <- 1
   print_gap <- 100
   count <- 0
+  started <- FALSE
 
   par0 <- rep(0, p)
   t0 <- system.time(d0 <- devfun_std(par0))[[1]]
@@ -63,8 +66,12 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
     stop("Could not approximate the likelihood at the starting parameters for optimization",
          call. = FALSE)
 
+  started <- TRUE
   if(verbose > 0L)
-    cat("Fitting the model .")
+    cat("Fitting the model.")
+  if(verbose == 2L) {
+    cat("\n")
+  }
   out_std <- optim(par0, devfun_std, hessian=TRUE, method="BFGS",
                    control = list(maxit = 500))
   if(verbose > 0L){
