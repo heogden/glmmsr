@@ -188,10 +188,20 @@ test_that("checks family", {
 })
 
 test_that("prev_fit doesn't affect the result", {
-  fit_SR <- glmm(formula, subform, data = data, family = binomial,
-                 method = "SR", prev_fit = fit, verbose = 0)
-  fit_SR_prev_fit <- glmm(formula, subform, data = data, family = binomial,
-                          method = "SR", prev_fit = fit_SR, verbose = 0)
-  expect_true(sum(abs(fit_SR$estim - fit_SR_prev_fit$estim)) < 0.01)
+  library(BradleyTerry2)
+  result <- rep(1, nrow(flatlizards$contests))
+  flatlizards_glmmsr <- c(list(result = result,
+                               winner = flatlizards$contests$winner,
+                               loser = flatlizards$contests$loser),
+                          flatlizards$predictors)
+  fit_1 <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
+                ability[liz] ~ 0 + SVL[liz] + (1 | liz),
+                data = flatlizards_glmmsr, family = binomial(link = "probit"),
+                method = "Laplace", verbose = 0)
+  fit_2 <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
+                ability[liz] ~ 0 + SVL[liz] + (1 | liz),
+                data = flatlizards_glmmsr, family = binomial(link = "probit"),
+                method = "Laplace", verbose = 0, prev_fit = fit_1)
+  expect_true(sum(abs(fit_1$estim - fit_2$estim)) < 0.01)
+  expect_true(sum(abs(fit_1$Sigma - fit_2$Sigma)) < 0.01)
 })
-
