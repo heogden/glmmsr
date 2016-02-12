@@ -82,6 +82,8 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
   }
   out_std <- optim(par0, devfun_std, hessian=TRUE, method="BFGS",
                    control = list(maxit = 500))
+  if(out_std$convergence != 0)
+    warning("optim did not converge")
   if(verbose > 0L){
     cat(" done.\n")
   }
