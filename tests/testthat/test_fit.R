@@ -202,6 +202,11 @@ test_that("prev_fit doesn't affect the result", {
                 ability[liz] ~ 0 + SVL[liz] + (1 | liz),
                 data = flatlizards_glmmsr, family = binomial(link = "probit"),
                 method = "Laplace", verbose = 0, prev_fit = fit_1)
+  fit_3 <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
+                ability[liz] ~ 0 + SVL[liz] + (1 | liz),
+                data = flatlizards_glmmsr, family = binomial(link = "probit"),
+                method = "Laplace", verbose = 0, prev_fit = fit_2)
   expect_true(sum(abs(fit_1$estim - fit_2$estim)) < 0.01)
   expect_true(sum(abs(fit_1$Sigma - fit_2$Sigma)) < 0.01)
+  expect_true(sum(abs(fit_1$Sigma - fit_3$Sigma)) < 0.01)
 })

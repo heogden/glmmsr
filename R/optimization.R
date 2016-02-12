@@ -17,19 +17,27 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
       Sigma <- matrix(0, nrow = p, ncol = p)
       Sigma[row(Sigma) == col(Sigma)] <- 1
     }
-  }else{
+  } else{
     mu <- c(rep(0.5, p_theta), rep(0, p_beta))
     Sigma <- matrix(0, nrow = p, ncol = p)
     Sigma[row(Sigma) == col(Sigma)] <- 1
   }
-  hess <- solve(Sigma / 2)
-  eigen_hess <- eigen(hess, symmetric=TRUE)
-  hess_eigen_sqrt <- t(eigen_hess$vectors %*%
-                         diag(sqrt(eigen_hess$values), nrow = p, ncol = p))
-  A_inv <- hess_eigen_sqrt
-  A <- solve(A_inv)
 
+  eigen_Sigma <- eigen(Sigma, symmetric = TRUE)
 
+  # try to prevent numerical problems
+  if(min(eigen_Sigma$values) < 1e-3) {
+     Sigma[row(Sigma) != col(Sigma)] <- 0
+     Sigma[row(Sigma) == col(Sigma)] <- 1
+     eigen_Sigma <- eigen(Sigma, symmetric = TRUE)
+  }
+
+  V <- eigen_Sigma$vectors
+  D_sqrt <- diag(sqrt(eigen_Sigma$values), nrow = p, ncol = p)
+  Sigma_sqrt <- V %*% D_sqrt %*% solve(V)
+
+  A <- t(Sigma_sqrt)
+  A_inv <- solve(A)
 
   devfun_ext <- function(param){
     result <- tryCatch(-2 * lfun(param), error = function(e) { Inf })
