@@ -62,8 +62,8 @@ find_lfun_SR <- function(modfr, devfun_lme4, nSL, nAGQ) {
                                                      normal_approx$precision,
                                                      calibration_pars)
     if(l_SR > normal_approx$l_laplace / 2)
-      error("Suspect sequential reduction approximation is unstable at that parameter value",
-            call. = FALSE)
+      stop("Suspect sequential reduction approximation is unstable at that parameter value",
+           call. = FALSE)
     l_SR
   }
   lfun
