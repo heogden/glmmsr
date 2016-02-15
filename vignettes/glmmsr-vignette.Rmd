@@ -22,6 +22,7 @@ some cases. Second, it is difficult to fit some GLMMs, such as pairwise
 comparison models, with `lme4`. 
 The `glmmsr` package aims to offer progress on both of these problems. 
 
+# Approximations to the likelihood
 In order to fit a GLMM with `glmmsr`, 
 a user must first choose which method to use to approximate
 the likelihood. In addition
@@ -31,19 +32,13 @@ be approximated by the sequential reduction approximation [@Ogden2015], which
 gives an accurate approximation to the likelihood in some situations
 where it is not possible to use adaptive Gaussian quadrature.
 
-The interface of `glmmsr` allows easy fitting of pairwise comparison 
-and many other interesting 
-models, which are difficult to fit with `lme4`.
-
-# Approximations to the likelihood
-
 ##  Example: a two-level model
 Suppose that our data are clustered, so that we observe $y_{ij}$
 for $i=1, \ldots, m$ and $j = 1, \ldots, m_i$,
-where $y_{ij}$ is the $j$th obervation from the
+where $y_{ij}$ is the $j$th observation from the
 $i$th cluster.
 We model $Y_{ij} \sim \text{Bernoulli}(p_{ij})$
-where $\log(p_{ij} / 1 - p_{ij}) = \alpha + \beta x_{ij} + \sigma u_i,$
+where $$\log(p_{ij} / 1 - p_{ij}) = \alpha + \beta x_{ij} + \sigma u_i,$$
 and $u_i \sim N(0, 1)$.
 The data `two_level`, available in
 `glmmsr`, is simulated from a binary two-level model
@@ -53,8 +48,8 @@ with $m = 50$ clusters in total.
 We want to infer the parameters
 $\theta = (\alpha, \beta, \sigma)$ of the model. 
 The likelihood may be written as
-$$L(\theta) = \int g(u; \theta) du,$$
-where $$g(u; \theta) = \prod_{i=1}^n \prod_{j=1}^{m_i} Pr(Y_{ij} = y_{ij} | u_i, \theta) \phi(u_i).$$
+$$L(\theta) = \int_{\mathbb{R}^m} g(\mathbf{u}; \theta) d\mathbf{u},$$
+where $$g(u; \theta) = \prod_{i=1}^m \prod_{j=1}^{m_i} Pr(Y_{ij} = y_{ij} | u_i, \theta) \phi(u_i).$$
 
 For this model, and for other GLMMs, 
 the likelihood function is an integral over the latent variables.
@@ -71,7 +66,7 @@ choice, to highlight to the user that some approximation must be used, and
 that the choice of this approximation might affect the resulting inference.
 
 ## The Laplace approximation (`method = "Laplace"`)
-The Laplace approximation works by approximating the integrand
+The Laplace approximation works by approximating the integrand $g(\mathbf{u}; \theta)$
 by a function proportional to a Gaussian density.
 
 ```{r two_level Laplace}
@@ -79,10 +74,10 @@ library(glmmsr)
 (mod_Laplace <- glmm(response ~ covariate + (1 | cluster), data = two_level,
                      family = binomial, method = "Laplace"))
 ```
-We have obtained some parameter estimates, but do not know if these
+This gives some estimates of the parameters, but do not know if these
 are close to the maximum likelihood estimates. Typically the structure
 of the data gives some hints about the quality of the Laplace approximation:
-if the data are `sparse`, in that there is only a small number
+if the data are 'sparse', in that there is only a small number
 of observations per random effect, the Laplace approximation may be a poor
 approximation to the likelihood. This is certainly the case here, since
 we only have two observations per cluster, and we would like to try
@@ -115,7 +110,7 @@ for $i=1, \ldots, m,$ $j = 1, \ldots, m_i$ and $k = 1, \ldots, m_{ij}$,
 where $y_{ijk}$ represents the $k$th observation in the $j$th cluster
 of the $i$th group.
 We have $Y_{ijk} \sim \text{Bernoulli}(p_{ijk})$
-where $\log(p_{ijk} / 1 - p_{ijk}) = \alpha + \beta x_{ijk} + b_i + c_j,$
+where $$\log(p_{ijk} / 1 - p_{ijk}) = \alpha + \beta x_{ijk} + b_i + c_j,$$
 $b_i \sim N(0, \sigma_b^2)$ and $c_j \sim N(0, \sigma_c^2)$.
 
 The data `three_level`, available in
@@ -175,15 +170,15 @@ of sparse grid storage
                     control = list(nSL = 4), prev_fit = mod_3_SR))
 ```
 We see that the parameter estimates are very close to those obtained with
-the lower level of sparse grid storage, and conclude that we are likely
-to have estimates close to the exact maximum likelihood estimates.
+the lower level of sparse grid storage, and conclude that these
+estimates are probably close to the exact maximum likelihood estimates.
 
 # The subformula interface
-The interface of `glmm` also allows fitting
-of some more complex models which are not easy to fit using `lme4`.
+The interface of `glmm` allows fitting
+of some more complex models which are not easy to fit with `lme4`.
 
 A typical call using this extended interface looks like
-`glmm(formula, subformula, data, family, method, control)`
+`glmm(formula, subformula, data, family, method)`
 where
 
 1. `formula` may contain one or more terms surrounded with `Sub(.)`. We call the
@@ -198,7 +193,7 @@ covariates.
 Next, we consider an example of the type of model we might want to fit using 
 this interface.
 
-### Pairwise competition models
+## Pairwise competition models
 Suppose that we observe the outcome of a set of matches played between pairs of 
 players, and that we also observe some covariates $x_{i}$ for each player $i$. 
 We suppose that each player $i$ has an 'ability' $\lambda_i$, and that
@@ -220,7 +215,7 @@ approach: first we described how the response depends on the unknown
 abilities, then we wrote down how the abilities depend on covariates. This type 
 of model can be written quite naturally using the subformula interface. We have 
 a formula
-`response ~ 0 + Sub(ability[player1] - ability[player2])`, 
+`response ~ 0 + Sub(ability[player1] - ability[player2])`,
 where `ability` is a substitution variable. We write
 down a corresponding subformula
 `ability[i] ~ 0 + x[i] + (1 | i)`.
@@ -304,18 +299,28 @@ for(i in 0:4) {
   l_SR_theta_poss[[i + 1]] <- apply(theta_poss, 1, lfun_SR_i)
 }
 plot(theta_poss[,1], l_SR_theta_poss[[5]], type = "l", col = 5,
-     xlab = "sigma", ylab = "loglikelihood")
+     xlab = "sigma", ylab = "log-likelihood")
 for(i in 1:4) {
   lines(theta_poss[,1], l_SR_theta_poss[[i]], col = i)
 }
 
 ```
 
-The loglikelihood $\ell(\sigma, \beta = 0.3)$ is an increasing function
+The log-likelihood $\ell(\sigma, \beta = 0.3)$ is an increasing function
 of $\sigma$, but the less accurate approximations to the likelihood
 substantially underestimate the likelihood for large values of $\sigma$,
 and so mask this difficulty. We will not discuss here how to deal
 with this problem, but note that without access to an accurate
 approximation to the likelihood, this problem would have gone unnoticed.
+
+# Conclusions
+The `glmmsr` package provides the user with a choice of methods for approximating
+the likelihood, including the sequential reduction approximation [@Ogden2015],
+which gives an accurate approximation to the likelihood in many cases
+for which the Laplace approximation is unreliable. Some cases remain
+in which the sequential reduction approximation is too expensive to compute,
+despite the poor quality of the Laplace approximation, motivating the need
+for other methods for approximating the likelihood. We hope to add such methods
+to future versions of `glmmsr`.
 
 ## References
