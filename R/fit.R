@@ -42,8 +42,8 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
 
     p_beta <- ncol(modfr$X)
     p_theta <- length(modfr$reTrms$theta)
-    opt <- optimizeGlmm(lfun, p_beta = p_beta, p_theta = p_theta,
-                        prev_fit = prev_fit, verbose = verbose)
+    opt <- optimize_glmm(lfun, p_beta = p_beta, p_theta = p_theta,
+                         prev_fit = prev_fit, verbose = verbose)
     if(all(modfr$reTrms$lower == 0)) {
       opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
       result <- glmmFit(list(estim = opt$estim, Sigma = opt$Sigma,

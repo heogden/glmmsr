@@ -7,8 +7,8 @@
 #' @param p_theta the number of random effects
 #' @inheritParams glmm
 #' @return A list, containing the parameter estimate and variance matrix
-optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
-                         verbose = 1L){
+optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
+                          verbose = 1L){
   p <- p_theta + p_beta
   if(length(prev_fit) > 0){
     mu <- prev_fit$estim
