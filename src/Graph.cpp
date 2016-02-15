@@ -1,9 +1,9 @@
 #include "Graph.h"
 
 Graph::Graph(const std::vector<int>& items): items_(items),
-					     graph_(items.size()),
 					     numVertices_(items.size()),
-					     isActive_(items.size(), true)
+					     isActive_(items.size(), true),
+					     graph_(items.size())
 {
   initializePositions();
 }
