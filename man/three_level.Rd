@@ -12,7 +12,7 @@ three_level
 A dataset simulated from a three-level model
 }
 \examples{
-# fit with the Laplace approximation to the likelihood
+# Fit a three-level model with the Laplace approximation to the likelihood
 (mod_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
                      data = three_level, family = binomial,
                      method = "Laplace"))

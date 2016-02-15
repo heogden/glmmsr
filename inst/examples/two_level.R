@@ -1,4 +1,4 @@
-# fit with the Laplace approximation to the likelihood
+# Fit a two-level model with the Laplace approximation to the likelihood
 (mod_Laplace <- glmm(response ~ covariate + (1 | cluster), data = two_level,
                      family = binomial, method = "Laplace"))
 
