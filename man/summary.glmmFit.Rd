@@ -17,4 +17,5 @@ An object of class \code{summaryGlmmFit}
 \description{
 Summarize a glmmFit object
 }
+\keyword{internal}
 

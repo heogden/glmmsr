@@ -15,4 +15,5 @@ An object of class \code{glmmFit}
 \description{
 Construct a glmmFit object
 }
+\keyword{internal}
 

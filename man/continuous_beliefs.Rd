@@ -11,4 +11,5 @@ continuous_beliefs()
 A vector of terms in the factorization of a graphical model,
 of mixed continuous types.
 }
+\keyword{internal}
 

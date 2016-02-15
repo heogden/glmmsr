@@ -28,4 +28,5 @@ A list, containing the parameter estimate and variance matrix
 Find the approximate maximum likelihood estimate, and finds
 a normal approximation to the likelihood surface
 }
+\keyword{internal}
 

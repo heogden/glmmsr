@@ -20,4 +20,5 @@ a string with the name of the likelihood approximation
 \description{
 Find the name of the likelihood approximation used for fitting
 }
+\keyword{internal}
 

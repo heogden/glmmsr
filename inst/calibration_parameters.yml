@@ -3,7 +3,7 @@ calibration_parameters:
   constructor:
     roxygen: |
       Parameters needed to calibrate the cluster tree
-      @export
+      @keywords internal
     name_cpp: makeParametersR
   active:
     theta:

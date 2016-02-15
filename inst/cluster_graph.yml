@@ -5,7 +5,7 @@ cluster_graph:
       The beliefs for the clusters and sepsets of a cluster tree,
       of mixed continuous types.
       @param beliefs the vector of continuous beliefs to put on the cluster tree
-      @export
+      @keywords internal
     args:
       - {beliefs: "std::vector<MixedContinuousBelief>"}
   methods:

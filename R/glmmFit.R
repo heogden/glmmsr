@@ -2,6 +2,7 @@
 #'
 #' @param x a list
 #' @return An object of class \code{glmmFit}
+#' @keywords internal
 #' @export
 glmmFit <- function(x) {
   structure(x, class = "glmmFit")
@@ -12,6 +13,7 @@ glmmFit <- function(x) {
 #'
 #' @param x a list
 #' @return An object of class \code{summaryGlmmFit}
+#' @keywords internal
 #' @export
 summaryGlmmFit <- function(x) {
   structure(x, class = "summaryGlmmFit")
@@ -21,6 +23,7 @@ summaryGlmmFit <- function(x) {
 #'
 #' @inheritParams glmm
 #' @return a string with the name of the likelihood approximation
+#' @keywords internal
 find_approximation_name <- function(method, control) {
   switch(method,
          "Laplace" = "Laplace approximation (lme4)",
@@ -51,6 +54,7 @@ print_subformula <- function(subformula) {
 #' @param x glmmFit object
 #' @param ... ignored
 #' @method print glmmFit
+#' @keywords internal
 #' @export
 print.glmmFit <- function(x, ...){
   name <- find_approximation_name(x$method, x$control)
@@ -96,6 +100,7 @@ print.glmmFit <- function(x, ...){
 #' @param ... ignored
 #' @return An object of class \code{summaryGlmmFit}
 #' @method summary glmmFit
+#' @keywords internal
 #' @export
 summary.glmmFit <- function(object, ...) {
   se <- sqrt(diag(object$Sigma))
@@ -110,6 +115,7 @@ summary.glmmFit <- function(object, ...) {
 #' @param x summaryGlmmFit object
 #' @param ... ignored
 #' @method print summaryGlmmFit
+#' @keywords internal
 #' @export
 print.summaryGlmmFit <- function(x, ...){
   fit <- x$fit

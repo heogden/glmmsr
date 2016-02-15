@@ -9,4 +9,5 @@ calibration_parameters()
 \description{
 Parameters needed to calibrate the cluster tree
 }
+\keyword{internal}
 

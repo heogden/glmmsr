@@ -4,7 +4,7 @@ continuous_beliefs:
     roxygen: |
       A vector of terms in the factorization of a graphical model,
       of mixed continuous types.
-      @export
+      @keywords internal
   methods:
     append_glmm_belief:
       name_cpp: appendGLMMBelief

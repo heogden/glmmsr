@@ -15,4 +15,5 @@ An object of class \code{summaryGlmmFit}
 \description{
 Construct a summaryGlmmFit object
 }
+\keyword{internal}
 
