@@ -12,35 +12,13 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
   p <- p_theta + p_beta
   if(length(prev_fit) > 0){
     mu <- prev_fit$estim
-    Sigma <- prev_fit$Sigma
-    if(any(eigen(Sigma, only.values = TRUE)$values < 1e-5)) {
-      Sigma <- matrix(0, nrow = p, ncol = p)
-      Sigma[row(Sigma) == col(Sigma)] <- 1
-    }
   } else{
     mu <- c(rep(0.5, p_theta), rep(0, p_beta))
-    Sigma <- matrix(0, nrow = p, ncol = p)
-    Sigma[row(Sigma) == col(Sigma)] <- 1
   }
-
-  eigen_Sigma <- eigen(Sigma, symmetric = TRUE)
-
-  # try to prevent numerical problems
-  if(min(eigen_Sigma$values) < 1e-3) {
-     Sigma[row(Sigma) != col(Sigma)] <- 0
-     Sigma[row(Sigma) == col(Sigma)] <- 1
-     eigen_Sigma <- eigen(Sigma, symmetric = TRUE)
-  }
-
-  V <- eigen_Sigma$vectors
-  D_sqrt <- diag(sqrt(eigen_Sigma$values), nrow = p, ncol = p)
-  Sigma_sqrt <- V %*% D_sqrt %*% solve(V)
-
-  A <- t(Sigma_sqrt)
-  A_inv <- solve(A)
 
   devfun_ext <- function(param){
     result <- tryCatch(-2 * lfun(param), error = function(e) { Inf })
+
     if(verbose == 1L) {
       count <<- count + 1
        if(count > print_gap) {
@@ -54,7 +32,7 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
     result
   }
   devfun_std <- function(param_std){
-    param <- as.numeric(A %*% param_std + mu)
+    param <- as.numeric(param_std + mu)
     return(devfun_ext(param))
   }
 
@@ -87,10 +65,9 @@ optimizeGlmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
   if(verbose > 0L){
     cat(" done.\n")
   }
-  hess_std <- out_std$hessian
+  hess <- out_std$hessian
   estim_std <- out_std$par
-  estim = as.numeric(A %*% estim_std + mu)
-  hess <- t(A_inv) %*% hess_std %*% A_inv
+  estim = as.numeric(estim_std + mu)
 
   Sigma <- 2 * solve(hess)
   if(min(abs(eigen(Sigma, only.values=TRUE)$values)) < 1e-6) {
