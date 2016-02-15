@@ -12,26 +12,24 @@ three_level
 A dataset simulated from a three-level model
 }
 \examples{
-# fit the three-level model using lme4
-# we can use the Laplace approximation
-(mod_Laplace <- lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
-                            data = three_level, family = binomial))
+# fit with the Laplace approximation to the likelihood
+(mod_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                     data = three_level, family = binomial,
+                     method = "Laplace"))
 
-# if we try to increase the number of adaptive Gaussian quadrature points,
-# we get an error message
+# if we try to fit with adaptive Gaussian quadrature, we get an error
 \dontrun{
-  lme4::glmer(response ~ covariate + (1 | cluster) + (1 | group),
-              data = three_level, family = binomial, nAGQ = 10)
+  (mod_AGQ <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                   data = three_level, family = binomial, method = "AGQ",
+                   control = list(nAGQ = 15)))
 }
 
-
-# we can fit the same model using the sequential reduction approximation
+# We can fit with the Sequential Reduction approximation
 \dontrun{
   (mod_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
-                  data = three_level, family = binomial,
-                  method = "SR", control = list(nSL = 3)))
+                  data = three_level, family = binomial, method = "SR",
+                  control = list(nSL = 3)))
 }
-
 # the estimates of the random effects standard deviations
 # are larger than those using the Laplace approximation
 }

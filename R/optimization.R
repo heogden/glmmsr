@@ -1,7 +1,7 @@
 #' Maximize the approximated log-likelihood
 #'
-#' Find the approximate maximum likelihood estimate, and finds
-#' a normal approximation to the likelihood surface
+#' Find the approximate maximum likelihood estimate, and estimate the variance
+#' of the estimate
 #' @param lfun the approximated loglikelihood function
 #' @param p_beta the number of covariates
 #' @param p_theta the number of random effects
