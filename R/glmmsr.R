@@ -29,6 +29,7 @@ NULL
 
 #' A dataset simulated from a two-level model
 #'
+#' @example inst/examples/two_level.R
 "two_level"
 
 #' A dataset simulated from a three-level model

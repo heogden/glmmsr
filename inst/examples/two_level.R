@@ -1,17 +1,14 @@
-# fit the two-level model using lme4
-# we can use the Laplace approximation
-mod_Laplace <- glmm(response ~ covariate + (1 | cluster),
-                    data = two_level, family = binomial)
-mod_Laplace
+# fit with the Laplace approximation to the likelihood
+(mod_Laplace <- glmm(response ~ covariate + (1 | cluster), data = two_level,
+                     family = binomial, method = "Laplace"))
 
-# or increase the number of adaptive Gaussian quadrature points
-mod_8 <- glmm(response ~ covariate + (1 | cluster),
-               data = two_level, family = binomial,
-               method = "AGQ", control = list(nAGQ = 8))
-mod_8
+# or with adaptive Gaussian quadrature
+(mod_AGQ <- glmm(response ~ covariate + (1 | cluster), data = two_level,
+                 family = binomial, method = "AGQ", control = list(nAGQ = 15)))
 
-# we can fit the same model using the sequential reduction approximation
-mod_SR <- glmm(response ~ covariate + (1 | cluster),
-               data = two_level, family = binomial,
-               method = "SR", control = list(nSL = 3))
-mod_SR
+# or with the Sequential Reduction approximation
+(mod_SR <- glmm(response ~ covariate + (1 | cluster), data = two_level,
+                family = binomial, method = "SR", control = list(nSL = 3)))
+
+# in a two-level model, method = "SR" is equivalent to method = "AGQ" with
+# nAGQ = 2^(nSL+1) - 1
