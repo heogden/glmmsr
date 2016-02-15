@@ -58,21 +58,25 @@ find_lfun_SR <- function(modfr, devfun_lme4, nSL, nAGQ) {
     calibration_pars$theta <- pars[1:n_random]
     calibration_pars$beta <- pars[-(1:n_random)]
     normal_approx <- compute_normal_approx(pars, devfun_lme4)
-    beliefs$compute_log_normalizing_constant(normal_approx$mean,
-                                             normal_approx$precision,
-                                             calibration_pars)
+    l_SR <- beliefs$compute_log_normalizing_constant(normal_approx$mean,
+                                                     normal_approx$precision,
+                                                     calibration_pars)
+    if(l_SR > normal_approx$l_laplace / 2)
+      error("Suspect sequential reduction approximation is unstable at that parameter value",
+            call. = FALSE)
+    l_SR
   }
   lfun
 }
 
 compute_normal_approx <- function(pars, devfun_lme4)
 {
-  devfun_lme4(pars)
+  l_laplace <- -devfun_lme4(pars)/2
   PR <- get("pp", environment(devfun_lme4))
   L_tot <- Matrix::expand(PR$L())
   L <- L_tot$L
   P <- L_tot$P
   precision <- Matrix::t(P)%*%Matrix::tcrossprod(L)%*%P
   mean <- PR$delu
-  return(list(mean = mean, precision = precision))
+  return(list(l_laplace = l_laplace, mean = mean, precision = precision))
 }
