@@ -38,7 +38,7 @@ for $i=1, \ldots, m$ and $j = 1, \ldots, m_i$,
 where $y_{ij}$ is the $j$th observation from the
 $i$th cluster.
 We model $Y_{ij} \sim \text{Bernoulli}(p_{ij})$
-where $$\log(p_{ij} / 1 - p_{ij}) = \alpha + \beta x_{ij} + \sigma u_i,$$
+where $$\log\left(\frac{p_{ij}}{1 - p_{ij}}\right) = \alpha + \beta x_{ij} + \sigma u_i,$$
 and $u_i \sim N(0, 1)$.
 The data `two_level`, available in
 `glmmsr`, is simulated from a binary two-level model
@@ -110,7 +110,7 @@ for $i=1, \ldots, m,$ $j = 1, \ldots, m_i$ and $k = 1, \ldots, m_{ij}$,
 where $y_{ijk}$ represents the $k$th observation in the $j$th cluster
 of the $i$th group.
 We have $Y_{ijk} \sim \text{Bernoulli}(p_{ijk})$
-where $$\log(p_{ijk} / 1 - p_{ijk}) = \alpha + \beta x_{ijk} + b_i + c_j,$$
+where $$\log\left(\frac{p_{ijk}}{1 - p_{ijk}}\right) = \alpha + \beta x_{ijk} + b_i + c_j,$$
 $b_i \sim N(0, \sigma_b^2)$ and $c_j \sim N(0, \sigma_c^2)$.
 
 The data `three_level`, available in
