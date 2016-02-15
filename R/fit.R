@@ -26,6 +26,7 @@
 #'   Only used if \code{method = "SR"}. Defaults to 3.}
 #'  }
 #' @return An object of the class \code{glmmFit}
+#' @example inst/examples/three_level.R
 #' @export
 glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                  method = NULL, control = list(), weights = NULL, offset = NULL,
