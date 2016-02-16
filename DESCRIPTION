@@ -11,7 +11,7 @@ Description: Conduct inference about generalized linear mixed models, with a
     Gaussian quadrature.
 Depends: R (>= 3.1.2)
 LinkingTo: Rcpp, RcppEigen, BH
-Imports: lme4 (>= 1.1-8), Matrix, R6, Rcpp
+Imports: lme4 (>= 1.1-8), Matrix, R6, Rcpp, methods, stats, utils
 URL: http://github.com/heogden/glmmsr
 BugReports: http://github.com/heogden/glmmsr/issues
 License: GPL (>=2)
