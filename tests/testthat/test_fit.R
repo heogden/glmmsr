@@ -115,7 +115,7 @@ test_that("nSL = 0 gives similar result to Laplace", {
   estim_SR_0 <- mod_SR_0$estim
   estim_Laplace <- mod_Laplace$estim
 
-  expect_true(sum(abs(estim_SR_0 - estim_Laplace)) < 1e-6)
+  expect_true(sum(abs(estim_SR_0 - estim_Laplace)) < 1e-3)
 
 })
 
