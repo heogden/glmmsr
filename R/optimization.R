@@ -17,8 +17,14 @@ optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
     mu <- c(rep(0.5, p_theta), rep(0, p_beta))
   }
 
-  devfun_ext <- function(param){
-    result <- tryCatch(-2 * lfun(param), error = function(e) { Inf })
+  devfun_ext <- function(param, stop_on_error = FALSE){
+    result <- tryCatch(-2 * lfun(param),
+                       error = function(e) {
+                         if(stop_on_error)
+                           stop(e)
+                         else
+                           return(Inf)
+                         })
 
     if(verbose == 1L) {
       count <<- count + 1
@@ -32,9 +38,9 @@ optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
     }
     result
   }
-  devfun_std <- function(param_std){
+  devfun_std <- function(param_std, stop_on_error = FALSE){
     param <- as.numeric(param_std + mu)
-    return(devfun_ext(param))
+    return(devfun_ext(param, stop_on_error))
   }
 
   time_threshold <- 0.1
@@ -44,14 +50,17 @@ optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
   started <- FALSE
 
   par0 <- rep(0, p)
-  t0 <- system.time(d0 <- devfun_std(par0))[[1]]
+  t0 <- system.time(
+    tryCatch(d0 <- devfun_std(par0, stop_on_error = TRUE),
+             error = function(e) {
+               stop("Could not approximate the likelihood at the starting parameters for optimization, due to ", e,
+                    call. = FALSE)
+             })
+    )[[1]]
   print_gap <- floor(time_interval / t0)
 
   if(verbose > 0L && t0 > time_threshold)
     cat("Approximating the likelihood at each point takes", t0, "seconds. \n")
-  if(!is.finite(d0))
-    stop("Could not approximate the likelihood at the starting parameters for optimization",
-         call. = FALSE)
 
   started <- TRUE
   if(verbose > 0L)
