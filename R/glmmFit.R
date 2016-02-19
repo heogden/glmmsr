@@ -3,7 +3,6 @@
 #' @param x a list
 #' @return An object of class \code{glmmFit}
 #' @keywords internal
-#' @export
 glmmFit <- function(x) {
   structure(x, class = "glmmFit")
 }
@@ -14,7 +13,6 @@ glmmFit <- function(x) {
 #' @param x a list
 #' @return An object of class \code{summaryGlmmFit}
 #' @keywords internal
-#' @export
 summaryGlmmFit <- function(x) {
   structure(x, class = "summaryGlmmFit")
 }
