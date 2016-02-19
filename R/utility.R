@@ -67,7 +67,7 @@ fixFormulaObject <- function(object) {
 
 find_pairs <- function(set) {
   if(length(set) > 1L) {
-    return(combn(set, m = 2, simplify = FALSE))
+    return(utils::combn(set, m = 2, simplify = FALSE))
   } else {
     return(NULL)
   }

@@ -22,11 +22,8 @@
 #' @docType package
 #' @name glmmsr
 #' @useDynLib glmmsr
-#' @import lme4
-#' @import Matrix
 #' @importFrom Rcpp sourceCpp
 #' @importFrom methods as
-#' @importFrom utils combn
 #' @importFrom stats drop.terms family formula gaussian glm lm model.matrix
 #'  model.response model.weights na.fail offset optim pnorm terms update.formula
 NULL
