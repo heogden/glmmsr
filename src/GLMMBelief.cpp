@@ -16,7 +16,7 @@ GLMMBelief::GLMMBelief(const std::vector<int>& items,
 		       const Eigen::ArrayXd& weights):
   ContinuousBeliefBase(items),
   numObservations_(response.size()), numFixed_(X.cols()),
-  X_(X), Zt_(Zt), Lambdat_(Lambdat), Lind_(Lind), 
+  X_(X), Zt_(Zt), Lambdat_(Lambdat), Lind_(Lind),
   response_(response), weights_(weights)
 {
   initializeParameterDependents();
@@ -34,7 +34,7 @@ double GLMMBelief::evaluate(const Eigen::VectorXd& x,
 
 Eigen::VectorXd GLMMBelief::evaluateDerivative(const Eigen::VectorXd& x,
 					       const Parameters& parameters)
-{  
+{
   setTheta(parameters.GLMMTheta);
   setBeta(parameters.GLMMBeta);
   auto family = parameters.GLMMFamily;
@@ -54,7 +54,7 @@ Eigen::MatrixXd GLMMBelief::evaluateSecondDerivative(const Eigen::VectorXd& x,
 
 void GLMMBelief::setTheta(const Eigen::VectorXd& theta)
 {
-  if(theta != theta_) {
+  if(theta.size() != theta_.size() || theta != theta_) {
     theta_ = theta;
     setLambdatThetaZt(theta);
   }
@@ -62,7 +62,7 @@ void GLMMBelief::setTheta(const Eigen::VectorXd& theta)
 
 void GLMMBelief::setBeta(const Eigen::VectorXd& beta)
 {
-  if(beta != beta_) {
+  if(beta.size() != beta_.size() || beta != beta_) {
     beta_ = beta;
     XBeta_ = X_ * beta_;
   }
