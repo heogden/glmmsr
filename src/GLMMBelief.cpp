@@ -70,10 +70,10 @@ void GLMMBelief::setBeta(const Eigen::VectorXd& beta)
 
 void GLMMBelief::initializeParameterDependents()
 {
-  theta_.resize(numItems_);
-  beta_.resize(numFixed_);
-  LambdatThetaZt_.resize(numObservations_, numItems_);
-  XBeta_.resize(numObservations_, numFixed_);
+  theta_ = Eigen::VectorXd::Zero(numItems_);
+  beta_ = Eigen::VectorXd::Zero(numFixed_);
+  setLambdatThetaZt(theta_);
+  XBeta_ = X_ * beta_;
 }
 
 void GLMMBelief::setLambdatThetaZt(const Eigen::VectorXd& theta)
