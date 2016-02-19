@@ -16,6 +16,6 @@ URL: http://github.com/heogden/glmmsr
 BugReports: http://github.com/heogden/glmmsr/issues
 License: GPL (>=2)
 LazyData: true
-Suggests: BradleyTerry2, knitr, testthat
-VignetteBuilder: knitr
+Suggests: BradleyTerry2, rmarkdown, testthat
+VignetteBuilder: rmarkdown
 RoxygenNote: 5.0.1
