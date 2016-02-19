@@ -20,11 +20,15 @@
 #'   Statistics 9: 135-152. doi:
 #'   \href{http://dx.doi.org/10.1214/15-EJS991}{10.1214/15-EJS991}
 #' @docType package
-#' @import lme4
 #' @name glmmsr
 #' @useDynLib glmmsr
-#' @importFrom Rcpp sourceCpp
+#' @import lme4
 #' @import Matrix
+#' @importFrom Rcpp sourceCpp
+#' @importFrom methods as
+#' @importFrom utils combn
+#' @importFrom stats drop.terms family formula gaussian glm lm model.matrix
+#'  model.response model.weights na.fail offset optim pnorm terms update.formula
 NULL
 
 #' A dataset simulated from a two-level model
