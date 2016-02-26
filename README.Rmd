@@ -22,7 +22,7 @@ limitations. First, except in very simple cases, `lme4` uses a Laplace
 approximation to the likelihood for inference, which may be of poor quality in 
 some cases. Second, it is difficult to fit some GLMMs, such as pairwise 
 comparison models, with `lme4`. 
-The `glmmsr` package aims to offer progress on both of these problems. 
+The `glmmsr` package offers progress on both of these problems. 
 
 A user must choose which method to use to approximate
 the likelihood. In addition
