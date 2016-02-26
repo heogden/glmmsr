@@ -37,7 +37,7 @@ parse_formula <- function(formula, data, family, weights, off) {
         fr <- glm(formula, data = data_vars_off, family = family,
                   method = "model.frame", offset = off)
       } else {
-        if(is.null(offset)) {
+        if(is.null(off)) {
           data_vars_weights <- data_vars
           data_vars_weights$weights <- weights
           fr <- glm(formula, data = data_vars_weights,
