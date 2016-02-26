@@ -14,13 +14,13 @@ vignette: >
 # Introduction
 
 Generalized linear mixed models (GLMMs) are an important and widely-used model 
-class. In R, it is possible to these models with the 
+class. In R, it is possible to fit these models with the 
 `lme4` package [@lme4], but there are some
 limitations. First, except in very simple cases, `lme4` uses a Laplace 
 approximation to the likelihood for inference, which may be of poor quality in 
 some cases. Second, it is difficult to fit some GLMMs, such as pairwise 
 comparison models, with `lme4`. 
-The `glmmsr` package aims to offer progress on both of these problems. 
+The `glmmsr` package offers progress on both of these problems. 
 
 # Approximations to the likelihood
 In order to fit a GLMM with `glmmsr`, 
@@ -40,7 +40,7 @@ $i$th cluster.
 We model $Y_{ij} \sim \text{Bernoulli}(p_{ij})$
 where $$\log\left(\frac{p_{ij}}{1 - p_{ij}}\right) = \alpha + \beta x_{ij} + \sigma u_i,$$
 and $u_i \sim N(0, 1)$.
-The data `two_level`, available in
+The artificial data `two_level`, available in
 `glmmsr`, is simulated from a binary two-level model
 with $m_i = 2$ observations per cluster, and 
 with $m = 50$ clusters in total.  
@@ -53,7 +53,7 @@ where $$g(u; \theta) = \prod_{i=1}^m \prod_{j=1}^{m_i} Pr(Y_{ij} = y_{ij} | u_i,
 
 For this model, and for other GLMMs, 
 the likelihood function is an integral over the latent variables.
-It is not possible to compute this integral exactly, except in the
+It is not possible to compute this integral analytically, except in the
 case of a linear mixed model.
 In `glmmsr`, the interface for fitting this model is
 ```{r two_level interface, eval = FALSE}
@@ -71,10 +71,11 @@ by a function proportional to a Gaussian density.
 
 ```{r two_level Laplace}
 library(glmmsr)
-(mod_Laplace <- glmm(response ~ covariate + (1 | cluster), data = two_level,
-                     family = binomial, method = "Laplace"))
+mod_Laplace <- glmm(response ~ covariate + (1 | cluster), data = two_level,
+                     family = binomial, method = "Laplace")
+mod_Laplace
 ```
-This gives some estimates of the parameters, but do not know if these
+This gives some estimates of the parameters, but we do not know if these
 are close to the maximum likelihood estimates. Typically the structure
 of the data gives some hints about the quality of the Laplace approximation:
 if the data are 'sparse', in that there is only a small number
@@ -85,10 +86,10 @@ using a more accurate approximation to the likelihood.
 
 ## Adaptive Gaussian quadrature (`method = "AGQ"`)
 For a two-level model, where each observation is contained within
-a single cluster, the likelihood simplifies into a product of
-one-dimensional integrals. 
+a single cluster, the likelihood simplifies to a product of
+one-dimensional integrals:
 $$L(\theta) = \prod_{i=1}^m  \int \prod_{j=1}^{m_i} Pr(Y_{ij} = y_{ij} | u_i, \theta) \phi(u_i) du_i.$$
-In that case, we can use adaptive Gaussian
+In this case, we can use adaptive Gaussian
 quadrature with `nAGQ` points to approximate each of the one-dimensional 
 integrals.
 ```{r two_level_AGQ}
@@ -96,7 +97,7 @@ glmm(response ~ covariate + (1 | cluster), data = two_level,
      family = binomial, method = "AGQ", control = list(nAGQ = 16),
      prev_fit = mod_Laplace)
 ```
-The estimate of the random effect standard deviation is significantly
+The estimate of the random-effect standard deviation is significantly
 larger than that obtained using the Laplace approximation to the likelihood.
 
 Unfortunately, we can only use this method for a simple two-level model.
@@ -113,15 +114,16 @@ We have $Y_{ijk} \sim \text{Bernoulli}(p_{ijk})$
 where $$\log\left(\frac{p_{ijk}}{1 - p_{ijk}}\right) = \alpha + \beta x_{ijk} + b_i + c_j,$$
 $b_i \sim N(0, \sigma_b^2)$ and $c_j \sim N(0, \sigma_c^2)$.
 
-The data `three_level`, available in
+The artificial data `three_level`, available in
 `glmmsr`, is simulated from a binary two-level model
 with $m_{ij} = 2$ observations per cluster, $m_i = 2$ clusters
 per group, and $m = 50$ clusters in total.  
 
-We may fit the model with the Laplace approximation to the likelihood
+We may fit the model with the Laplace approximation to the likelihood:
 ```{r three_level_Laplace}
-(mod_3_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
-                       data = three_level, family = binomial, method = "Laplace"))
+mod_3_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                      data = three_level, family = binomial, method = "Laplace")
+mod_3_Laplace
 ```
 The structure is sparse -- there is little
 information provided by the data about the value of each random effect --
@@ -155,19 +157,20 @@ In the three-level example,
 `glmm` may be used to fit the model using the sequential reduction
 approximation, with 3 sparse grid levels.
 ```{r three_level_SR}
-(mod_3_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
-                  data = three_level, family = binomial, method = "SR",
-                  control = list(nSL = 3), prev_fit = mod_3_Laplace))
+mod_3_SR <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                 data = three_level, family = binomial, method = "SR",
+                 control = list(nSL = 3), prev_fit = mod_3_Laplace)
+mod_3_SR
 ```
 The estimates of the random effects standard deviations
 are larger than the corresponding estimates from the Laplace approximation.
 
-To check the quality of the approximation, we could increase the level
+To check the quality of the approximation, we increase the level
 of sparse grid storage
 ```{r three_level_SR_4}
-(mod_3_SR_4 <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
-                    data = three_level, family = binomial, method = "SR",
-                    control = list(nSL = 4), prev_fit = mod_3_SR))
+mod_3_SR_4 <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                   data = three_level, family = binomial, method = "SR",
+                   control = list(nSL = 4), prev_fit = mod_3_SR)
 ```
 We see that the parameter estimates are very close to those obtained with
 the lower level of sparse grid storage, and conclude that these
@@ -220,9 +223,11 @@ where `ability` is a substitution variable. We write
 down a corresponding subformula
 `ability[i] ~ 0 + x[i] + (1 | i)`.
 Here `player1` and `player2` are factors with common levels, and `x`
-is a vector of player-specific covariates, where the ordering of the players is
-given by the levels of `player1` and `player2`. The index `i` is arbitrary, and 
-is deduced automatically from the levels of `player1` and `player2`.
+is a vector of player-specific covariates. The common levels 
+of `player1` and `player2` give the full vector of players involved
+in the tournament, and the covariates should ordered so that the $i$th
+component of `x` gives covariates for the $i$th player in this vector. The 
+symbol used index the players, in this case `i`, is arbitrary.
 
 ## Example: `flatlizards` data
 
@@ -244,7 +249,7 @@ lizards_mod_BTm <- BTm(result, winner, loser, ~ SVL[..] + (1|..),
 summary(lizards_mod_BTm)
 ```
 
-We could fit the same model using `glmmsr`, first using the Laplace
+We can fit the same model using `glmmsr`, first using the Laplace
 approximation to the likelihood.
 
 ```{r lizards_Laplace}
@@ -258,7 +263,7 @@ lizards_mod_Laplace <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
                             method = "Laplace")
 summary(lizards_mod_Laplace)
 ```
-We could try using a more accurate likelihood approximation, such as sequential reduction with `nSL = 2`.
+We can try using a more accurate likelihood approximation, such as sequential reduction with `nSL = 2`.
 ```{r lizards_SR_2}
 lizards_mod_SR_2 <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]), 
                          ability[liz] ~ 0 + SVL[liz] + (1 | liz),
@@ -268,7 +273,7 @@ lizards_mod_SR_2 <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]),
 summary(lizards_mod_SR_2)
 ```
 
-We could increase `nSL` further.
+We can increase `nSL` further.
 
 ```{r lizards_SR_3}
 lizards_mod_SR_3 <- glmm(result ~ 0 + Sub(ability[winner] - ability[loser]), 
@@ -280,8 +285,8 @@ summary(lizards_mod_SR_3)
 ```
 
 The inference we get using different approximations to the likelihood
-is very different. As we increase `nSL`, the estimate the random
-effect standard deviation $\sigma$ increases.
+is very different. As we increase `nSL`, the estimate of the 
+random-effect standard deviation $\sigma$ increases.
 
 To investigate why this happens, 
 we examine a cut across the various approximate log-likelihood surfaces, at $\beta = 0.3$,
@@ -303,7 +308,7 @@ plot(theta_poss[,1], l_SR_theta_poss[[5]], type = "l", col = 5,
 for(i in 1:4) {
   lines(theta_poss[,1], l_SR_theta_poss[[i]], col = i)
 }
-
+legend("bottomright", legend = paste("nSL =", 0:4), col = 1:5, lty = 1, bty = "n")
 ```
 
 The log-likelihood $\ell(\sigma, \beta = 0.3)$ is an increasing function
