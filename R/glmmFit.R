@@ -27,6 +27,7 @@ find_approximation_name <- function(method, control) {
          "Laplace" = "Laplace approximation (lme4)",
          "AGQ" = paste("Adaptive Gaussian Quadrature with", control$nAGQ, "points (lme4)"),
          "SR" = paste("Sequential reduction at level", control$nSL),
+         "IS" = paste("Importance sampling with", control$nIS, "samples"),
          stop(cat("method", method, "not found")))
 }
 

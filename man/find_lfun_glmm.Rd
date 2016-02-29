@@ -11,7 +11,8 @@ find_lfun_glmm(modfr, method, control = NULL)
 
 \item{method}{the method used to approximate the likelihood. The options
 are \code{"Laplace"}, \code{"AGQ"} (the adaptive Gaussian quadrature approximation,
-from \code{lme4}), and \code{"SR"} (the sequential reduction approximation).}
+from \code{lme4}), \code{"SR"} (the sequential reduction approximation)
+and \code{"IS"} (an importance sampling approximation).}
 
 \item{control}{a list of extra parameters controlling the approximation
 to the likelihood. See 'Details' for more information.}

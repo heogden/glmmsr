@@ -23,12 +23,14 @@ find_control_with_defaults <- function(control, method)
   conLaplace <- list()
   conAGQ <- list(nAGQ = 15)
   conSR <- list(nSL = 3)
-  con_tot <- c(conAGQ, conSR)
+  conIS <- list(nIS = 1000)
+  con_tot <- c(conAGQ, conSR, conIS)
 
   con <- switch(method,
                 "Laplace" = conLaplace,
                 "AGQ" = conAGQ,
                 "SR" = conSR,
+                "IS" = conIS,
                 stop(paste("The method", method, "is not recognised"), call. = FALSE))
 
   are_known <- names(control) %in% names(con_tot)

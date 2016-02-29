@@ -102,7 +102,15 @@ test_that("fits a two-level model correctly", {
 
   expect_true(sum(abs(estim_3_SR - estim_15)) < 0.001)
 
+  set.seed(1)
+  mod_IS_100 <- glmm(response ~ covariate + (1 | cluster),
+                     data = two_level, family = binomial, method = "IS",
+                     control = list(nIS = 100), verbose = 0)
+  estim_IS_100 <- mod_IS_100$estim
+  expect_true(sum(abs(estim_IS_100 - estim_15)) < 0.2)
+
 })
+
 
 test_that("nSL = 0 gives similar result to Laplace", {
   mod_SR_0 <- glmm(response ~ covariate + (1 | cluster) + (1 | group),

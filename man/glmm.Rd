@@ -28,7 +28,8 @@ variables named in \code{formula}, and in any of the subformulas.}
 
 \item{method}{the method used to approximate the likelihood. The options
 are \code{"Laplace"}, \code{"AGQ"} (the adaptive Gaussian quadrature approximation,
-from \code{lme4}), and \code{"SR"} (the sequential reduction approximation).}
+from \code{lme4}), \code{"SR"} (the sequential reduction approximation)
+and \code{"IS"} (an importance sampling approximation).}
 
 \item{control}{a list of extra parameters controlling the approximation
 to the likelihood. See 'Details' for more information.}
@@ -66,6 +67,8 @@ The \code{control} argument is a list, used to specify further
   Only used if \code{method = "AGQ"}. Defaults to 15.}
   \item{\code{nSL}}{the level of sparse grid storage.
   Only used if \code{method = "SR"}. Defaults to 3.}
+  \item{\node{nIS}}{the number of samples to use for importance sampling.
+  Only used if \code{method = "IS"}. Defaults to 1000.}
  }
 }
 \examples{

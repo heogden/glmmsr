@@ -23,6 +23,7 @@ find_lfun_glmm_internal <- function(modfr, method, control)
          SR = find_lfun_SR(modfr, devfun_lme4,
                            nSL = control$nSL,
                            nAGQ = control$nAGQ),
+         IS = find_lfun_IS(modfr, devfun_lme4, nIS = control$nIS),
          stop(cat("method", method, "not available"))
   )
 }
