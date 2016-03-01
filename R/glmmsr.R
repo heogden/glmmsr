@@ -6,8 +6,9 @@
 #'
 #' In addition to the Laplace and adaptive Gaussian quadrature approximations,
 #' which are borrowed from \code{lme4}, the likelihood may
-#' be approximated by the sequential reduction approximation, which
-#' gives an accurate approximation to the likelihood in some situations
+#' be approximated by the sequential reduction approximation
+#' or an importance sampling approximation. These methods
+#' provide an accurate approximation to the likelihood in some situations
 #' where it is not possible to use adaptive Gaussian quadrature.
 #'
 #' The main function of the glmmsr package is \code{\link{glmm}}, which is
