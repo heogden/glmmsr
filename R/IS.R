@@ -20,35 +20,35 @@ find_log_integrand<- function(pars, modfr)
   XBeta <- as.numeric(modfr$X %*% beta)
 
   log_integrand <- function(u) {
-    eta <- XBeta + as.numeric(u %*% LambdatThetaZt)
-    mu <- family$linkinv(eta)
-    -sum(family$dev.resids(y, mu, weights))/2 + sum(dnorm(u, log = TRUE))
+    utLambdatThetaZt <- Matrix::crossprod(u, LambdatThetaZt)
+
+    utLambdatThetaZt_num <- as.numeric(utLambdatThetaZt)
+    eta_num <- rep(XBeta, each = ncol(u)) + utLambdatThetaZt_num
+    mu_num <- family$linkinv(eta_num)
+    y_rep <- rep(y, each = ncol(u))
+    weights_rep <- rep(weights, each = ncol(u))
+    dev_resids_num <- family$dev.resids(y_rep, mu_num, weights_rep)
+    dev_resids <- matrix(dev_resids_num, nrow = ncol(u))
+    - rowSums(dev_resids) / 2 + colSums(dnorm(u, log = TRUE))
   }
   log_integrand
 }
 
 transform_normal <- function(z, normal_approx) {
   C <- solve(chol(normal_approx$precision))
-  as.numeric(normal_approx$mean + tcrossprod(z, C))
+  normal_approx$mean + crossprod(C, z)
 }
 
-find_IS_term <- function(z, log_integrand, normal_approx) {
+find_log_weights <- function(z, log_integrand, normal_approx) {
   u <- transform_normal(z, normal_approx)
-  normal_part <- sum(dnorm(z, log = TRUE)) + determinant(as.matrix(normal_approx$precision), log = TRUE)$modulus/2
-  log_weight <- log_integrand(u) - normal_part
-  log_weight
-}
-
-find_log_weights <- function(z_poss, log_integrand, normal_approx) {
-  log_weights <- apply(z_poss, 1, find_IS_term, log_integrand = log_integrand,
-                      normal_approx = normal_approx)
+  normal_part <- colSums(dnorm(z, log = TRUE)) + determinant(as.matrix(normal_approx$precision), log = TRUE)$modulus/2
+  log_weights <- log_integrand(u) - normal_part
   log_weights
 }
 
-
 find_lfun_IS <- function(modfr, devfun_laplace, nIS) {
   n <- nrow(modfr$reTrms$Zt)
-  z_poss <- matrix(rnorm(n * nIS), nrow = nIS)
+  z_poss <- matrix(rnorm(n * nIS), nrow = n)
 
   lfun <- function(pars) {
     normal_approx <- compute_normal_approx(pars, devfun_laplace)
