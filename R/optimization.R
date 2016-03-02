@@ -50,13 +50,12 @@ optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
   started <- FALSE
 
   par0 <- rep(0, p)
-  t0 <- system.time(
-    tryCatch(d0 <- devfun_std(par0, stop_on_error = TRUE),
-             error = function(e) {
-               stop("Could not approximate the likelihood at the starting parameters for optimization, due to ", e,
-                    call. = FALSE)
-             })
-    )[[1]]
+  tryCatch(d0 <- devfun_std(par0, stop_on_error = TRUE),
+           error = function(e) {
+             stop("Could not approximate the likelihood at the starting parameters for optimization, due to ", e,
+                  call. = FALSE)
+           })
+  t0 <- system.time(devfun_std(par0))[[1]]
   print_gap <- floor(time_interval / t0)
 
   if(verbose > 0L && t0 > time_threshold)
