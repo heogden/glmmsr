@@ -25,7 +25,7 @@
 #'   Only used if \code{method = "AGQ"}. Defaults to 15.}
 #'   \item{\code{nSL}}{the level of sparse grid storage.
 #'   Only used if \code{method = "SR"}. Defaults to 3.}
-#'   \item{\node{nIS}}{the number of samples to use for importance sampling.
+#'   \item{\code{nIS}}{the number of samples to use for importance sampling.
 #'   Only used if \code{method = "IS"}. Defaults to 1000.}
 #'  }
 #' @return An object of the class \code{glmmFit}
