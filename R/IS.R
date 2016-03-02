@@ -41,7 +41,8 @@ transform_normal <- function(z, normal_approx) {
 
 find_log_weights <- function(z, log_integrand, normal_approx) {
   u <- transform_normal(z, normal_approx)
-  normal_part <- colSums(dnorm(z, log = TRUE)) + determinant(as.matrix(normal_approx$precision), log = TRUE)$modulus/2
+  log_det_prec <- determinant(as.matrix(normal_approx$precision), logarithm = TRUE)$modulus
+  normal_part <- colSums(dnorm(z, log = TRUE)) + log_det_prec/2
   log_weights <- log_integrand(u) - normal_part
   log_weights
 }
