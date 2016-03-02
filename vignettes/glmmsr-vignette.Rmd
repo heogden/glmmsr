@@ -28,8 +28,9 @@ a user must first choose which method to use to approximate
 the likelihood. In addition
 to the Laplace and adaptive Gaussian quadrature approximations,
 which are borrowed from `lme4`, the likelihood may
-be approximated by the sequential reduction approximation [@Ogden2015], which
-gives an accurate approximation to the likelihood in some situations
+be approximated by the sequential reduction approximation [@Ogden2015],
+or an importance sampling approximation. These methods
+provide an accurate approximation to the likelihood in some situations
 where it is not possible to use adaptive Gaussian quadrature.
 
 ##  Example: a two-level model
@@ -176,6 +177,80 @@ We see that the parameter estimates are very close to those obtained with
 the lower level of sparse grid storage, and conclude that these
 estimates are probably close to the exact maximum likelihood estimates.
 
+## Example: `salamander` data
+
+@McCullagh1989 discuss an experiment designed to study
+whether salamanders from two different populations would
+breed with one another. This well-known salamander mating data set 
+is available in the `hglm.data` package. 
+
+```{r salamander_data}
+data(salamander, package = "hglm.data")
+```
+
+Here, we fit the model used by @Booth1999, any many other authors.
+Writing $Y_{ij}$ for an indicator of whether the female salamander
+$i$ mates with male salamander $j$, we have $Y_{ij} \sim \text{Bernoulli}(p_{ij})$,
+where
+\[  \log\left(\frac{p_{ij}}{1 - p_{ij}}\right) = \beta^T \mathbf{x}_{ij} + b_i + c_j, \]
+and $b_i \sim N(0, \sigma_f^2)$, $c_j \sim N(0, \sigma_m^2)$. 
+Here $\mathbf{x}_{ij}$ tells us which population each of the pair of
+salamanders belongs to. The latent variables $b_i$ and $c_j$ represent
+the differeces in propensity to mate between individual animals,
+not explained by the population effects.
+
+We can fit the model using the Laplace approximation:
+```{r salamander_Laplace}
+mod_sal_Laplace <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+                        family = binomial, data = salamander, method = "Laplace")
+mod_sal_Laplace
+```
+
+It is possible, but time-consuming, to fit the model with the sequential
+reduction approximation with $2$ sparse levels, but if we try to use
+$3$ sparse levels, we get an error:
+```{r salamander_SR_3, error = TRUE}
+mod_sal_SR_3 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+                     family = binomial, data = salamander, method = "SR", 
+                     control = list(nSL = 3))
+```
+The sequential reduction approximation is too expensive to compute in this case.
+
+## Importance sampling (`method = "IS"`)
+
+If the sequential reduction approximation is too difficult to compute,
+we can use an importance sampling approximation to the likelihood.
+
+This takes `nIS` samples $\mathbf{u}^{(j)}$ 
+from the Gaussian approximation $N(\mu_\theta, \Sigma_\theta)$ used in the 
+Laplace approximation, and approximates $L(\theta)$ with
+\[ \hat L_{n_\text{IS}}(\theta) = 
+\sum_{j=1}^{n_\text{IS}} \frac{g(\mathbf{u}^{(j)}; \theta)}{\phi(\mathbf{u}^{(j)}; \mu_\theta, \Sigma_\theta)}.\]
+To ensure the approximation to the likelihood surface is smooth, the samples
+used for each value of $\theta$ are constructed by transforming a common
+set of standard normal samples.
+
+Since this is a stochastic approximation, we will obtain a different
+fit if we run the same code twice. We fit our model for the
+`salamander` data twice, each time using importance sampling with $1000$ samples:
+```{r salamander_IS_1000_1}
+set.seed(1)
+mod_sal_IS_1000_1 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+                          family = binomial, data = salamander,
+                          method = "IS", control = list(nIS = 1000),
+                          prev_fit = mod_sal_Laplace)
+mod_sal_IS_1000_1
+
+mod_sal_IS_1000_2 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+                          family = binomial, data = salamander,
+                          method = "IS", control = list(nIS = 1000),
+                          prev_fit = mod_sal_Laplace)
+mod_sal_IS_1000_2
+```
+Both fits agree reasonably well with each other.
+We could increase `nIS` even further, to check that the inference
+is close to exact likelihood inference.
+
 # The subformula interface
 The interface of `glmm` allows fitting
 of some more complex models which are not easy to fit with `lme4`.
@@ -241,7 +316,7 @@ predictors, `SVL` has no missing values.
 
 The model may be analysed using `BradleyTerry2`.
 
-```{r lizards_BTm}
+```{r lizards_BTm, message = FALSE}
 library(BradleyTerry2)
 result <- rep(1, nrow(flatlizards$contests))
 lizards_mod_BTm <- BTm(result, winner, loser, ~ SVL[..] + (1|..),
@@ -318,14 +393,61 @@ and so mask this difficulty. We will not discuss here how to deal
 with this problem, but note that without access to an accurate
 approximation to the likelihood, this problem would have gone unnoticed.
 
+## Example: `salamander` data revisited
+
+Recall that we assume that female $i$ and male $j$ mated
+with probability $p_{ij}$, where
+\[  \log\left(\frac{p_{ij}}{1 - p_{ij}}\right) = \beta^T \mathbf{x}_{ij} + b_i + c_j. \]
+Previously, we assumed that $b_i \sim N(0, \sigma_f^2)$ and $c_j \sim N(0, \sigma_m^2)$
+are samples from different distributions. We might also
+be interested in a simpler model, where $b_i$ and $c_j$ are both samples
+from a common $N(0, \sigma^2)$ distribution.
+
+We may fit this model using the subformula interface of `glmmsr`.
+To do this, we will use a substituted variable `propen`, representing
+the latent propensity of each salamander to mate.
+First, we must construct identifiers for the female and 
+the male salamander involved in each match. These identifiers should
+be factors with common levels, where the levels are the identifiers
+of all the salamanders involved in the experiment:
+```{r salamander_equal_ids}
+female_id <- paste("F", salamander$Female, sep = "")
+male_id <- paste("M", salamander$Male, sep = "")
+ids <- unique(c(female_id, male_id))
+salamander$female_id <- factor(female_id, levels = ids)
+salamander$male_id <- factor(male_id, levels = ids)
+```
+
+We may then fit the model, using a Laplace approximation to the likelihood:
+```{r salamander_equal}
+mod_sal_equal <- glmm(Mate ~ 0 + Cross + Sub(propen[female_id] + propen[male_id]),
+                      propen[sal] ~ 0 + (1 | sal), family = binomial, 
+                      data = salamander, method = "Laplace")
+mod_sal_equal
+```
+As before, we can also fit the model with an importance sampling approximation
+to the likelihood:
+```{r salamander_equal_IS}
+mod_sal_equal_IS <- glmm(Mate ~ 0 + Cross + Sub(propen[female_id] + propen[male_id]),
+                         propen[sal] ~ 0 + (1 | sal), family = binomial, 
+                         data = salamander, method = "IS", 
+                         control = list(nIS = 1000), prev_fit = mod_sal_equal)
+mod_sal_equal_IS
+```
+We observe a small increase in the estimate of the random-effects standard
+deviation when we use the more accurate approximation to the likelihood.
+
 # Conclusions
 The `glmmsr` package provides the user with a choice of methods for approximating
 the likelihood, including the sequential reduction approximation [@Ogden2015],
-which gives an accurate approximation to the likelihood in many cases
-for which the Laplace approximation is unreliable. Some cases remain
-in which the sequential reduction approximation is too expensive to compute,
-despite the poor quality of the Laplace approximation, motivating the need
-for other methods for approximating the likelihood. We hope to add such methods
-to future versions of `glmmsr`.
+which gives an accurate approximation to the likelihood in many cases for which 
+the Laplace approximation is unreliable. Some cases remain in which the sequential 
+reduction approximation is too expensive to compute, despite the poor quality 
+of the Laplace approximation. An importance sampling approximation may sometimes 
+be used to obtain accurate inference in such cases, although if the Laplace 
+approximation is a very poor approximation, the importance sampling approximation 
+might take a very long time to converge. This motivates the need for other 
+methods for approximating the likelihood, and we hope to add such methods in 
+future versions of `glmmsr`.
 
 ## References
