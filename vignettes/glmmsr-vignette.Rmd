@@ -207,9 +207,16 @@ mod_sal_Laplace <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
 mod_sal_Laplace
 ```
 
-It is possible, but time-consuming, to fit the model with the sequential
-reduction approximation with $2$ sparse levels, but if we try to use
-$3$ sparse levels, we get an error:
+We can fit the model using the sequential
+reduction approximation with $2$ sparse levels, although
+this is quite time-consuming:
+```{r salamander_SR_2}
+mod_sal_SR_2 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+                     family = binomial, data = salamander, method = "SR", 
+                     control = list(nSL = 2))
+mod_sal_SR_2
+```
+If we try to use $3$ sparse levels, we get an error:
 ```{r salamander_SR_3, error = TRUE}
 mod_sal_SR_3 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
                      family = binomial, data = salamander, method = "SR", 
@@ -248,7 +255,8 @@ mod_sal_IS_1000_2 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
                           prev_fit = mod_sal_Laplace)
 mod_sal_IS_1000_2
 ```
-Both fits agree reasonably well with each other.
+The two fits agree reasonably well with each other, and with
+the fit using sequential reduction with two sparse levels.
 We could increase `nIS` even further, to check that the inference
 is close to exact likelihood inference.
 
