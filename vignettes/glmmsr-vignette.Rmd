@@ -210,11 +210,10 @@ mod_sal_Laplace
 We can fit the model using the sequential
 reduction approximation with $2$ sparse levels, although
 this is quite time-consuming:
-```{r salamander_SR_2}
+```{r salamander_SR_2, eval = FALSE}
 mod_sal_SR_2 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
                      family = binomial, data = salamander, method = "SR", 
-                     control = list(nSL = 2))
-mod_sal_SR_2
+                     control = list(nSL = 2), prev_fit = mod_sal_Laplace)
 ```
 If we try to use $3$ sparse levels, we get an error:
 ```{r salamander_SR_3, error = TRUE}
@@ -240,23 +239,17 @@ set of standard normal samples.
 
 Since this is a stochastic approximation, we will obtain different
 fits with different random seeds. We fit our model for the
-`salamander` data twice, each time using importance sampling with $1000$ samples:
-```{r salamander_IS_1000_1}
+`salamander` data using importance sampling with $1000$ samples:
+```{r salamander_IS_1000}
 set.seed(1)
-mod_sal_IS_1000_1 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+mod_sal_IS_1000 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
                           family = binomial, data = salamander,
                           method = "IS", control = list(nIS = 1000),
                           prev_fit = mod_sal_Laplace)
-mod_sal_IS_1000_1
-
-mod_sal_IS_1000_2 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
-                          family = binomial, data = salamander,
-                          method = "IS", control = list(nIS = 1000),
-                          prev_fit = mod_sal_Laplace)
-mod_sal_IS_1000_2
+mod_sal_IS_1000
 ```
-The two fits agree reasonably well with each other, and with
-the fit using sequential reduction with two sparse levels.
+We observe a small increase in the estimate of the random-effects standard
+deviation when we this importance sampling approximation to the likelihood.
 We could increase `nIS` even further, to check that the inference
 is close to exact likelihood inference.
 
@@ -381,7 +374,7 @@ modfr_lizards <-  find_modfr_glmm(result ~ 0 + Sub(ability[winner] - ability[los
                                   ability[liz] ~ 0 + SVL[liz] + (1 | liz), 
                                   data = flatlizards_glmmsr,
                                   family = binomial(link = "probit"))
-theta_poss <- cbind(seq(0, 3, by = 0.2), 0.3)
+theta_poss <- cbind(seq(0, 3, by = 0.25), 0.3)
 l_SR_theta_poss <- list()
 for(i in 0:4) {
   lfun_SR_i <- find_lfun_glmm(modfr_lizards, method = "SR", control = list(nSL = i))
@@ -434,17 +427,6 @@ mod_sal_equal <- glmm(Mate ~ 0 + Cross + Sub(propen[female_id] + propen[male_id]
                       data = salamander, method = "Laplace")
 mod_sal_equal
 ```
-As before, we can also fit the same model with an importance sampling approximation
-to the likelihood:
-```{r salamander_equal_IS}
-mod_sal_equal_IS <- glmm(Mate ~ 0 + Cross + Sub(propen[female_id] + propen[male_id]),
-                         propen[sal] ~ 0 + (1 | sal), family = binomial, 
-                         data = salamander, method = "IS", 
-                         control = list(nIS = 1000), prev_fit = mod_sal_equal)
-mod_sal_equal_IS
-```
-We observe a small increase in the estimate of the random-effects standard
-deviation when we this importance sampling approximation to the likelihood.
 
 # Conclusions
 The `glmmsr` package provides the user with a choice of methods for approximating
