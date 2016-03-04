@@ -45,7 +45,7 @@ find_lfun_SR <- function(modfr, devfun_lme4, nSL, nAGQ) {
   complexity_limit <- 5e5
   if(beliefs$width^(2 * nSL) > complexity_limit) {
     stop(paste("The sequential reduction approximation with", nSL,
-               "sparse levels is too difficult to compute in this case.",
+               "sparse levels \n is too difficult to compute in this case. \n",
                "Consider reducing nSL, or using a different approximation method."),
          call. = FALSE)
   }
