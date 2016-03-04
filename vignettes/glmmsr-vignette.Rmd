@@ -54,7 +54,7 @@ where $$g(u; \theta) = \prod_{i=1}^m \prod_{j=1}^{m_i} Pr(Y_{ij} = y_{ij} | u_i,
 
 For this model, and for other GLMMs, 
 the likelihood function is an integral over the latent variables.
-It is not possible to compute this integral analytically, except in the
+It is not possible to evaluate this integral analytically, except in the
 case of a linear mixed model.
 In `glmmsr`, the interface for fitting this model is
 ```{r two_level interface, eval = FALSE}
@@ -188,15 +188,16 @@ is available in the `hglm.data` package.
 data(salamander, package = "hglm.data")
 ```
 
-Here, we fit the model used by @Booth1999, any many other authors.
+Here, we fit the model used by @Booth1999, and many other authors.
 Writing $Y_{ij}$ for an indicator of whether the female salamander
 $i$ mates with male salamander $j$, we have $Y_{ij} \sim \text{Bernoulli}(p_{ij})$,
 where
 \[  \log\left(\frac{p_{ij}}{1 - p_{ij}}\right) = \beta^T \mathbf{x}_{ij} + b_i + c_j, \]
 and $b_i \sim N(0, \sigma_f^2)$, $c_j \sim N(0, \sigma_m^2)$. 
 Here $\mathbf{x}_{ij}$ tells us which population each of the pair of
-salamanders belongs to. The latent variables $b_i$ and $c_j$ represent
-the differeces in propensity to mate between individual animals,
+salamanders belongs to, given by the variable `Cross` in the
+`salamander` data. The latent variables $b_i$ and $c_j$ represent
+the differences in propensity to mate between individual animals,
 not explained by the population effects.
 
 We can fit the model using the Laplace approximation:
@@ -226,12 +227,12 @@ from the Gaussian approximation $N(\mu_\theta, \Sigma_\theta)$ used in the
 Laplace approximation, and approximates $L(\theta)$ with
 \[ \hat L_{n_\text{IS}}(\theta) = 
 \sum_{j=1}^{n_\text{IS}} \frac{g(\mathbf{u}^{(j)}; \theta)}{\phi(\mathbf{u}^{(j)}; \mu_\theta, \Sigma_\theta)}.\]
-To ensure the approximation to the likelihood surface is smooth, the samples
+To ensure that the approximation to the likelihood surface is smooth, the samples
 used for each value of $\theta$ are constructed by transforming a common
 set of standard normal samples.
 
-Since this is a stochastic approximation, we will obtain a different
-fit if we run the same code twice. We fit our model for the
+Since this is a stochastic approximation, we will obtain different
+fits with different random seeds. We fit our model for the
 `salamander` data twice, each time using importance sampling with $1000$ samples:
 ```{r salamander_IS_1000_1}
 set.seed(1)
@@ -425,7 +426,7 @@ mod_sal_equal <- glmm(Mate ~ 0 + Cross + Sub(propen[female_id] + propen[male_id]
                       data = salamander, method = "Laplace")
 mod_sal_equal
 ```
-As before, we can also fit the model with an importance sampling approximation
+As before, we can also fit the same model with an importance sampling approximation
 to the likelihood:
 ```{r salamander_equal_IS}
 mod_sal_equal_IS <- glmm(Mate ~ 0 + Cross + Sub(propen[female_id] + propen[male_id]),
@@ -435,7 +436,7 @@ mod_sal_equal_IS <- glmm(Mate ~ 0 + Cross + Sub(propen[female_id] + propen[male_
 mod_sal_equal_IS
 ```
 We observe a small increase in the estimate of the random-effects standard
-deviation when we use the more accurate approximation to the likelihood.
+deviation when we this importance sampling approximation to the likelihood.
 
 # Conclusions
 The `glmmsr` package provides the user with a choice of methods for approximating
@@ -445,7 +446,7 @@ the Laplace approximation is unreliable. Some cases remain in which the sequenti
 reduction approximation is too expensive to compute, despite the poor quality 
 of the Laplace approximation. An importance sampling approximation may sometimes 
 be used to obtain accurate inference in such cases, although if the Laplace 
-approximation is a very poor approximation, the importance sampling approximation 
+approximation is a poor approximation, the importance sampling approximation 
 might take a very long time to converge. This motivates the need for other 
 methods for approximating the likelihood, and we hope to add such methods in 
 future versions of `glmmsr`.
