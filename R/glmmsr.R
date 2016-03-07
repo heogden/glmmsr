@@ -25,8 +25,8 @@
 #' @useDynLib glmmsr
 #' @importFrom Rcpp sourceCpp
 #' @importFrom methods as
-#' @importFrom stats drop.terms family formula gaussian glm lm model.matrix
-#'  model.response model.weights na.fail offset optim pnorm terms update.formula
+#' @importFrom stats dnorm drop.terms family formula gaussian glm lm model.matrix
+#'  model.response model.weights na.fail offset optim pnorm rnorm terms update.formula
 NULL
 
 #' A dataset simulated from a two-level model
