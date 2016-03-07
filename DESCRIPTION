@@ -5,7 +5,7 @@ Authors@R: person("Helen", "Ogden", , "heogden12@gmail.com", role = c("aut", "cr
 Description: Conduct inference about generalized linear mixed models, with a
     choice about which method to use to approximate the likelihood. In addition
     to the Laplace and adaptive Gaussian quadrature approximations, which are
-    borrowed from lme4, the likelihood may be approximated by the sequential
+    borrowed from 'lme4', the likelihood may be approximated by the sequential
     reduction approximation, or an importance sampling approximation. These
     methods provide an accurate approximation to the likelihood in some
     situations where it is not possible to use adaptive Gaussian quadrature.
