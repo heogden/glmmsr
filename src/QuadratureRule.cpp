@@ -36,7 +36,8 @@ Eigen::MatrixXd QuadratureRule::findHermiteJacobi(int n)
   // but fast enough for reasonable n
   Eigen::MatrixXd hermiteJacobi = Eigen::MatrixXd::Zero(n, n);
   for(int i = 1; i < n; ++i){
-    hermiteJacobi(i, i - 1) =  pow(i / 2.0, 0.5);
+    double iOver2 = i / 2.0;
+    hermiteJacobi(i, i - 1) =  sqrt(iOver2);
   }
   return hermiteJacobi;
 }
@@ -47,7 +48,7 @@ double integrate1D(std::function<double(double)> f,
 		   const QuadratureRule& rule)
 {
   double ret = 0;
-  auto scale = sqrt(2) * sigma;
+  auto scale = sqrt(2.) * sigma;
   auto nodes = rule.getNodes();
   auto weights = rule.getWeights();
   for(auto i = 0; i < nodes.size(); ++i) {
@@ -66,7 +67,7 @@ Eigen::ArrayXd integrate1DVector(std::function<Eigen::ArrayXd(double)> f,
 				 const QuadratureRule& rule)
 {
   Eigen::ArrayXd ret = Eigen::ArrayXd::Zero(d);
-  auto scale = sqrt(2) * sigma;
+  auto scale = sqrt(2.) * sigma;
   auto nodes = rule.getNodes();
   auto weights = rule.getWeights();
   for(auto i = 0; i < nodes.size(); ++i) {
@@ -85,7 +86,7 @@ Eigen::ArrayXXd integrate1DMatrix(std::function<Eigen::ArrayXXd(double)> f,
 				  const QuadratureRule& rule)
 {
   Eigen::ArrayXXd ret = Eigen::ArrayXXd::Zero(d, d);
-  auto scale = sqrt(2) * sigma;
+  auto scale = sqrt(2.) * sigma;
   auto nodes = rule.getNodes();
   auto weights = rule.getWeights();
   for(auto i = 0; i < nodes.size(); ++i) {

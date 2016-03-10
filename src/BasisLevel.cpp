@@ -72,7 +72,7 @@ double BasisLevel::evaluateSecondDerivative(double x, int position) const
 void BasisLevel::initializeBandwidth(int levelMax)
 {
   if(levelMax > 0) {
-     double prob = 0.5 + pow(2, -levelMax - 1);
+     double prob = 0.5 + pow(2., -levelMax - 1);
      boost::math::normal standardNormal(0.0, 1.0);
      bandwidth_ = (scale_ * quantile(standardNormal, prob)) / 10;
   } else {
@@ -83,7 +83,7 @@ void BasisLevel::initializeBandwidth(int levelMax)
 
 void BasisLevel::initializeKnots()
 {
-  int N = pow(2, level_);
+  int N = (1 << level_);
   double prob;
   double knot;
   int knotId;
@@ -104,7 +104,7 @@ void BasisLevel::initializeGridIds()
   double knot;
   int knotId;
   int knotIdPrev = 0;
-  int numKnots = pow(2, level_ + 1) - 1;
+  int numKnots = (2 << level_) - 1;
   boost::math::normal standardNormal(0.0, 1.0);
   for(int i = 0; i < numKnots; ++i) {
     prob = (i + 1.0) / (numKnots + 1.0);
@@ -222,7 +222,7 @@ std::vector<double> BasisLevel::findKnotsTotal() const
   double knotToGrid;
   std::vector<double> knotsTotal;
   boost::math::normal standardNormal(0.0, 1.0);
-  int numKnots = pow(2, level_ + 1) - 1;
+  int numKnots = (2 << level_) - 1;
   for(int i = 0; i < numKnots; ++i) {
     prob = (i + 1.0) / (numKnots + 1.0);
     knot = scale_ * quantile(standardNormal, prob);
