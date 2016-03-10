@@ -5,3 +5,4 @@ temp
 ^README-*\.png$
 .travis.yml
 ^data-raw$
+^NEWS\.md$
