@@ -2,6 +2,7 @@ language: r
 r: devel
 cache: packages
 
+r_build_args: "--no-build-vignettes"
 r_check_args: "--as-cran --no-vignettes"
 
 warnings_are_errors: true
