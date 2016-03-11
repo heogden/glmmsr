@@ -43,7 +43,7 @@ See the vignette for some examples.
 
 ## Installing `glmmsr`
 
-You can install version 0.1.0 of `glmmsr` from CRAN with
+You can `glmmsr` from CRAN with
 ```{r, eval = FALSE}
 install.packages("glmmsr")
 ```
