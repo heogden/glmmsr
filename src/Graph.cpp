@@ -1,33 +1,56 @@
 #include "Graph.h"
 
-Graph::Graph(const std::vector<int>& items): items_(items),
-					     numVertices_(items.size()),
-					     isActive_(items.size(), true),
-					     graph_(items.size())
+
+Graph::Graph(const std::vector<int>& items): numVertices_(0),
+					     numEdges_(0)
 {
-  initializePositions();
+  for(const auto& item : items) {
+    addNode(item);
+  }
 }
 
-void Graph::addEdge(int i, int j)
+void Graph::addNode(int item)
 {
-  int ri = positions_.at(i);
-  int rj = positions_.at(j);
-  boost::add_edge(ri, rj, graph_);
+  auto v = boost::add_vertex(graph_);
+  graph_[v].item = item;
+  graph_[v].active = true;
+  positions_[item] = v;
+  numVertices_++;
 }
 
 void Graph::removeNode(int i)
 {
-  int ri = positions_.at(i);
-
-  boost::graph_traits<InternalGraph>::adjacency_iterator wi, wi_end;
-  // remove all edges incident to i
-  for(boost::tie(wi, wi_end) = adjacent_vertices(ri, graph_);
-      wi != wi_end; ++wi)
-    boost::remove_edge(ri, *wi, graph_);
-
-  isActive_.at(ri) = false;
-  --numVertices_;
+  auto ri = positions_.at(i);
+  if(graph_[ri].active) {
+    auto di = findDegree(i);
+    graph_[ri].active = false;
+    numVertices_--;
+    numEdges_ -= di;
+  }
 }
+
+void Graph::addEdge(int i, int j)
+{
+  auto ri = positions_.at(i);
+  auto rj = positions_.at(j);
+
+  // make sure the vertices are active
+  if(!graph_[ri].active) {
+    graph_[ri].active = true;
+    numVertices_++;
+  }
+  if(!graph_[rj].active) {
+    graph_[rj].active = true;
+    numVertices_++;
+  }
+
+  bool edgeExists = boost::edge(ri, rj, graph_).second;
+  if(!edgeExists) {
+    boost::add_edge(ri, rj, graph_);
+    numEdges_++;
+  }
+}
+
 
 void Graph::connect(const std::vector<int>& items)
 {
@@ -46,39 +69,53 @@ int Graph::numVertices() const
 
 int Graph::numEdges() const
 {
-  return boost::num_edges(graph_);
+  return numEdges_;
 }
 
 std::vector<int> Graph::getItems() const
 {
   std::vector<int> items;
-  for(auto i = items_.size() - items_.size(); i != items_.size(); ++i) {
-    if(isActive_.at(i))
-      items.push_back(items_.at(i));
+  // iterate through all vertices, only record active
+  VertexIter wi, wi_end;
+  for(boost::tie(wi, wi_end) = vertices(graph_);
+      wi != wi_end; ++wi) {
+    if(graph_[*wi].active)
+      items.push_back(graph_[*wi].item);
   }
+
   return items;
+}
+
+int Graph::findDegree(int i) const
+{
+  int degree = 0;
+  AdjIter wi, wi_end;
+  auto ri = positions_.at(i);
+
+  for(boost::tie(wi, wi_end) = adjacent_vertices(ri, graph_);
+      wi != wi_end; ++wi) {
+    if(graph_[*wi].active) {
+      degree++;
+    }
+  }
+  return degree;
 }
 
 std::vector<int> Graph::findNeighbours(int i) const
 {
-  boost::graph_traits<InternalGraph>::adjacency_iterator wi, wi_end;
+  AdjIter wi, wi_end;
   std::vector<int> neighbours;
-  int ri = positions_.at(i);
-  
+  auto ri = positions_.at(i);
+
   for(boost::tie(wi, wi_end) = adjacent_vertices(ri, graph_);
-      wi != wi_end; ++wi)
-      neighbours.push_back(items_.at(*wi));
+      wi != wi_end; ++wi) {
+    if(graph_[*wi].active) {
+      neighbours.push_back(graph_[*wi].item);
+    }
+  }
 
   return neighbours;
 }
-
-
-void Graph::initializePositions()
-{
-  for(unsigned int i = 0; i != items_.size(); ++i)
-    positions_[items_.at(i)] = i;
-}
-
 
 bool isComplete(const Graph& graph)
 {
