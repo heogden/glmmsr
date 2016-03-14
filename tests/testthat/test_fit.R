@@ -230,3 +230,10 @@ test_that("prev_fit doesn't affect the result", {
   expect_true(sum(abs(fit_SR_2$estim - fit_SR_2_2$estim)) < 0.01)
   expect_true(sum(abs(fit_SR_2$Sigma - fit_SR_2_2$Sigma)) < 0.01)
 })
+
+test_that("family = gaussian handled correctly", {
+  expect_error(glmm(response ~ covariate + (1 | cluster),
+                    data = two_level, family = gaussian,
+                    method = "Laplace", verbose = 0),
+               "glmmsr can't yet handle family = gaussian")
+})

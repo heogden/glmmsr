@@ -8,6 +8,8 @@ parse_formula <- function(formula, data, family, weights, off) {
   if (is.function(family))
     family <- family()
   if(has_re(formula)) {
+    if (family$family == "gaussian")
+      stop("glmmsr can't yet handle family = gaussian", call. = FALSE)
     if(is.null(off) && is.null(weights)) {
       modfr <- lme4::glFormula(formula, data = data_vars, family = family,
                                na.action = na.fail)

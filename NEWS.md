@@ -1,4 +1,5 @@
 # glmmsr 0.1.1.9000
+* give error for family = gaussian, which is not yet handled correctly
 
 # glmmsr 0.1.1
 * Make C++ code more portable, by removing ambiguous pow(int, int) 
