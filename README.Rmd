@@ -48,8 +48,8 @@ You can `glmmsr` from CRAN with
 install.packages("glmmsr")
 ```
 
-You can install this development version of `glmmsr` 
-by running
+You can install the development version of `glmmsr` 
+from GitHub by running
 ```{r, eval = FALSE}
 devtools::install_github("heogden/glmmsr")
 ```
