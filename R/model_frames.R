@@ -26,6 +26,8 @@ parse_formula <- function(formula, data, family, weights, off) {
         }
       }
     }
+    if(is.null(modfr$family))
+      modfr$family <- family
   } else {
     if(is.null(off) && is.null(weights)) {
       fr <- glm(formula, data = data_vars, family = family,
