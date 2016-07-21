@@ -18,7 +18,7 @@ find_lfun_glmm_internal <- function(modfr, method, control)
   devfun_lme4 <- lme4::updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = nAGQ_lme4)
   lfun_lme4 <- function(x) { -devfun_lme4(x) / 2 }
   switch(method,
-         Laplace = lfun_lme4,
+         Laplace = find_lfun_Laplace(modfr, devfun_lme4, order = control$order),
          AGQ = lfun_lme4,
          SR = find_lfun_SR(modfr, devfun_lme4,
                            nSL = control$nSL,

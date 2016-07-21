@@ -237,3 +237,25 @@ test_that("family = gaussian handled correctly", {
                     method = "Laplace", verbose = 0),
                "glmmsr can't yet handle family = gaussian")
 })
+
+test_that("Laplace order handled correctly", {
+
+  mod_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                      data = three_level, family = binomial,
+                      method = "Laplace", verbose = 0)
+
+  mod_Laplace_1 <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                      data = three_level, family = binomial,
+                      method = "Laplace",
+                      control = list(order = 1),
+                      verbose = 0)
+  expect_true(sum(abs(mod_Laplace$estim - mod_Laplace_1$estim)) < 0.01)
+  expect_error(glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                    data = three_level, family = binomial,
+                    method = "Laplace",
+                    control = list(order = 2),
+                    verbose = 0),
+               "higher-order Laplace approximation not yet implemented")
+
+})
+

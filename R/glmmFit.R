@@ -24,7 +24,7 @@ summaryGlmmFit <- function(x) {
 #' @keywords internal
 find_approximation_name <- function(method, control) {
   switch(method,
-         "Laplace" = "Laplace approximation (lme4)",
+         "Laplace" = paste("Laplace approximation, order ", control$order),
          "AGQ" = paste("Adaptive Gaussian Quadrature with", control$nAGQ, "points (lme4)"),
          "SR" = paste("Sequential reduction at level", control$nSL),
          "IS" = paste("Importance sampling with", control$nIS, "samples"),

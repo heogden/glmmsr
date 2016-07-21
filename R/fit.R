@@ -27,6 +27,8 @@
 #'   Only used if \code{method = "SR"}. Defaults to 3.}
 #'   \item{\code{nIS}}{the number of samples to use for importance sampling.
 #'   Only used if \code{method = "IS"}. Defaults to 1000.}
+#'   \item{\code{order}{the order of Laplace approxiation.
+#'   only used if \code{method = "Laplace"}. Defaults to 1.}}
 #'  }
 #' @return An object of the class \code{glmmFit}
 #' @example inst/examples/three_level.R
