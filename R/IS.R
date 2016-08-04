@@ -23,7 +23,11 @@ find_log_integrand<- function(pars, modfr)
     utLambdatThetaZt <- Matrix::crossprod(u, LambdatThetaZt)
 
     utLambdatThetaZt_num <- as.numeric(utLambdatThetaZt)
-    eta_num <- rep(XBeta, each = ncol(u)) + utLambdatThetaZt_num
+    if(length(XBeta) > 0)
+      eta_num <- rep(XBeta, each = ncol(u)) + utLambdatThetaZt_num
+    else
+      eta_num <- utLambdatThetaZt_num
+
     mu_num <- family$linkinv(eta_num)
     y_rep <- rep(y, each = ncol(u))
     weights_rep <- rep(weights, each = ncol(u))
