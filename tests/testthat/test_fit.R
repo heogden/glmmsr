@@ -111,6 +111,21 @@ test_that("fits a two-level model correctly", {
 
 })
 
+test_that("Can handle settings with no covariates", {
+
+  mod_3_SR <- glmm(response ~ 0 + (1 | cluster),
+                   data = two_level, family = binomial, method = "SR",
+                   control = list(nSL = 3), verbose = 0)
+
+  estim_3_SR <- mod_3_SR$estim
+
+  set.seed(1)
+  mod_IS_100 <- glmm(response ~ 0 + (1 | cluster),
+                     data = two_level, family = binomial, method = "IS",
+                     control = list(nIS = 100), verbose = 0)
+  estim_IS_100 <- mod_IS_100$estim
+  expect_true(sum(abs(estim_IS_100 - estim_3_SR)) < 0.2)
+})
 
 test_that("nSL = 0 gives similar result to Laplace", {
   mod_SR_0 <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
