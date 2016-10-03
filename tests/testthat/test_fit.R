@@ -268,9 +268,9 @@ test_that("Laplace order handled correctly", {
   expect_error(glmm(response ~ covariate + (1 | cluster) + (1 | group),
                     data = three_level, family = binomial,
                     method = "Laplace",
-                    control = list(order = 2),
+                    control = list(order = 3),
                     verbose = 0),
-               "higher-order Laplace approximation not yet implemented")
+               "order-3 Laplace approximation not yet implemented")
 
 })
 
