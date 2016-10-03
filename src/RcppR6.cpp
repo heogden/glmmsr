@@ -91,4 +91,13 @@ int cluster_graph__width__get(glmmsr::RcppR6::RcppR6<ClusterGraph> obj_) {
 }
 
 
+// [[Rcpp::export]]
+Family extended_family__ctor(std::string family, std::string link) {
+  return Family(family, link);
+}
+// [[Rcpp::export]]
+double extended_family__evaluate(glmmsr::RcppR6::RcppR6<Family> obj_, Eigen::ArrayXd linear_predictor, Eigen::ArrayXd response, Eigen::ArrayXd weights) {
+  return obj_->evaluate(linear_predictor, response, weights);
+}
+
 

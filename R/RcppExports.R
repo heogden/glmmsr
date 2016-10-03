@@ -81,3 +81,11 @@ cluster_graph__width__get <- function(obj_) {
     .Call('glmmsr_cluster_graph__width__get', PACKAGE = 'glmmsr', obj_)
 }
 
+extended_family__ctor <- function(family, link) {
+    .Call('glmmsr_extended_family__ctor', PACKAGE = 'glmmsr', family, link)
+}
+
+extended_family__evaluate <- function(obj_, linear_predictor, response, weights) {
+    .Call('glmmsr_extended_family__evaluate', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
+}
+

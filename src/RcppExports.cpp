@@ -236,3 +236,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// extended_family__ctor
+Family extended_family__ctor(std::string family, std::string link);
+RcppExport SEXP glmmsr_extended_family__ctor(SEXP familySEXP, SEXP linkSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type family(familySEXP);
+    Rcpp::traits::input_parameter< std::string >::type link(linkSEXP);
+    rcpp_result_gen = Rcpp::wrap(extended_family__ctor(family, link));
+    return rcpp_result_gen;
+END_RCPP
+}
+// extended_family__evaluate
+double extended_family__evaluate(glmmsr::RcppR6::RcppR6<Family> obj_, Eigen::ArrayXd linear_predictor, Eigen::ArrayXd response, Eigen::ArrayXd weights);
+RcppExport SEXP glmmsr_extended_family__evaluate(SEXP obj_SEXP, SEXP linear_predictorSEXP, SEXP responseSEXP, SEXP weightsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< glmmsr::RcppR6::RcppR6<Family> >::type obj_(obj_SEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type linear_predictor(linear_predictorSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type response(responseSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type weights(weightsSEXP);
+    rcpp_result_gen = Rcpp::wrap(extended_family__evaluate(obj_, linear_predictor, response, weights));
+    return rcpp_result_gen;
+END_RCPP
+}

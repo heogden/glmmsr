@@ -25,6 +25,8 @@ template <> SEXP wrap(const Parameters&);
 template <> Parameters as(SEXP);
 template <> SEXP wrap(const ClusterGraph&);
 template <> ClusterGraph as(SEXP);
+template <> SEXP wrap(const Family&);
+template <> Family as(SEXP);
 }
 
 #endif

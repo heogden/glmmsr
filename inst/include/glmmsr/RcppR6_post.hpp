@@ -17,6 +17,9 @@ template <> inline std::string generator_name<Parameters >() {return ".R6_calibr
 template <> inline std::string   class_name_r<ClusterGraph >() {return "cluster_graph";}
 template <> inline std::string   package_name<ClusterGraph >() {return "glmmsr";}
 template <> inline std::string generator_name<ClusterGraph >() {return ".R6_cluster_graph";}
+template <> inline std::string   class_name_r<Family >() {return "extended_family";}
+template <> inline std::string   package_name<Family >() {return "glmmsr";}
+template <> inline std::string generator_name<Family >() {return ".R6_extended_family";}
 }
 }
 }
@@ -55,6 +58,12 @@ template <> inline SEXP wrap(const ClusterGraph& x) {
 }
 template <> inline ClusterGraph as(SEXP x) {
   return *(glmmsr::RcppR6::RcppR6<ClusterGraph>(x));
+}
+template <> inline SEXP wrap(const Family& x) {
+  return wrap(glmmsr::RcppR6::RcppR6<Family>(x));
+}
+template <> inline Family as(SEXP x) {
+  return *(glmmsr::RcppR6::RcppR6<Family>(x));
 }
 }
 

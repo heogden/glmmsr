@@ -69,6 +69,8 @@ The \code{control} argument is a list, used to specify further
   Only used if \code{method = "SR"}. Defaults to 3.}
   \item{\code{nIS}}{the number of samples to use for importance sampling.
   Only used if \code{method = "IS"}. Defaults to 1000.}
+  \item{\code{order}{the order of Laplace approxiation.
+  only used if \code{method = "Laplace"}. Defaults to 1.}}
  }
 }
 \examples{
