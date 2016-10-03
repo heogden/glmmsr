@@ -13,4 +13,17 @@ test_that("extended family evaluates correctly", {
   log_f <- -sum(binomial_logit_family$dev.resids(y, mu, wt)) / 2
   log_f_extended <- binomial_logit_extended_family$evaluate(eta, y, wt)
   expect_equal(log_f_extended, log_f)
+
+  log_f_d1_extended <- binomial_logit_extended_family$evaluate_d1(eta, y, wt)
+  log_f_d2_extended <- binomial_logit_extended_family$evaluate_d2(eta, y, wt)
+
+  log_f_fun <- function(eta) {
+     mu <- binomial_logit_family$linkinv(eta)
+    -sum(binomial_logit_family$dev.resids(y, mu, wt)) / 2
+  }
+
+  log_f_d1_num <- numDeriv::grad(log_f_fun, eta)
+
+  expect_equal(log_f_d1_num, log_f_d1_extended)
 })
+

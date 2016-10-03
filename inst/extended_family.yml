@@ -13,4 +13,20 @@ extended_family:
         - {linear_predictor: "Eigen::ArrayXd"}
         - {response: "Eigen::ArrayXd"}
         - {weights: "Eigen::ArrayXd"}
+    evaluate_d1:
+      name_cpp: evaluateDerivative
+      return_type: "Eigen::ArrayXd"
+      access: member
+      args:
+        - {linear_predictor: "Eigen::ArrayXd"}
+        - {response: "Eigen::ArrayXd"}
+        - {weights: "Eigen::ArrayXd"}
+    evaluate_d2:
+      name_cpp: evaluateSecondDerivative
+      return_type: "Eigen::ArrayXd"
+      access: member
+      args:
+        - {linear_predictor: "Eigen::ArrayXd"}
+        - {response: "Eigen::ArrayXd"}
+        - {weights: "Eigen::ArrayXd"}
 

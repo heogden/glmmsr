@@ -99,5 +99,13 @@ Family extended_family__ctor(std::string family, std::string link) {
 double extended_family__evaluate(glmmsr::RcppR6::RcppR6<Family> obj_, Eigen::ArrayXd linear_predictor, Eigen::ArrayXd response, Eigen::ArrayXd weights) {
   return obj_->evaluate(linear_predictor, response, weights);
 }
+// [[Rcpp::export]]
+Eigen::ArrayXd extended_family__evaluate_d1(glmmsr::RcppR6::RcppR6<Family> obj_, Eigen::ArrayXd linear_predictor, Eigen::ArrayXd response, Eigen::ArrayXd weights) {
+  return obj_->evaluateDerivative(linear_predictor, response, weights);
+}
+// [[Rcpp::export]]
+Eigen::ArrayXd extended_family__evaluate_d2(glmmsr::RcppR6::RcppR6<Family> obj_, Eigen::ArrayXd linear_predictor, Eigen::ArrayXd response, Eigen::ArrayXd weights) {
+  return obj_->evaluateSecondDerivative(linear_predictor, response, weights);
+}
 
 
