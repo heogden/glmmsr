@@ -2,5 +2,7 @@ classes:
   - inst/continuous_beliefs.yml
   - inst/calibration_parameters.yml
   - inst/cluster_graph.yml
+  - inst/extended_family.yml
+
 
 

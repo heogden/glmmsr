@@ -1,0 +1,16 @@
+extended_family:
+  name_cpp: Family
+  constructor:
+    args:
+      - {family: "std::string"}
+      - {link: "std::string"}
+  methods:
+    evaluate:
+      name_cpp: evaluate
+      return_type: "double"
+      access: member
+      args:
+        - {linear_predictor: "Eigen::ArrayXd"}
+        - {response: "Eigen::ArrayXd"}
+        - {weights: "Eigen::ArrayXd"}
+
