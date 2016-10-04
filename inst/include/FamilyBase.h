@@ -17,6 +17,8 @@ class FamilyBase
   virtual double evaluate(const Eigen::ArrayXd&, const Eigen::ArrayXd&, const Eigen::ArrayXd&) const = 0;
   virtual Eigen::ArrayXd evaluateDerivative(const Eigen::ArrayXd&, const Eigen::ArrayXd&, const Eigen::ArrayXd&) const = 0;
   virtual Eigen::ArrayXd evaluateSecondDerivative(const Eigen::ArrayXd&, const Eigen::ArrayXd&, const Eigen::ArrayXd&) const = 0;
+  virtual Eigen::ArrayXd evaluateThirdDerivative(const Eigen::ArrayXd&, const Eigen::ArrayXd&, const Eigen::ArrayXd&) const = 0;
+  virtual Eigen::ArrayXd evaluateFourthDerivative(const Eigen::ArrayXd&, const Eigen::ArrayXd&, const Eigen::ArrayXd&) const = 0;
 
   virtual std::string getName() const = 0;
 };

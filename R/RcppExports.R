@@ -97,3 +97,11 @@ extended_family__evaluate_d2 <- function(obj_, linear_predictor, response, weigh
     .Call('glmmsr_extended_family__evaluate_d2', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
 }
 
+extended_family__evaluate_d3 <- function(obj_, linear_predictor, response, weights) {
+    .Call('glmmsr_extended_family__evaluate_d3', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
+}
+
+extended_family__evaluate_d4 <- function(obj_, linear_predictor, response, weights) {
+    .Call('glmmsr_extended_family__evaluate_d4', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
+}
+

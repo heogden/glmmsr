@@ -16,14 +16,39 @@ test_that("extended family evaluates correctly", {
 
   log_f_d1_extended <- binomial_logit_extended_family$evaluate_d1(eta, y, wt)
   log_f_d2_extended <- binomial_logit_extended_family$evaluate_d2(eta, y, wt)
-
+  log_f_d3_extended <- binomial_logit_extended_family$evaluate_d3(eta, y, wt)
+  log_f_d4_extended <- binomial_logit_extended_family$evaluate_d4(eta, y, wt)
+  
   log_f_fun <- function(eta) {
      mu <- binomial_logit_family$linkinv(eta)
     -sum(binomial_logit_family$dev.resids(y, mu, wt)) / 2
   }
 
   log_f_d1_num <- numDeriv::grad(log_f_fun, eta)
-
+  
   expect_equal(log_f_d1_num, log_f_d1_extended)
-})
 
+  log_f_d1_fun <- function(eta) {
+    binomial_logit_extended_family$evaluate_d1(eta, y, wt)
+  }
+
+  log_f_d2_num <- numDeriv::grad(log_f_d1_fun, eta)
+  
+  expect_equal(log_f_d2_num, log_f_d2_extended)
+  
+  log_f_d2_fun <- function(eta) {
+    binomial_logit_extended_family$evaluate_d2(eta, y, wt)
+  }
+
+  log_f_d3_num <- numDeriv::grad(log_f_d2_fun, eta)
+  
+  expect_equal(log_f_d3_num, log_f_d3_extended)
+
+  log_f_d3_fun <- function(eta) {
+    binomial_logit_extended_family$evaluate_d3(eta, y, wt)
+  }
+
+  log_f_d4_num <- numDeriv::grad(log_f_d3_fun, eta)
+  
+  expect_equal(log_f_d4_num, log_f_d4_extended)
+})

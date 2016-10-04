@@ -37,6 +37,20 @@ Eigen::ArrayXd Binomial::evaluateSecondDerivative(const Eigen::ArrayXd& mean,
   return -weights * ( response * pow(mean, -2) + (1 - response) * pow(1 - mean, -2) );
 }
 
+Eigen::ArrayXd Binomial::evaluateThirdDerivative(const Eigen::ArrayXd& mean,
+						 const Eigen::ArrayXd& response, 
+						 const Eigen::ArrayXd& weights) const
+{
+  return 2 * weights * ( response * pow(mean, -3) - (1 - response) * pow(1 - mean, -3) );
+}
+
+Eigen::ArrayXd Binomial::evaluateFourthDerivative(const Eigen::ArrayXd& mean,
+						  const Eigen::ArrayXd& response, 
+						  const Eigen::ArrayXd& weights) const
+{
+  return -6 * weights * ( response * pow(mean, -4) + (1 - response) * pow(1 - mean, -4) );
+}
+
 std::string Binomial::getName() const
 {
   return "binomial";

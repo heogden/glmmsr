@@ -37,6 +37,17 @@ Eigen::ArrayXd Link::computeMeanSecondDerivative(const Eigen::ArrayXd& linearPre
   return link_->computeMeanSecondDerivative(linearPredictor);
 }
 
+Eigen::ArrayXd Link::computeMeanThirdDerivative(const Eigen::ArrayXd& linearPredictor) const
+{
+  return link_->computeMeanThirdDerivative(linearPredictor);
+}
+
+Eigen::ArrayXd Link::computeMeanFourthDerivative(const Eigen::ArrayXd& linearPredictor) const
+{
+  return link_->computeMeanFourthDerivative(linearPredictor);
+}
+
+
 std::string Link::getName() const
 {
   return link_->getName();

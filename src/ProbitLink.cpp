@@ -28,6 +28,16 @@ Eigen::ArrayXd ProbitLink::computeMeanSecondDerivative(const Eigen::ArrayXd& lin
   return secondDerivative;
 }
 
+Eigen::ArrayXd ProbitLink::computeMeanThirdDerivative(const Eigen::ArrayXd& linearPredictor) const
+{
+}
+
+
+Eigen::ArrayXd ProbitLink::computeMeanFourthDerivative(const Eigen::ArrayXd& linearPredictor) const
+{
+}
+
+
 std::string ProbitLink::getName() const
 {
   return "probit";

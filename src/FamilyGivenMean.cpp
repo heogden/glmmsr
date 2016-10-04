@@ -49,6 +49,20 @@ Eigen::ArrayXd FamilyGivenMean::evaluateSecondDerivative(const Eigen::ArrayXd& m
   return familyGivenMean_->evaluateSecondDerivative(mean, response, weights);
 }
 
+Eigen::ArrayXd FamilyGivenMean::evaluateThirdDerivative(const Eigen::ArrayXd& mean,
+							const Eigen::ArrayXd& response, 
+							const Eigen::ArrayXd& weights) const
+{
+  return familyGivenMean_->evaluateThirdDerivative(mean, response, weights);
+}
+
+Eigen::ArrayXd FamilyGivenMean::evaluateFourthDerivative(const Eigen::ArrayXd& mean,
+							 const Eigen::ArrayXd& response, 
+							 const Eigen::ArrayXd& weights) const
+{
+  return familyGivenMean_->evaluateFourthDerivative(mean, response, weights);
+}
+
 std::string FamilyGivenMean::getName() const
 {
   return familyGivenMean_->getName();

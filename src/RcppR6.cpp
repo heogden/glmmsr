@@ -107,5 +107,13 @@ Eigen::ArrayXd extended_family__evaluate_d1(glmmsr::RcppR6::RcppR6<Family> obj_,
 Eigen::ArrayXd extended_family__evaluate_d2(glmmsr::RcppR6::RcppR6<Family> obj_, Eigen::ArrayXd linear_predictor, Eigen::ArrayXd response, Eigen::ArrayXd weights) {
   return obj_->evaluateSecondDerivative(linear_predictor, response, weights);
 }
+// [[Rcpp::export]]
+Eigen::ArrayXd extended_family__evaluate_d3(glmmsr::RcppR6::RcppR6<Family> obj_, Eigen::ArrayXd linear_predictor, Eigen::ArrayXd response, Eigen::ArrayXd weights) {
+  return obj_->evaluateThirdDerivative(linear_predictor, response, weights);
+}
+// [[Rcpp::export]]
+Eigen::ArrayXd extended_family__evaluate_d4(glmmsr::RcppR6::RcppR6<Family> obj_, Eigen::ArrayXd linear_predictor, Eigen::ArrayXd response, Eigen::ArrayXd weights) {
+  return obj_->evaluateFourthDerivative(linear_predictor, response, weights);
+}
 
 
