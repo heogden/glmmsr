@@ -30,11 +30,17 @@ test_that("log-likelihoods match for two-level model", {
   lfun_IS <- find_lfun_glmm(modfr, method = "IS", control = list(nIS = 1e3))
 
   pars <- c(1, 0.5, -0.5)
+  lfun_Laplace_pars <- lfun_Laplace(pars)
   lfun_AGQ_pars <- lfun_AGQ(pars)
   lfun_SR_pars <- lfun_SR(pars)
   lfun_IS_pars <- lfun_IS(pars)
+  
+  lfun_L2 <- find_lfun_glmm(modfr, method = "Laplace", control = list(order = 2))
+  lfun_L2_pars <- lfun_L2(pars)
+
 
   expect_true(abs(lfun_AGQ_pars - lfun_SR_pars) < 1e-3)
   expect_true(abs(lfun_AGQ_pars - lfun_IS_pars) < 0.1)
+  expect_true(abs(lfun_L2_pars - lfun_Laplace_pars) > abs(lfun_L2_pars - lfun_AGQ_pars))
 
 })

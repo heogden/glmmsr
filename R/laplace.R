@@ -12,9 +12,11 @@ find_lfun_Laplace <- function(modfr, devfun_laplace_1, order) {
   else {
     check_if_order_implemented(modfr$family, order)
     if(order == 2L) {
-      epsilon_1 <- find_epsilon_1(modfr, devfun_laplace_1)
-      lfun <- function(x){ -devfun_laplace_1(x) / 2 + epsilon_1(x) }
+      lfun <- function(x){
+        epsilon_1 <- find_epsilon_1(x, modfr, devfun_laplace_1)
+        -devfun_laplace_1(x) / 2 + epsilon_1
+      }
     }
   }
-  lfun
+  return(lfun)
 }

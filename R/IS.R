@@ -1,32 +1,53 @@
-find_log_integrand<- function(pars, modfr)
-{
+find_XBeta <- function(pars, modfr) {
   n_fixed <- ncol(modfr$X)
+  n_random <- length(modfr$reTrms$theta)
+  beta <- pars[(n_random + 1) : (n_random + n_fixed)]
+  XBeta <- as.numeric(modfr$X %*% beta)
+}
+
+find_LambdatThetaZt <- function(pars, modfr) {
   n_random <- length(modfr$reTrms$theta)
 
   Zt <- modfr$reTrms$Zt
+  
   LambdatTheta <- modfr$reTrms$Lambdat
   theta <- pars[1:n_random]
 
   LambdatTheta@x[] <- theta[modfr$reTrms$Lind]
   LambdatThetaZt <- LambdatTheta %*% Zt
+}
 
+find_eta <- function(u, XBeta, LambdatThetaZt) {
+  utLambdatThetaZt <- Matrix::crossprod(u, LambdatThetaZt)
+  utLambdatThetaZt_num <- as.numeric(utLambdatThetaZt)
+  if(is.matrix(u)) {
+    r <- ncol(u)
+  } else {
+    r <- 1
+  }
+  
+  if(length(XBeta) > 0)
+    eta <- rep(XBeta, each = r) + utLambdatThetaZt_num
+  else
+    eta <- utLambdatThetaZt_num
+
+  eta
+}
+
+
+find_log_integrand<- function(pars, modfr)
+{
   family <- modfr$family
   y <- model.response(modfr$fr)
   weights <- model.weights(modfr$fr)
   if(length(weights) == 0)
     weights <- rep(1, length(y))
 
-  beta <- pars[(n_random + 1) : (n_random + n_fixed)]
-  XBeta <- as.numeric(modfr$X %*% beta)
+  XBeta <- find_XBeta(pars, modfr)
+  LambdatThetaZt <- find_LambdatThetaZt(pars, modfr)
 
   log_integrand <- function(u) {
-    utLambdatThetaZt <- Matrix::crossprod(u, LambdatThetaZt)
-
-    utLambdatThetaZt_num <- as.numeric(utLambdatThetaZt)
-    if(length(XBeta) > 0)
-      eta_num <- rep(XBeta, each = ncol(u)) + utLambdatThetaZt_num
-    else
-      eta_num <- utLambdatThetaZt_num
+    eta_num <- find_eta(u, XBeta, LambdatThetaZt)
 
     mu_num <- family$linkinv(eta_num)
     y_rep <- rep(y, each = ncol(u))
