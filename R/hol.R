@@ -1,19 +1,12 @@
 find_M <- function(pars, modfr, normal_approx) {
-    H_hat_inv <- solve(normal_approx$precision)
-    Zt <- modfr$reTrms$Zt
-    N <- ncol(Zt)
-    d <- nrow(Zt)
-    M <- matrix(nrow = N, ncol = N)
-    LambdatThetaZt <- find_LambdatThetaZt(pars, modfr)
+  H_hat_inv <- solve(normal_approx$precision)
+  Zt <- modfr$reTrms$Zt
+  N <- ncol(Zt)
+  d <- nrow(Zt)
+  M <- matrix(0, nrow = N, ncol = N)
+  LambdatThetaZt <- find_LambdatThetaZt(pars, modfr)
 
-    for(i in 1:N) {
-      Zti = matrix(LambdatThetaZt[,i], nrow = d, ncol = d, byrow = TRUE)
-      for(j in 1:N) {
-        Ztj = matrix(LambdatThetaZt[,j], nrow = d, ncol = d)
-        M[i, j] <- sum(Zti * H_hat_inv * Ztj)
-      }
-    }
-   M
+  Matrix::t(LambdatThetaZt) %*% H_hat_inv %*% LambdatThetaZt
 }
 
 find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
