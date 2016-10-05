@@ -1,6 +1,13 @@
 library(glmmsr)
 context("replicate Shun1995")
 
+# Checks that the second-order Laplace approximation is the
+# same as the second-order Laplace approximation computed in
+# "Laplace Approximation of High Dimensional Integrals",
+# Zhenming Shun and Peter McCullagh,
+# Journal of the Royal Statistical Society. Series B (Methodological)
+# Volume 57, Issue 4 (1995), 749-760
+
 response <- c(1, 0, 0, 1, 0, 1, 1, 1, 1, 1,
               1, 0, 1, 0, 0, 0, 0, 1, 0, 1,
               1, 1, 1, 1, 1, 0, 0, 0, 1, 1,
