@@ -31,10 +31,8 @@ find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
   if(length(weights) == 0)
     weights <- rep(1, length(response))
 
-  gamma_1 <- modfr_family$evaluate_d1(eta_hat, response, weights)
-  gamma_2 <- modfr_family$evaluate_d2(eta_hat, response, weights)
-  gamma_3 <- modfr_family$evaluate_d3(eta_hat, response, weights)
-  gamma_4 <- modfr_family$evaluate_d4(eta_hat, response, weights)
+  gamma_3 <- -modfr_family$evaluate_d3(eta_hat, response, weights)
+  gamma_4 <- -modfr_family$evaluate_d4(eta_hat, response, weights)
 
   M <- find_M(pars, modfr, normal_approx)
   diag_M <- M[row(M) == col(M)]
@@ -43,5 +41,5 @@ find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
   kappa_13_2 <- sum(tcrossprod(weights * gamma_3 * diag_M) * M)
   kappa_23_2 <- sum(tcrossprod(weights * gamma_3) * M^3)
 
-  kappa_4 / 8 + (2 * kappa_23_2 + 3 * kappa_13_2) / 24
+  - kappa_4 / 8 + (2 * kappa_23_2 + 3 * kappa_13_2) / 24
 }
