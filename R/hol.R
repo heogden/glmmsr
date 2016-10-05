@@ -5,7 +5,7 @@ find_M <- function(pars, modfr, normal_approx) {
     d <- nrow(Zt)
     M <- matrix(nrow = N, ncol = N)
     LambdatThetaZt <- find_LambdatThetaZt(pars, modfr)
-    
+
     for(i in 1:N) {
       Zti = matrix(LambdatThetaZt[,i], nrow = d, ncol = d, byrow = TRUE)
       for(j in 1:N) {
@@ -25,7 +25,7 @@ find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
   XBeta <- find_XBeta(pars, modfr)
   LambdatThetaZt <- find_LambdatThetaZt(pars, modfr)
   eta_hat <- find_eta(u_hat, XBeta, LambdatThetaZt)
-  
+
   response <- model.response(modfr$fr)
   weights <- model.weights(modfr$fr)
   if(length(weights) == 0)
@@ -38,10 +38,10 @@ find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
 
   M <- find_M(pars, modfr, normal_approx)
   diag_M <- M[row(M) == col(M)]
-  
-  kappa_4 <- sum(gamma_4 * diag_M^2)
-  kappa_13_2 <- sum(tcrossprod(gamma_3 * diag_M) * M)
-  kappa_23_2 <- sum(tcrossprod(gamma_3) * M^3)
 
-  kappa_4 / 8 - (2 * kappa_13_2 + 3 * kappa_23_2) / 24
+  kappa_4 <- sum(weights * gamma_4 * diag_M^2)
+  kappa_13_2 <- sum(tcrossprod(weights * gamma_3 * diag_M) * M)
+  kappa_23_2 <- sum(tcrossprod(weights * gamma_3) * M^3)
+
+  kappa_4 / 8 + (2 * kappa_23_2 + 3 * kappa_13_2) / 24
 }
