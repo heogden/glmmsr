@@ -40,3 +40,18 @@ find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
 find_delta_1 <- function(pars, modfr, devfun_laplace_1) {
   numDeriv::grad(find_epsilon_1, pars, modfr = modfr, devfun_laplace_1 = devfun_laplace_1)
 }
+
+approximate_estim_2_p_value <- function(fit_laplace_1, modfr, devfun_laplace_1, type = "LR") {
+  delta_1 <- find_delta_1(fit_laplace_1$estim, modfr, devfun_laplace_1)
+  estim_2_1 <- fit_laplace_1$estim + as.numeric(crossprod(fit_laplace_1$Sigma, delta_1))
+  if(type == "Wald") {
+    # Wald test statistic
+    W <- sum(delta_1 * crossprod(fit_laplace_1$Sigma, delta_1))
+  } else {
+    # Likelihood-ratio test statistic
+    W <- devfun_laplace_1(estim_2_1) - devfun_laplace_1(fit_laplace_1$estim)
+  }
+  p <- length(fit_laplace_1$estim)
+  pchisq(W, df = p)
+}
+
