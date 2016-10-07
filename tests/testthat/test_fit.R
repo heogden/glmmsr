@@ -287,3 +287,33 @@ test_that("Laplace order handled correctly", {
 
 })
 
+test_that("First step of approx Fisher scoring with Laplace-2 moves in right direction", {
+  mod_1 <- glmm(response ~ covariate + (1 | cluster),
+                data = two_level, family = binomial, method = "Laplace",
+                control = list(order = 1), verbose = 0)
+  estim_1 <- mod_1$estim
+
+  mod_2 <- glmm(response ~ covariate + (1 | cluster),
+                data = two_level, family = binomial, method = "Laplace",
+                control = list(order = 2), verbose = 0)
+  estim_2 <- mod_2$estim
+
+
+  modfr <- find_modfr_glmm(response ~ covariate + (1 | cluster),
+                           data = two_level, family = binomial)
+  # approximate error-in-score for first-order Laplace
+  devfun_laplace_1 <- lme4::mkGlmerDevfun(fr = modfr$fr, X = modfr$X,
+                                          reTrms = modfr$reTrms, family = modfr$family,
+                                          control = lme4_control())
+  devfun_laplace_1 <- lme4::updateGlmerDevfun(devfun_laplace_1, modfr$reTrms, nAGQ = 1)
+  delta_1 <- find_delta_1(estim_1, modfr, devfun_laplace_1)
+
+  # approx first step of Fisher scoring
+  move_1 <- as.numeric(crossprod(mod_1$Sigma, delta_1))
+
+  #actual move to estim_2
+  move_real <- estim_2 - estim_1
+
+  expect_true(all(sign(move_1) == sign(move_real)))
+})
+

@@ -36,3 +36,7 @@ find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
 
   - kappa_4 / 8 + (2 * kappa_23_2 + 3 * kappa_13_2) / 24
 }
+
+find_delta_1 <- function(pars, modfr, devfun_laplace_1) {
+  numDeriv::grad(find_epsilon_1, pars, modfr = modfr, devfun_laplace_1 = devfun_laplace_1)
+}
