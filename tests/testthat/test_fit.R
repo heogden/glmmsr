@@ -109,6 +109,19 @@ test_that("fits a two-level model correctly", {
   estim_IS_100 <- mod_IS_100$estim
   expect_true(sum(abs(estim_IS_100 - estim_15)) < 0.2)
 
+  mod_Laplace_1 <- glmm(response ~ covariate + (1 | cluster),
+                        data = two_level, family = binomial, method = "Laplace",
+                        control = list(order = 1), verbose = 0)
+  estim_Laplace_1 <- mod_Laplace_1$estim
+  error_Laplace_1 <- sum(abs(estim_Laplace_1 - estim_15))
+
+  mod_Laplace_2 <- glmm(response ~ covariate + (1 | cluster),
+                        data = two_level, family = binomial, method = "Laplace",
+                        control = list(order = 2), verbose = 0)
+  estim_Laplace_2 <- mod_Laplace_2$estim
+  error_Laplace_2 <- sum(abs(estim_Laplace_2 - estim_15))
+  expect_true(error_Laplace_2 < error_Laplace_1)
+
 })
 
 test_that("Can handle settings with no covariates", {
