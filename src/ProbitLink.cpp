@@ -30,11 +30,19 @@ Eigen::ArrayXd ProbitLink::computeMeanSecondDerivative(const Eigen::ArrayXd& lin
 
 Eigen::ArrayXd ProbitLink::computeMeanThirdDerivative(const Eigen::ArrayXd& linearPredictor) const
 {
+  Eigen::ArrayXd thirdDerivative(linearPredictor.size());
+  for(auto i = 0; i < thirdDerivative.size(); ++i)
+    thirdDerivative(i) = (pow(linearPredictor(i), 2) - 1.) * pdf(standardNormal_, linearPredictor(i));
+  return thirdDerivative;
 }
 
 
 Eigen::ArrayXd ProbitLink::computeMeanFourthDerivative(const Eigen::ArrayXd& linearPredictor) const
 {
+  Eigen::ArrayXd fourthDerivative(linearPredictor.size());
+  for(auto i = 0; i < fourthDerivative.size(); ++i)
+    fourthDerivative(i) = (-pow(linearPredictor(i), 3) +  3. * linearPredictor(i)) * pdf(standardNormal_, linearPredictor(i));
+  return fourthDerivative;
 }
 
 
