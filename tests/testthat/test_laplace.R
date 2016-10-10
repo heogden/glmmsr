@@ -1,0 +1,102 @@
+library("glmmsr")
+context("Laplace approximations")
+
+test_that("Laplace order handled correctly", {
+
+  mod_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                      data = three_level, family = binomial,
+                      method = "Laplace",  control = list(check_Laplace = FALSE),
+                      verbose = 0)
+
+  mod_Laplace_1 <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                        data = three_level, family = binomial,
+                        method = "Laplace",
+                        control = list(order = 1, check_Laplace = FALSE),
+                        verbose = 0)
+  expect_true(sum(abs(mod_Laplace$estim - mod_Laplace_1$estim)) < 0.01)
+  expect_error(glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                    data = three_level, family = binomial,
+                    method = "Laplace",
+                    control = list(order = 3),
+                    verbose = 0),
+               "order-3 Laplace approximation not yet implemented")
+
+})
+
+test_that("First step of approx Fisher scoring with Laplace-2 moves in right direction", {
+  mod_1 <- glmm(response ~ covariate + (1 | cluster),
+                data = two_level, family = binomial, method = "Laplace",
+                control = list(order = 1, check_Laplace = FALSE), verbose = 0)
+  estim_1 <- mod_1$estim
+
+  mod_2 <- glmm(response ~ covariate + (1 | cluster),
+                data = two_level, family = binomial, method = "Laplace",
+                control = list(order = 2), verbose = 0)
+  estim_2 <- mod_2$estim
+
+
+  modfr <- find_modfr_glmm(response ~ covariate + (1 | cluster),
+                           data = two_level, family = binomial)
+  # approximate error-in-score for first-order Laplace
+  devfun_laplace_1 <- lme4::mkGlmerDevfun(fr = modfr$fr, X = modfr$X,
+                                          reTrms = modfr$reTrms, family = modfr$family,
+                                          control = lme4_control())
+  devfun_laplace_1 <- lme4::updateGlmerDevfun(devfun_laplace_1, modfr$reTrms, nAGQ = 1)
+  delta_1 <- find_delta_1(estim_1, modfr, devfun_laplace_1)
+
+  # approx first step of Fisher scoring
+  move_1 <- as.numeric(crossprod(mod_1$Sigma, delta_1))
+
+  #actual move to estim_2
+  move_real <- estim_2 - estim_1
+
+  expect_true(all(sign(move_1) == sign(move_real)))
+})
+
+test_that("Wald and LR tests for Laplace-2 first step estimator roughly agree", {
+  modfr <- find_modfr_glmm(response ~ covariate + (1 | cluster),
+                           data = two_level, family = binomial)
+  devfun_laplace_1 <- find_devfun_laplace_1(modfr)
+  fit_laplace_1 <- glmm(response ~ covariate + (1 | cluster),
+                        data = two_level, family = binomial, method = "Laplace",
+                        control = list(order = 1, check_Laplace = FALSE), verbose = 0)
+  p_Wald <- approximate_estim_2_p_value(fit_laplace_1, modfr, devfun_laplace_1, type = "Wald")
+  p_LR <- approximate_estim_2_p_value(fit_laplace_1, modfr, devfun_laplace_1, type = "LR")
+  expect_true((p_Wald / p_LR) > 0.5 && (p_Wald / p_LR) < 2)
+})
+
+
+test_that("Laplace has more problem for duplicated data", {
+  # duplicate data from two-level model
+  two_level_d<- list()
+  two_level_d$response <- rep(two_level$response, 2)
+  two_level_d$covariate <- rep(two_level$covariate, 2)
+  two_level_d$cluster   <- c(two_level$cluster, max(two_level$cluster) + two_level$cluster)
+
+  modfr <- find_modfr_glmm(response ~ covariate + (1 | cluster),
+                           data = two_level, family = binomial)
+  devfun_laplace_1 <- find_devfun_laplace_1(modfr)
+
+  modfr_d <- find_modfr_glmm(response ~ covariate + (1 | cluster),
+                           data = two_level_d, family = binomial)
+  devfun_laplace_1_d <- find_devfun_laplace_1(modfr_d)
+
+  expect_warning(
+  fit_laplace <- glmm(response ~ covariate + (1 | cluster),
+                      data = two_level, family = binomial, method = "Laplace",
+                      control = list(order = 1), verbose = 0),
+  "Inference using the first-order Laplace approximation may be unreliable in this case")
+
+  expect_warning(
+  fit_laplace_d <- glmm(response ~ covariate + (1 | cluster),
+                        data = two_level_d, family = binomial, method = "Laplace",
+                        control = list(order = 1), verbose = 0),
+  "Inference using the first-order Laplace approximation may be unreliable in this case")
+
+  estim_2_p_value <- approximate_estim_2_p_value(fit_laplace, modfr, devfun_laplace_1)
+  estim_2_p_value_d <- approximate_estim_2_p_value(fit_laplace_d, modfr_d, devfun_laplace_1_d)
+
+  expect_true(estim_2_p_value < estim_2_p_value_d)
+
+})
+
