@@ -30,9 +30,9 @@ find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
   M <- find_M(pars, modfr, normal_approx)
   diag_M <- M[row(M) == col(M)]
 
-  kappa_4 <- sum(weights * gamma_4 * diag_M^2)
-  kappa_13_2 <- sum(tcrossprod(weights * gamma_3 * diag_M) * M)
-  kappa_23_2 <- sum(tcrossprod(weights * gamma_3) * M^3)
+  kappa_4 <- sum(gamma_4 * diag_M^2)
+  kappa_13_2 <- sum(tcrossprod(gamma_3 * diag_M) * M)
+  kappa_23_2 <- sum(tcrossprod(gamma_3) * M^3)
 
   - kappa_4 / 8 + (2 * kappa_23_2 + 3 * kappa_13_2) / 24
 }
@@ -41,7 +41,7 @@ find_delta_1 <- function(pars, modfr, devfun_laplace_1) {
   numDeriv::grad(find_epsilon_1, pars, modfr = modfr, devfun_laplace_1 = devfun_laplace_1)
 }
 
-approximate_estim_2_p_value <- function(fit_laplace_1, modfr, devfun_laplace_1, type = "LR") {
+find_error_Laplace <- function(fit_laplace_1, modfr, devfun_laplace_1, type = "Wald") {
   delta_1 <- find_delta_1(fit_laplace_1$estim, modfr, devfun_laplace_1)
   estim_2_1 <- fit_laplace_1$estim + as.numeric(crossprod(fit_laplace_1$Sigma, delta_1))
   if(type == "Wald") {

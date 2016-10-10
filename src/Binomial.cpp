@@ -15,37 +15,37 @@ void Binomial::checkMean(Eigen::ArrayXd& mean) const
   }
 }
 
-double Binomial::evaluate(const Eigen::ArrayXd& mean, 
-			  const Eigen::ArrayXd& response, 
+double Binomial::evaluate(const Eigen::ArrayXd& mean,
+			  const Eigen::ArrayXd& response,
 			  const Eigen::ArrayXd& weights) const
 {
 
-  return ( weights * (response * log(mean) + (1 - response) * log(1 - mean)) ).sum();
+  return ( weights * ( response * log(mean) + (1 - response) * log(1 - mean) ) ).sum();
 }
 
-Eigen::ArrayXd Binomial::evaluateDerivative(const Eigen::ArrayXd& mean, 
+Eigen::ArrayXd Binomial::evaluateDerivative(const Eigen::ArrayXd& mean,
 					     const Eigen::ArrayXd& response,
 					     const Eigen::ArrayXd& weights) const
 {
-  return weights * (response  / mean) - (1 - response) / (1 - mean);
+  return weights * ( (response  / mean) - (1 - response) / (1 - mean) );
 }
 
 Eigen::ArrayXd Binomial::evaluateSecondDerivative(const Eigen::ArrayXd& mean,
-						   const Eigen::ArrayXd& response, 
+						   const Eigen::ArrayXd& response,
 						   const Eigen::ArrayXd& weights) const
 {
   return -weights * ( response * pow(mean, -2) + (1 - response) * pow(1 - mean, -2) );
 }
 
 Eigen::ArrayXd Binomial::evaluateThirdDerivative(const Eigen::ArrayXd& mean,
-						 const Eigen::ArrayXd& response, 
+						 const Eigen::ArrayXd& response,
 						 const Eigen::ArrayXd& weights) const
 {
   return 2 * weights * ( response * pow(mean, -3) - (1 - response) * pow(1 - mean, -3) );
 }
 
 Eigen::ArrayXd Binomial::evaluateFourthDerivative(const Eigen::ArrayXd& mean,
-						  const Eigen::ArrayXd& response, 
+						  const Eigen::ArrayXd& response,
 						  const Eigen::ArrayXd& weights) const
 {
   return -6 * weights * ( response * pow(mean, -4) + (1 - response) * pow(1 - mean, -4) );

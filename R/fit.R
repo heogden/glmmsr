@@ -62,8 +62,8 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
     opt <- optimize_glmm(lfun, p_beta = p_beta, p_theta = p_theta,
                          prev_fit = prev_fit, verbose = verbose)
     if(con$check_Laplace) {
-      estim_2_p_value <- approximate_estim_2_p_value(opt, modfr, devfun_laplace_1, "LR")
-      if(estim_2_p_value > con$warn_Laplace_threshold)
+      opt$error_Laplace <- find_error_Laplace(opt, modfr, devfun_laplace_1, "LR")
+      if(opt$error_Laplace > con$warn_Laplace_threshold)
         warning("Inference using the first-order Laplace approximation may be unreliable in this case",
                 call. = FALSE)
     }
@@ -71,7 +71,8 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
       opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
       result <- glmmFit(list(estim = opt$estim, Sigma = opt$Sigma,
                              lfun = lfun, modfr = modfr,
-                             method = method, control = con))
+                             method = method, control = con,
+                             error_Laplace = opt$error_Laplace))
     }else{
       warning("proper print and summary method not yet implemented ",
               "for correlated random effects")
