@@ -4,28 +4,34 @@
 #' @export
 find_lfun_glmm <- function(modfr, method, control = NULL)
 {
+  devfun_laplace_1 <- find_devfun_laplace_1(modfr)
   con <- find_control_with_defaults(control, method)
-  find_lfun_glmm_internal(modfr, method, con)
+  find_lfun_glmm_internal(modfr, method, con, devfun_laplace_1)
 }
 
-
-find_lfun_glmm_internal <- function(modfr, method, control)
-{
+find_devfun_laplace_1 <- function(modfr) {
   devfun_lme4 <- lme4::mkGlmerDevfun(fr = modfr$fr, X = modfr$X,
                                      reTrms = modfr$reTrms, family = modfr$family,
                                      control = lme4_control())
-  nAGQ_lme4 <- ifelse(method == "AGQ", control$nAGQ, 1)
-  devfun_lme4 <- lme4::updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = nAGQ_lme4)
-  lfun_lme4 <- function(x) { -devfun_lme4(x) / 2 }
+  lme4::updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = 1)
+}
+
+find_lfun_glmm_internal <- function(modfr, method, control, devfun_laplace_1)
+{
   switch(method,
-         Laplace = find_lfun_Laplace(modfr, devfun_lme4, order = control$order),
-         AGQ = lfun_lme4,
-         SR = find_lfun_SR(modfr, devfun_lme4,
+         Laplace = find_lfun_Laplace(modfr, devfun_laplace_1, order = control$order),
+         AGQ = find_lfun_AGQ(modfr, devfun_laplace_1, nAGQ = control$nAGQ),
+         SR = find_lfun_SR(modfr, devfun_laplace_1,
                            nSL = control$nSL,
                            nAGQ = control$nAGQ),
-         IS = find_lfun_IS(modfr, devfun_lme4, nIS = control$nIS),
+         IS = find_lfun_IS(modfr, devfun_laplace_1, nIS = control$nIS),
          stop(cat("method", method, "not available"))
   )
+}
+
+find_lfun_AGQ <- function(modfr, devfun_laplace_1, nAGQ) {
+  devfun_AGQ <- lme4::updateGlmerDevfun(devfun_laplace_1, modfr$reTrms, nAGQ = nAGQ)
+  function(x) { -devfun_AGQ(x) / 2 }
 }
 
 find_lfun_SR <- function(modfr, devfun_lme4, nSL, nAGQ) {

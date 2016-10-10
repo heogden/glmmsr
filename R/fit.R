@@ -29,6 +29,15 @@
 #'   Only used if \code{method = "IS"}. Defaults to 1000.}
 #'   \item{\code{order}{the order of Laplace approxiation.
 #'   only used if \code{method = "Laplace"}. Defaults to 1.}}
+#'   \item{\code{check_Laplace}{should quality of first-order Laplace
+#'   approximation be checked? Only used  if \code{method = "Laplace"}
+#'   and \code{order = 1}. Defaults to TRUE}}
+#'   \item{\code{warn_Laplace_threshold}{if \code{check_Laplace = TRUE},
+#'   warn about quality of inference using the first-order Laplace
+#'   approximation if one step of approximate Fisher scoring with
+#'   the second-order Laplace approximation moves estimator outside
+#'   of original \code{warn_Laplace_threshold} confidence region.
+#'   Defaults to 1e-3}}
 #'  }
 #' @return An object of the class \code{glmmFit}
 #' @example inst/examples/three_level.R
@@ -44,12 +53,20 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                            family = family, weights = weights, offset = offset)
 
   if(has_reTrms(modfr)) {
-    lfun <- find_lfun_glmm_internal(modfr, method = method, control = con)
+    devfun_laplace_1 <- find_devfun_laplace_1(modfr)
+    lfun <- find_lfun_glmm_internal(modfr, method = method, control = con,
+                                    devfun_laplace_1 = devfun_laplace_1)
 
     p_beta <- ncol(modfr$X)
     p_theta <- length(modfr$reTrms$theta)
     opt <- optimize_glmm(lfun, p_beta = p_beta, p_theta = p_theta,
                          prev_fit = prev_fit, verbose = verbose)
+    if(con$check_Laplace) {
+      estim_2_p_value <- approximate_estim_2_p_value(opt, modfr, devfun_laplace_1, "LR")
+      if(estim_2_p_value > con$warn_Laplace_threshold)
+        warning("Inference using the first-order Laplace approximation may be unreliable in this case",
+                call. = FALSE)
+    }
     if(all(modfr$reTrms$lower == 0)) {
       opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
       result <- glmmFit(list(estim = opt$estim, Sigma = opt$Sigma,

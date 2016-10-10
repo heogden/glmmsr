@@ -50,3 +50,10 @@ test_that("second-order Laplace matches Shun1995", {
 
 })
 # (see Table 2, p 757, Shun1995)
+
+test_that("first-order Laplace sufficiently accurate here", {
+  fit_laplace_1 <- glmm(response ~ (1 | row_id) + (1 | col_id),
+                        data = binary_array, family = binomial,
+                        method = "Laplace",
+                        verbose = 0)
+})
