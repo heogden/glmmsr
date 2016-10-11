@@ -26,8 +26,9 @@ find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
   diag_M <- Matrix::diag(M)
 
   kappa_4 <- sum(gamma_4 * diag_M^2)
-  kappa_13_2 <- sum(tcrossprod(gamma_3 * diag_M) * M)
-  kappa_23_2 <- sum(tcrossprod(gamma_3) * M^3)
+  gamma_3_diag_M <- gamma_3 * diag_M
+  kappa_13_2 <- as.numeric(Matrix::crossprod(gamma_3_diag_M, Matrix::crossprod(M, gamma_3_diag_M)))
+  kappa_23_2 <- as.numeric(Matrix::crossprod(gamma_3, Matrix::crossprod(M^3, gamma_3)))
 
   - kappa_4 / 8 + (2 * kappa_23_2 + 3 * kappa_13_2) / 24
 }
