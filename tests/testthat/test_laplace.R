@@ -53,18 +53,6 @@ test_that("First step of approx Fisher scoring with Laplace-2 moves in right dir
   expect_true(all(sign(move_1) == sign(move_real)))
 })
 
-test_that("Wald and LR tests for Laplace-2 first step estimator roughly agree", {
-  modfr <- find_modfr_glmm(response ~ covariate + (1 | cluster),
-                           data = two_level, family = binomial)
-  devfun_laplace_1 <- find_devfun_laplace_1(modfr)
-  fit_laplace_1 <- glmm(response ~ covariate + (1 | cluster),
-                        data = two_level, family = binomial, method = "Laplace",
-                        control = list(order = 1, check_Laplace = FALSE), verbose = 0)
-  p_Wald <- find_error_Laplace(fit_laplace_1, modfr, devfun_laplace_1, type = "Wald")
-  p_LR <- find_error_Laplace(fit_laplace_1, modfr, devfun_laplace_1, type = "LR")
-  expect_true((p_Wald / p_LR) > 0.5 && (p_Wald / p_LR) < 2)
-})
-
 
 test_that("Laplace error larger for duplicated data", {
   # duplicate data from two-level model
@@ -85,6 +73,6 @@ test_that("Laplace error larger for duplicated data", {
                         control = list(order = 1), verbose = 0),
   "Inference using the first-order Laplace approximation may be unreliable in this case")
 
-  expect_true(fit_laplace$error_Laplace < fit_laplace_d$error_Laplace)
+  expect_true(fit_laplace$laplace_divergence < fit_laplace_d$laplace_divergence)
 })
 

@@ -9,17 +9,17 @@ test_that("model fitting uses weights correctly", {
                               data = two_level_double, family = binomial,
                               method = "Laplace",
                               control = list(check_Laplace = TRUE,
-                                             warn_Laplace_threshold = 1e6),
+                                             divergence_threshold = 1e6),
                               verbose = 0)
   mod_w2_Laplace <- glmm(response ~ covariate + (1 | cluster),
                          data = two_level, family = binomial,
                          method = "Laplace",
                          control = list(check_Laplace = TRUE,
-                                        warn_Laplace_threshold = 1e6),
+                                        divergence_threshold = 1e6),
                          weights = rep(2, length(two_level$response)),
                          verbose = 0)
   expect_equal(mod_double_Laplace$estim, mod_w2_Laplace$estim)
-  expect_equal(mod_double_Laplace$error_Laplace, mod_w2_Laplace$error_Laplace)
+  expect_equal(mod_double_Laplace$laplace_divergence, mod_w2_Laplace$laplace_divergence)
 
   mod_double_SR <-  glmm(response ~ covariate + (1 | cluster),
                          data = two_level_double, family = binomial,

@@ -32,12 +32,11 @@
 #'   \item{\code{check_Laplace}{should quality of first-order Laplace
 #'   approximation be checked? Only used  if \code{method = "Laplace"}
 #'   and \code{order = 1}. Defaults to TRUE}}
-#'   \item{\code{warn_Laplace_threshold}{if \code{check_Laplace = TRUE},
+#'   \item{\code{divergence_threshold}{if \code{check_Laplace = TRUE},
 #'   warn about quality of inference using the first-order Laplace
-#'   approximation if one step of approximate Fisher scoring with
-#'   the second-order Laplace approximation moves estimator outside
-#'   of original \code{warn_Laplace_threshold} confidence region.
-#'   Defaults to 1e-3}}
+#'   approximation if measure of divergence from inference with
+#'   second-order Laplace approximation exceeds \code{divergence_threshold}.
+#'   Defaults to 0.1}}
 #'  }
 #' @return An object of the class \code{glmmFit}
 #' @example inst/examples/three_level.R
@@ -62,8 +61,8 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
     opt <- optimize_glmm(lfun, p_beta = p_beta, p_theta = p_theta,
                          prev_fit = prev_fit, verbose = verbose)
     if(con$check_Laplace) {
-      opt$error_Laplace <- find_error_Laplace(opt, modfr, devfun_laplace_1, "LR")
-      if(opt$error_Laplace > con$warn_Laplace_threshold)
+      opt$laplace_divergence <- find_laplace_divergence(opt, modfr, devfun_laplace_1)
+      if(opt$laplace_divergence > con$divergence_threshold)
         warning("Inference using the first-order Laplace approximation may be unreliable in this case",
                 call. = FALSE)
     }
@@ -72,7 +71,7 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
       result <- glmmFit(list(estim = opt$estim, Sigma = opt$Sigma,
                              lfun = lfun, modfr = modfr,
                              method = method, control = con,
-                             error_Laplace = opt$error_Laplace))
+                             laplace_divergence = opt$laplace_divergence))
     }else{
       warning("proper print and summary method not yet implemented ",
               "for correlated random effects")

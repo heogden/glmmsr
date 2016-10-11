@@ -56,4 +56,11 @@ test_that("first-order Laplace sufficiently accurate here", {
                         data = binary_array, family = binomial,
                         method = "Laplace",
                         verbose = 0)
+  expect_true(fit_laplace_1$laplace_divergence < 0.1)
 })
+
+fit_laplace_2 <- glmm(response ~ (1 | row_id) + (1 | col_id),
+                      data = binary_array, family = binomial,
+                      method = "Laplace",
+                      control = list(order = 2),
+                      verbose = 0)

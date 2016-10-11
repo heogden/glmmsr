@@ -74,12 +74,11 @@ The \code{control} argument is a list, used to specify further
   \item{\code{check_Laplace}{should quality of first-order Laplace
   approximation be checked? Only used  if \code{method = "Laplace"}
   and \code{order = 1}. Defaults to TRUE}}
-  \item{\code{warn_Laplace_threshold}{if \code{check_Laplace = TRUE},
+  \item{\code{divergence_threshold}{if \code{check_Laplace = TRUE},
   warn about quality of inference using the first-order Laplace
-  approximation if one step of approximate Fisher scoring with
-  the second-order Laplace approximation moves estimator outside
-  of original \code{warn_Laplace_threshold} confidence region.
-  Defaults to 1e-3}}
+  approximation if measure of divergence from inference with
+  second-order Laplace approximation exceeds \code{divergence_threshold}.
+  Defaults to 0.1}}
  }
 }
 \examples{
