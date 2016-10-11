@@ -76,3 +76,11 @@ test_that("Laplace error larger for duplicated data", {
   expect_true(fit_laplace$laplace_divergence < fit_laplace_d$laplace_divergence)
 })
 
+
+test_that("Laplace divergence is always positive", {
+  mod_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                      data = three_level, family = binomial, method = "Laplace",
+                      control = list(divergence_threshold = 1e6), verbose = 0)
+  expect_true(mod_Laplace$laplace_divergence > 0)
+}
+)
