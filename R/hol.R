@@ -1,12 +1,7 @@
 find_M <- function(pars, modfr, normal_approx) {
-  H_hat_inv <- solve(normal_approx$precision)
-  Zt <- modfr$reTrms$Zt
-  N <- ncol(Zt)
-  d <- nrow(Zt)
-  M <- matrix(0, nrow = N, ncol = N)
+  H_hat <- normal_approx$precision
   LambdatThetaZt <- find_LambdatThetaZt(pars, modfr)
-
-  Matrix::t(LambdatThetaZt) %*% H_hat_inv %*% LambdatThetaZt
+  Matrix::crossprod(LambdatThetaZt, Matrix::solve(H_hat, LambdatThetaZt))
 }
 
 find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
@@ -28,7 +23,7 @@ find_epsilon_1 <- function(pars, modfr, devfun_laplace_1) {
   gamma_4 <- -modfr_family$evaluate_d4(eta_hat, response, weights)
 
   M <- find_M(pars, modfr, normal_approx)
-  diag_M <- M[row(M) == col(M)]
+  diag_M <- Matrix::diag(M)
 
   kappa_4 <- sum(gamma_4 * diag_M^2)
   kappa_13_2 <- sum(tcrossprod(gamma_3 * diag_M) * M)
