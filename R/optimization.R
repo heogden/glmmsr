@@ -18,13 +18,17 @@ optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
   }
 
   devfun_ext <- function(param, stop_on_error = FALSE){
-    result <- tryCatch(-2 * lfun(param),
-                       error = function(e) {
-                         if(stop_on_error)
-                           stop(e)
-                         else
-                           return(Inf)
+    if(any(abs(param[1:p_theta]) > 5)) {
+      result <- Inf
+    } else {
+      result <- tryCatch(-2 * lfun(param),
+                         error = function(e) {
+                           if(stop_on_error)
+                             stop(e)
+                           else
+                             return(Inf)
                          })
+    }
 
     if(verbose == 1L) {
       count <<- count + 1

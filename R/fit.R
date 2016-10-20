@@ -68,6 +68,9 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
     }
     if(all(modfr$reTrms$lower == 0)) {
       opt$estim[1:p_theta] <- abs(opt$estim[1:p_theta])
+      if(any(opt$estims[1:p_theta] > 4.9)) {
+        warning("The approximate MLE might not be finite", call. = FALSE)
+      }
       result <- glmmFit(list(estim = opt$estim, Sigma = opt$Sigma,
                              lfun = lfun, modfr = modfr,
                              method = method, control = con,
