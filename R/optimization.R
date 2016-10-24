@@ -17,9 +17,9 @@ optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
     mu <- c(rep(0.5, p_theta), rep(0, p_beta))
   }
 
-  devfun_ext <- function(param, stop_on_error = FALSE){
+  devfun_ext <- function(param, stop_on_error = FALSE, big = Inf){
     if(any(abs(param[1:p_theta]) > 5)) {
-      result <- Inf
+      result <- big
     } else {
       result <- tryCatch(-2 * lfun(param),
                          error = function(e) {
@@ -42,9 +42,9 @@ optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
     }
     result
   }
-  devfun_std <- function(param_std, stop_on_error = FALSE){
+  devfun_std <- function(param_std, stop_on_error = FALSE, big = Inf){
     param <- as.numeric(param_std + mu)
-    return(devfun_ext(param, stop_on_error))
+    return(devfun_ext(param, stop_on_error, big))
   }
 
   time_threshold <- 0.1
@@ -54,7 +54,7 @@ optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
   started <- FALSE
 
   par0 <- rep(0, p)
-  tryCatch(d0 <- devfun_std(par0, stop_on_error = TRUE),
+  tryCatch(d0 <- devfun_std(par0, stop_on_error = TRUE, big = Inf),
            error = function(e) {
              stop("Could not approximate the likelihood at the starting parameters for optimization, due to ", e,
                   call. = FALSE)
@@ -71,7 +71,8 @@ optimize_glmm <- function(lfun, p_beta, p_theta, prev_fit = NULL,
   if(verbose == 2L) {
     cat("\n")
   }
-  out_std <- optim(par0, devfun_std, hessian=TRUE, method="BFGS",
+  out_std <- optim(par0, devfun_std, big = d0 + 100,
+                   hessian = TRUE, method = "BFGS",
                    control = list(maxit = 500))
   if(out_std$convergence != 0)
     warning("optim did not converge")
