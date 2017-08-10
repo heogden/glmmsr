@@ -1,4 +1,5 @@
 # glmmsr 0.1.1.9000
+* fix to avoid adding attribute on a symbol (#4)
 * bound the size of random effects variance parameters to be less than
   5, to avoid poor-quality likelihood approximations for very large 
   values of these variance parameters.

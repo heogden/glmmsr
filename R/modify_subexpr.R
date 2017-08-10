@@ -1,44 +1,29 @@
-# add an attribute "sub" to each element of x (recursively),
-# to say whether that element contains subvar
-add_sub_status <- function(x, subvar) {
-  if(is.atomic(x)){
-    attr(x, "sub") <- FALSE
+find_sub_status <- function(x, subvar) {
+  if(is.logical(x)) {
     x
-  } else if(is.name(x)) {
-    if(identical(as.character(x), subvar)) {
-      attr(x, "sub") <- TRUE
-    } else {
-      attr(x, "sub") <- FALSE
-    }
-    x
-  } else if (is.call(x)) {
-    x_list <- lapply(x, add_sub_status, subvar = subvar)
-    sub_status <- any(vapply(x_list, attr, TRUE, which = "sub", exact = TRUE))
-    x <- as.call(x_list)
-    attr(x, "sub") <- sub_status
-    x
-  } else if(is.pairlist(x)) {
-    x_list <- lapply(x, add_sub_status, subvar = subvar)
-    sub_status <- any(vapply(x_list, attr, TRUE, which = "sub", exact = TRUE))
-    x <- as.pairlist(x_list)
-    attr(x, "sub") <- sub_status
-    x
-  } else{
+  }
+  else if(is.name(x)) {
+    identical(as.character(x), subvar)
+  }
+  else if (is.call(x) || is.pairlist(x) ) {
+    sub_status_vector <- vapply(x, find_sub_status, TRUE, subvar = subvar)
+    any(sub_status_vector)
+  }
+  else{
     stop("Don't know how to handle type ", typeof(x), call. = FALSE)
   }
 }
 
 modify_subexpr <- function(x, subvar) {
-  x <- add_sub_status(x, subvar)
   if(is.atomic(x) || is.name(x)) {
     x
   } else if (is.call(x)) {
     arg1sub <- FALSE
     arg2sub <- FALSE
     if(length(x) > 1L) {
-      arg1sub <- attr(x[[2]], "sub")
+      arg1sub <- find_sub_status(x[[2]], subvar)
       if(length(x) > 2L) {
-        arg2sub <- attr(x[[3]], "sub")
+        arg2sub <- find_sub_status(x[[3]], subvar)
       }
     }
     if(arg1sub || arg2sub) {
@@ -74,11 +59,10 @@ modify_subexpr <- function(x, subvar) {
 }
 
 extract_to_flatten <- function(x, subvar) {
-  x <- add_sub_status(x, subvar)
   if(is.atomic(x) || is.name(x)) {
     list()
   } else if(is.call(x)) {
-    if(identical(x[[1]], quote(`[`)) && length(x) > 3L && attr(x[[2]], "sub")) {
+    if(identical(x[[1]], quote(`[`)) && length(x) > 3L && find_sub_status(x[[2]], subvar)) {
       # have multiple indexing: must flatten
       to_flatten <- paste(as.list(x)[-c(1, 2)])
       out <- list()
