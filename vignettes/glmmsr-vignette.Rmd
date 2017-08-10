@@ -67,8 +67,8 @@ choice, to highlight to the user that some approximation must be used, and
 that the choice of this approximation might affect the resulting inference.
 
 ## The Laplace approximation (`method = "Laplace"`)
-The Laplace approximation works by approximating the integrand $g(\mathbf{u}; \theta)$
-by a function proportional to a Gaussian density.
+The (first-order) Laplace approximation works by approximating the integrand 
+$g(\mathbf{u}; \theta)$ by a function proportional to a Gaussian density.
 
 ```{r two_level Laplace}
 library(glmmsr)
@@ -84,6 +84,15 @@ of observations per random effect, the Laplace approximation may be a poor
 approximation to the likelihood. This is certainly the case here, since
 we only have two observations per cluster, and we would like to try
 using a more accurate approximation to the likelihood.
+
+If `method = "Laplace"` is used, `glmm` automatically tries to check the 
+reliability of inference using this approximation, and in this case gives a
+warning message that inference the first-order Laplace approximation may be 
+unreliable. These checks are experimental, and are currently only used for the
+first-order Laplace approximation. An absence of this warning, particularly 
+when using other approximation methods, should not be taken to mean that the 
+resulting inference will be reliable. These checks can be switched off by 
+using `control = list(check_Laplace = FALSE)`.
 
 ## Adaptive Gaussian quadrature (`method = "AGQ"`)
 For a two-level model, where each observation is contained within
