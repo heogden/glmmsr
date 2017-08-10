@@ -34,4 +34,3 @@ A dataset simulated from a three-level model
 # are larger than those using the Laplace approximation
 }
 \keyword{datasets}
-

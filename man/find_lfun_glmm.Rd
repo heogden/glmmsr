@@ -20,4 +20,3 @@ to the likelihood. See 'Details' for more information.}
 \description{
 Find the log-likelihood function
 }
-

@@ -10,4 +10,3 @@ calibration_parameters()
 Parameters needed to calibrate the cluster tree
 }
 \keyword{internal}
-

@@ -15,4 +15,3 @@
 Print summaryGlmmFit object
 }
 \keyword{internal}
-

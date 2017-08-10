@@ -15,4 +15,3 @@ The beliefs for the clusters and sepsets of a cluster tree,
 of mixed continuous types.
 }
 \keyword{internal}
-

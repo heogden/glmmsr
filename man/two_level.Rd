@@ -28,4 +28,3 @@ A dataset simulated from a two-level model
 # nAGQ = 2^(nSL+1) - 1
 }
 \keyword{datasets}
-

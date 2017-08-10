@@ -18,4 +18,3 @@ An object of class \code{summaryGlmmFit}
 Summarize a glmmFit object
 }
 \keyword{internal}
-

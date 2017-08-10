@@ -9,7 +9,7 @@ find_modfr_glmm(formula, subformula = NULL, data = NULL,
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
-    fixed-effects and fixed-effects part of the model, with the response
+    fixed-effects and random-effects part of the model, with the response
     on the left of a \code{~} operator and the terms, separated by
     \code{+} operators, on the right.  Random-effects terms are
     distinguished by vertical bars (\code{"|"}) separating expressions
@@ -39,4 +39,3 @@ variables named in \code{formula}, and in any of the subformulas.}
 \description{
 Parse a formula (and possibly subformulas)
 }
-

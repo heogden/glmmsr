@@ -29,4 +29,3 @@ Find the approximate maximum likelihood estimate, and estimate the variance
 of the estimate
 }
 \keyword{internal}
-

@@ -15,4 +15,3 @@
 Print glmmFit object
 }
 \keyword{internal}
-

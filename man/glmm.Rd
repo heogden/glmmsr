@@ -10,7 +10,7 @@ glmm(formula, subformula = NULL, data = NULL, family = gaussian,
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
-    fixed-effects and fixed-effects part of the model, with the response
+    fixed-effects and random-effects part of the model, with the response
     on the left of a \code{~} operator and the terms, separated by
     \code{+} operators, on the right.  Random-effects terms are
     distinguished by vertical bars (\code{"|"}) separating expressions
@@ -103,4 +103,3 @@ The \code{control} argument is a list, used to specify further
 # the estimates of the random effects standard deviations
 # are larger than those using the Laplace approximation
 }
-
