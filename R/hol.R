@@ -58,7 +58,7 @@ find_laplace_divergence <- function(fit_laplace_1, modfr, devfun_laplace_1, use_
     KL <- 0.5 * (log_det_ratio - p + trace_ratio + sum(diff * crossprod(J_1, diff)))
     attr(KL, "logarithm") <- NULL
   } else {
-    KL <- sum(delta_1 * crossprod(Sigma_1, delta_1))
+    KL <- 0.5 * sum(delta_1 * crossprod(Sigma_1, delta_1))
   }
   KL
 }
