@@ -64,13 +64,13 @@ test_that("Laplace error larger for duplicated data", {
   expect_warning(
   fit_laplace <- glmm(response ~ covariate + (1 | cluster),
                       data = two_level, family = binomial, method = "Laplace",
-                      control = list(order = 1), verbose = 0),
+                      control = list(order = 1, check_Laplace = TRUE), verbose = 0),
   "Inference using the first-order Laplace approximation may be unreliable in this case")
 
   expect_warning(
   fit_laplace_d <- glmm(response ~ covariate + (1 | cluster),
                         data = two_level_d, family = binomial, method = "Laplace",
-                        control = list(order = 1), verbose = 0),
+                        control = list(order = 1, check_Laplace = TRUE), verbose = 0),
   "Inference using the first-order Laplace approximation may be unreliable in this case")
 
   expect_true(fit_laplace$laplace_divergence < fit_laplace_d$laplace_divergence)
@@ -80,7 +80,8 @@ test_that("Laplace error larger for duplicated data", {
 test_that("Laplace divergence is always positive", {
   mod_Laplace <- glmm(response ~ covariate + (1 | cluster) + (1 | group),
                       data = three_level, family = binomial, method = "Laplace",
-                      control = list(divergence_threshold = 1e6), verbose = 0)
+                      control = list(divergence_threshold = 1e6, check_Laplace = TRUE),
+                      verbose = 0)
   expect_true(mod_Laplace$laplace_divergence > 0)
 }
 )
