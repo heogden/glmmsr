@@ -2,106 +2,106 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 continuous_beliefs__ctor <- function() {
-    .Call('glmmsr_continuous_beliefs__ctor', PACKAGE = 'glmmsr')
+    .Call('_glmmsr_continuous_beliefs__ctor', PACKAGE = 'glmmsr')
 }
 
 continuous_beliefs__append_glmm_belief <- function(obj_, items, X, Zt, Lambdat, Lind, response, weights) {
-    invisible(.Call('glmmsr_continuous_beliefs__append_glmm_belief', PACKAGE = 'glmmsr', obj_, items, X, Zt, Lambdat, Lind, response, weights))
+    invisible(.Call('_glmmsr_continuous_beliefs__append_glmm_belief', PACKAGE = 'glmmsr', obj_, items, X, Zt, Lambdat, Lind, response, weights))
 }
 
 continuous_beliefs__append_normal_belief <- function(obj_, items, mean, precision) {
-    invisible(.Call('glmmsr_continuous_beliefs__append_normal_belief', PACKAGE = 'glmmsr', obj_, items, mean, precision))
+    invisible(.Call('_glmmsr_continuous_beliefs__append_normal_belief', PACKAGE = 'glmmsr', obj_, items, mean, precision))
 }
 
 continuous_beliefs__size <- function(obj_) {
-    .Call('glmmsr_continuous_beliefs__size', PACKAGE = 'glmmsr', obj_)
+    .Call('_glmmsr_continuous_beliefs__size', PACKAGE = 'glmmsr', obj_)
 }
 
 calibration_parameters__ctor <- function() {
-    .Call('glmmsr_calibration_parameters__ctor', PACKAGE = 'glmmsr')
+    .Call('_glmmsr_calibration_parameters__ctor', PACKAGE = 'glmmsr')
 }
 
 calibration_parameters__theta__get <- function(obj_) {
-    .Call('glmmsr_calibration_parameters__theta__get', PACKAGE = 'glmmsr', obj_)
+    .Call('_glmmsr_calibration_parameters__theta__get', PACKAGE = 'glmmsr', obj_)
 }
 
 calibration_parameters__theta__set <- function(obj_, value) {
-    invisible(.Call('glmmsr_calibration_parameters__theta__set', PACKAGE = 'glmmsr', obj_, value))
+    invisible(.Call('_glmmsr_calibration_parameters__theta__set', PACKAGE = 'glmmsr', obj_, value))
 }
 
 calibration_parameters__beta__get <- function(obj_) {
-    .Call('glmmsr_calibration_parameters__beta__get', PACKAGE = 'glmmsr', obj_)
+    .Call('_glmmsr_calibration_parameters__beta__get', PACKAGE = 'glmmsr', obj_)
 }
 
 calibration_parameters__beta__set <- function(obj_, value) {
-    invisible(.Call('glmmsr_calibration_parameters__beta__set', PACKAGE = 'glmmsr', obj_, value))
+    invisible(.Call('_glmmsr_calibration_parameters__beta__set', PACKAGE = 'glmmsr', obj_, value))
 }
 
 calibration_parameters__family__get <- function(obj_) {
-    .Call('glmmsr_calibration_parameters__family__get', PACKAGE = 'glmmsr', obj_)
+    .Call('_glmmsr_calibration_parameters__family__get', PACKAGE = 'glmmsr', obj_)
 }
 
 calibration_parameters__family__set <- function(obj_, value) {
-    invisible(.Call('glmmsr_calibration_parameters__family__set', PACKAGE = 'glmmsr', obj_, value))
+    invisible(.Call('_glmmsr_calibration_parameters__family__set', PACKAGE = 'glmmsr', obj_, value))
 }
 
 calibration_parameters__link__get <- function(obj_) {
-    .Call('glmmsr_calibration_parameters__link__get', PACKAGE = 'glmmsr', obj_)
+    .Call('_glmmsr_calibration_parameters__link__get', PACKAGE = 'glmmsr', obj_)
 }
 
 calibration_parameters__link__set <- function(obj_, value) {
-    invisible(.Call('glmmsr_calibration_parameters__link__set', PACKAGE = 'glmmsr', obj_, value))
+    invisible(.Call('_glmmsr_calibration_parameters__link__set', PACKAGE = 'glmmsr', obj_, value))
 }
 
 calibration_parameters__n_sparse_levels__get <- function(obj_) {
-    .Call('glmmsr_calibration_parameters__n_sparse_levels__get', PACKAGE = 'glmmsr', obj_)
+    .Call('_glmmsr_calibration_parameters__n_sparse_levels__get', PACKAGE = 'glmmsr', obj_)
 }
 
 calibration_parameters__n_sparse_levels__set <- function(obj_, value) {
-    invisible(.Call('glmmsr_calibration_parameters__n_sparse_levels__set', PACKAGE = 'glmmsr', obj_, value))
+    invisible(.Call('_glmmsr_calibration_parameters__n_sparse_levels__set', PACKAGE = 'glmmsr', obj_, value))
 }
 
 calibration_parameters__n_quadrature_points__get <- function(obj_) {
-    .Call('glmmsr_calibration_parameters__n_quadrature_points__get', PACKAGE = 'glmmsr', obj_)
+    .Call('_glmmsr_calibration_parameters__n_quadrature_points__get', PACKAGE = 'glmmsr', obj_)
 }
 
 calibration_parameters__n_quadrature_points__set <- function(obj_, value) {
-    invisible(.Call('glmmsr_calibration_parameters__n_quadrature_points__set', PACKAGE = 'glmmsr', obj_, value))
+    invisible(.Call('_glmmsr_calibration_parameters__n_quadrature_points__set', PACKAGE = 'glmmsr', obj_, value))
 }
 
 cluster_graph__ctor <- function(beliefs) {
-    .Call('glmmsr_cluster_graph__ctor', PACKAGE = 'glmmsr', beliefs)
+    .Call('_glmmsr_cluster_graph__ctor', PACKAGE = 'glmmsr', beliefs)
 }
 
 cluster_graph__compute_log_normalizing_constant <- function(obj_, mean, precision, parameters) {
-    .Call('glmmsr_cluster_graph__compute_log_normalizing_constant', PACKAGE = 'glmmsr', obj_, mean, precision, parameters)
+    .Call('_glmmsr_cluster_graph__compute_log_normalizing_constant', PACKAGE = 'glmmsr', obj_, mean, precision, parameters)
 }
 
 cluster_graph__width__get <- function(obj_) {
-    .Call('glmmsr_cluster_graph__width__get', PACKAGE = 'glmmsr', obj_)
+    .Call('_glmmsr_cluster_graph__width__get', PACKAGE = 'glmmsr', obj_)
 }
 
 extended_family__ctor <- function(family, link) {
-    .Call('glmmsr_extended_family__ctor', PACKAGE = 'glmmsr', family, link)
+    .Call('_glmmsr_extended_family__ctor', PACKAGE = 'glmmsr', family, link)
 }
 
 extended_family__evaluate <- function(obj_, linear_predictor, response, weights) {
-    .Call('glmmsr_extended_family__evaluate', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
+    .Call('_glmmsr_extended_family__evaluate', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
 }
 
 extended_family__evaluate_d1 <- function(obj_, linear_predictor, response, weights) {
-    .Call('glmmsr_extended_family__evaluate_d1', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
+    .Call('_glmmsr_extended_family__evaluate_d1', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
 }
 
 extended_family__evaluate_d2 <- function(obj_, linear_predictor, response, weights) {
-    .Call('glmmsr_extended_family__evaluate_d2', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
+    .Call('_glmmsr_extended_family__evaluate_d2', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
 }
 
 extended_family__evaluate_d3 <- function(obj_, linear_predictor, response, weights) {
-    .Call('glmmsr_extended_family__evaluate_d3', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
+    .Call('_glmmsr_extended_family__evaluate_d3', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
 }
 
 extended_family__evaluate_d4 <- function(obj_, linear_predictor, response, weights) {
-    .Call('glmmsr_extended_family__evaluate_d4', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
+    .Call('_glmmsr_extended_family__evaluate_d4', PACKAGE = 'glmmsr', obj_, linear_predictor, response, weights)
 }
 
