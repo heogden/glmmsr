@@ -1,5 +1,7 @@
 language: r
-r: devel
+r:
+  - release
+  - devel
 cache: packages
 
 r_check_args: "--as-cran --no-vignettes"
