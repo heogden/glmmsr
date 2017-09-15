@@ -1,3 +1,5 @@
+# glmmsr 0.2.0.9000
+
 # glmmsr 0.2.0
 * fix to avoid adding attribute on a symbol (#4)
 * bound the size of random effects variance parameters to be less than

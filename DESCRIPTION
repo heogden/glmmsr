@@ -1,6 +1,6 @@
 Package: glmmsr
 Title: Fit a Generalized Linear Mixed Model
-Version: 0.2.0
+Version: 0.2.0.9000
 Authors@R: person("Helen", "Ogden", , "heogden12@gmail.com", role = c("aut", "cre"))
 Description: Conduct inference about generalized linear mixed models, with a
     choice about which method to use to approximate the likelihood. In addition
