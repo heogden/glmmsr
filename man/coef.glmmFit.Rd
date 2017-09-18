@@ -4,10 +4,10 @@
 \alias{coef.glmmFit}
 \title{Extract Model Coefficients for a glmmFit object}
 \usage{
-\method{coef}{glmmFit}(x)
+\method{coef}{glmmFit}(object, ...)
 }
 \arguments{
-\item{x}{glmmFit object}
+\item{object}{glmmFit object}
 
 \item{...}{ignored}
 }

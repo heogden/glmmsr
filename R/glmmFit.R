@@ -188,27 +188,27 @@ coef_fixed.glmmFit <- function(x) {
 
 #' Extract Model Coefficients for a glmmFit object
 #'
-#' @param x glmmFit object
+#' @param object glmmFit object
 #' @param ... ignored
 #' @return A names vector of model coefficients
 #' @method coef glmmFit
 #' @keywords internal
 #' @export
-coef.glmmFit <- function(x) {
-  c(coef_random.glmmFit(x), coef_fixed.glmmFit(x))
+coef.glmmFit <- function(object, ...) {
+  c(coef_random.glmmFit(object), coef_fixed.glmmFit(object))
 }
 
 #' Calculate Variance-Covariance Matrix for a glmmFit object
 #'
-#' @param x glmmFit object
+#' @param object glmmFit object
 #' @param ... ignored
 #' @return A matrix of the estimated covariances between the parameter estimates
 #' @method vcov glmmFit
 #' @keywords internal
 #' @export
-vcov.glmmFit <- function(x) {
-  par_names <- names(coef.glmmFit(x))
-  covmat <- x$Sigma
+vcov.glmmFit <- function(object, ...) {
+  par_names <- names(coef.glmmFit(object))
+  covmat <- object$Sigma
   rownames(covmat) <- par_names
   colnames(covmat) <- par_names
   covmat

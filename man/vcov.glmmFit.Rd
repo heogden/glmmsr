@@ -4,10 +4,10 @@
 \alias{vcov.glmmFit}
 \title{Calculate Variance-Covariance Matrix for a glmmFit object}
 \usage{
-\method{vcov}{glmmFit}(x)
+\method{vcov}{glmmFit}(object, ...)
 }
 \arguments{
-\item{x}{glmmFit object}
+\item{object}{glmmFit object}
 
 \item{...}{ignored}
 }
