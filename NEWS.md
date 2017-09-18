@@ -1,4 +1,5 @@
 # glmmsr 0.2.0.9000
+* add coef and vcov methods for a fitted glmmFit object
 
 # glmmsr 0.2.0
 * fix to avoid adding attribute on a symbol (#4)

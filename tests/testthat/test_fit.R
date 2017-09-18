@@ -33,17 +33,28 @@ test_that("fits a two-level model correctly", {
   estim_Laplace_1 <- mod_Laplace_1$estim
   error_Laplace_1 <- sum(abs(estim_Laplace_1 - estim_15))
 
-  coef_Laplace_1 <- coef(mod_Laplace_1)
-  expect_true(sum(abs(coef_Laplace_1 - estim_Laplace_1)) < 1e-6)
-  expect_equal(names(coef_Laplace_1),
-               c("RE(Intercept)", "(Intercept)", "covariate"))
-
   mod_Laplace_2 <- glmm(response ~ covariate + (1 | cluster),
                         data = two_level, family = binomial, method = "Laplace",
                         control = list(order = 2), verbose = 0)
   estim_Laplace_2 <- mod_Laplace_2$estim
   error_Laplace_2 <- sum(abs(estim_Laplace_2 - estim_15))
   expect_true(error_Laplace_2 < error_Laplace_1)
+})
+
+test_that("coef.glmmFit and vcov.glmmFit give correct names", {
+  mod <- glmm(response ~ covariate + (1 | cluster),
+              data = two_level, family = binomial, method = "Laplace",
+              verbose = 0)
+  coef_mod <- coef(mod)
+  expect_true(sum(abs(coef_mod - mod$estim)) < 1e-6)
+
+  expect_equal(names(coef_mod),
+               c("RE(Intercept)", "(Intercept)", "covariate"))
+
+  vcov_mod <- vcov(mod)
+  expect_equal(rownames(vcov_mod), names(coef_mod))
+  expect_equal(colnames(vcov_mod), names(coef_mod))
+
 })
 
 test_that("Can handle settings with no covariates", {
