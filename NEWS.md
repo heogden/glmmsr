@@ -1,5 +1,6 @@
 # glmmsr 0.2.0.9000
 * add coef and vcov methods for a fitted glmmFit object
+* fix compatibility with lme4 1.1-14
 
 # glmmsr 0.2.0
 * fix to avoid adding attribute on a symbol (#4)

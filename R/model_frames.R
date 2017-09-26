@@ -102,7 +102,7 @@ is_modfr <- function(x) {
     reTrms <- modfr$reTrms
     out$reTrms$Zt <- reTrms$Zt[, i, drop = FALSE]
     out$reTrms$Ztlist <- lapply(reTrms$Ztlist, "[", j = i, drop = FALSE)
-    out$reTrms$flist <- reTrms$flist[i, , drop = FALSE]
+    out$reTrms$flist <- lapply(reTrms$flist, "[", j = i, drop = FALSE)
   }
   return(out)
 }
@@ -197,7 +197,6 @@ concatenate_frames <- function(modfr1, modfr2) {
       out$reTrms$Gp <- c(0L, reTrms1$Gp[2] + reTrms2$Gp[2])
       out$reTrms$lower <- c(reTrms1$lower, reTrms2$upper)
       out$reTrms$Lambdat <- concatenate_Matrix(reTrms1$Lambdat, reTrms2$Lambdat)
-      out$reTrms$flist <- c(reTrms1$flist, reTrms2$flist)
       # need "assign" attribute to print out groups correctly
       attr(out$reTrms$flist, "assign") <- TRUE
       out$reTrms$cnms <- c(reTrms1$cnms, reTrms2$cnms)
