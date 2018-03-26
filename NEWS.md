@@ -1,4 +1,4 @@
-# glmmsr 0.2.1.9000
+# glmmsr 0.2.2
 * remove deprecated use of rBind
 
 # glmmsr 0.2.1
