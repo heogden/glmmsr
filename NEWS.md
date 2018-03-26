@@ -1,4 +1,5 @@
 # glmmsr 0.2.1.9000
+* remove deprecated use of rBind
 
 # glmmsr 0.2.1
 * add coef and vcov methods for a fitted glmmFit object

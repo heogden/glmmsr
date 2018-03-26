@@ -191,7 +191,7 @@ concatenate_frames <- function(modfr1, modfr2) {
     if(has_reTrms(modfr2)) {
       reTrms1 <- modfr1$reTrms
       reTrms2 <- modfr2$reTrms
-      out$reTrms$Zt <- Matrix::rBind(reTrms1$Zt, reTrms2$Zt)
+      out$reTrms$Zt <- rbind(reTrms1$Zt, reTrms2$Zt)
       out$reTrms$theta <- c(reTrms1$theta, reTrms2$theta)
       out$reTrms$Lind <- c(reTrms1$Lind, reTrms2$Lind + length(reTrms1$theta))
       out$reTrms$Gp <- c(0L, reTrms1$Gp[2] + reTrms2$Gp[2])
