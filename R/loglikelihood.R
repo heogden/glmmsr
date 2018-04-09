@@ -84,7 +84,7 @@ compute_normal_approx <- function(pars, devfun_lme4)
   L_tot <- Matrix::expand(PR$L())
   L <- L_tot$L
   P <- L_tot$P
-  precision <- Matrix::t(P)%*%Matrix::tcrossprod(L)%*%P
+  precision <- as(Matrix::t(P)%*%Matrix::tcrossprod(L)%*%P, "sparseMatrix")
   mean <- PR$delu
   return(list(l_laplace = l_laplace, mean = mean, precision = precision))
 }

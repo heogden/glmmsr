@@ -1,6 +1,8 @@
 # glmmsr 0.2.2
 * remove deprecated use of `rBind`
 * allow passing of controls to `lme4` via `lme4_control` argument
+* fix errors in approximating likelihood when a random effect has 
+  only one level
 
 # glmmsr 0.2.1
 * add `coef` and `vcov` methods for a fitted glmmFit object
