@@ -7,13 +7,17 @@ x <- rbinom(10, 1, 0.5)
 cluster <- rep(1:5, each = 2)
 data = list(y = y, x = x, cluster = cluster)
 modfr_glm <- parse_formula(y ~ x, data = data, family = binomial,
-                           weights = NULL, off = NULL)
+                           weights = NULL, off = NULL,
+                           lme4_control = set_lme4_control())
 modfr_lme4 <- parse_formula(y ~ x + (1 | cluster), data = data,
-                            family = binomial, weights = NULL, off = NULL)
+                            family = binomial, weights = NULL, off = NULL,
+                            lme4_control = set_lme4_control())
 
 
-modfr_sub_fixed  <- parse_subformula(y ~ x, data = data)
-modfr_sub_random <- parse_subformula(y ~ x + (1 | cluster), data = data)
+modfr_sub_fixed  <- parse_subformula(y ~ x, data = data,
+                                     lme4_control = set_lme4_control())
+modfr_sub_random <- parse_subformula(y ~ x + (1 | cluster), data = data,
+                                     lme4_control = set_lme4_control())
 
 subset <- c(2, 5, 5, 6)
 modfr_sub_fixed_subset <- `[fr`(modfr_sub_fixed, subset)

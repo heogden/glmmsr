@@ -112,7 +112,7 @@ match_subform_subexpr <- function(subforms, subexprs, data) {
 }
 
 
-parse_sub <- function(sub, data, family)
+parse_sub <- function(sub, data, family, lme4_control)
 {
   subvar <- sub$subvar
   subform <- sub$subform
@@ -131,7 +131,7 @@ parse_sub <- function(sub, data, family)
 
   data_subform <- c(as.list(indices_expand), subvar_data, as.list(data))
 
-  modfr_subform <- parse_subformula(subform_flat, data_subform)
+  modfr_subform <- parse_subformula(subform_flat, data_subform, lme4_control)
   modfr_subform_list <- list(modfr_subform)
   names(modfr_subform_list) <- subvar
 
@@ -156,7 +156,8 @@ parse_sub <- function(sub, data, family)
 #' @inheritParams glmm
 #' @export
 find_modfr_glmm <- function (formula, subformula = NULL, data = NULL,
-                             family = gaussian, weights = NULL, offset = NULL)
+                             family = gaussian, weights = NULL, offset = NULL,
+                             lme4_control = set_lme4_control())
 {
   if(is.list(subformula) || length(subformula) == 0L){
     subforms <- subformula
@@ -168,14 +169,15 @@ find_modfr_glmm <- function (formula, subformula = NULL, data = NULL,
   subexprs <- formula_split$subexprs
   modfr_no_sub <- parse_formula(form_no_sub, data = data,
                                 family = family, weights = weights,
-                                off = offset)
+                                off = offset, lme4_control = lme4_control)
 
   if(length(subexprs) == 0L) {
     return(modfr_no_sub)
   }
   subs <- match_subform_subexpr(subforms, subexprs, data)
 
-  modfr_list <- lapply(subs, parse_sub, data = data, family = family)
+  modfr_list <- lapply(subs, parse_sub, data = data, family = family,
+                       lme4_control = lme4_control)
 
   modfr <- attach_subframes(modfr_no_sub, modfr_list)
   modfr$formula <- formula

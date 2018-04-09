@@ -1,5 +1,6 @@
 # glmmsr 0.2.2
 * remove deprecated use of `rBind`
+* allow passing of controls to `lme4` via `lme4_control` argument
 
 # glmmsr 0.2.1
 * add `coef` and `vcov` methods for a fitted glmmFit object

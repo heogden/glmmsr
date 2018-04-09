@@ -1,17 +1,33 @@
-# A version of glmerControl, from lme4,
-# with some options changed from their defaults
-lme4_control <- function()
+#' Control of Mixed Model Fitting
+#'
+#' A version of \code{glmerControl} from \code{lme4}, with different defaults.
+#'
+#' @param ... other arguments to \code{glmerControl}
+#' @inheritParams lme4::glmerControl
+#' @export
+set_lme4_control <- function(check.nobs.vs.rankZ = "ignore",
+                             check.nobs.vs.nlev = "ignore",
+                             check.nlev.gtreq.5 = "ignore",
+                             check.nlev.gtr.1 = "ignore",
+                             check.nobs.vs.nRE = "ignore",
+                             check.rankX = c("message+drop.cols","silent.drop.cols",
+                                             "warn+drop.cols", "stop.deficient",
+                                             "ignore"),
+                             check.scaleX  = "warning",
+                             check.formula.LHS = "stop",
+                             check.response.not.const = "ignore",
+                             ...)
 {
-  lme4::glmerControl(check.nobs.vs.rankZ = "ignore",
-                     check.nobs.vs.nlev = "ignore",
-                     check.nlev.gtreq.5 = "ignore",
-                     check.nlev.gtr.1 = "ignore",
-                     check.nobs.vs.nRE = "ignore",
-                     check.rankX = c("message+drop.cols","silent.drop.cols", "warn+drop.cols",
-                                     "stop.deficient", "ignore"),
-                     check.scaleX  = "warning",
-                     check.formula.LHS = "stop",
-                     check.response.not.const = "ignore")
+  lme4::glmerControl(check.nobs.vs.rankZ = check.nobs.vs.rankZ,
+                     check.nobs.vs.nlev = check.nobs.vs.nlev,
+                     check.nlev.gtreq.5 = check.nlev.gtreq.5,
+                     check.nlev.gtr.1 = check.nlev.gtr.1,
+                     check.nobs.vs.nRE = check.nobs.vs.nRE,
+                     check.rankX = check.rankX,
+                     check.scaleX  = check.scaleX,
+                     check.formula.LHS = check.formula.LHS,
+                     check.response.not.const = check.response.not.const,
+                     ...)
 }
 
 # code modified from use of control in optim

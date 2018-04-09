@@ -5,7 +5,8 @@
 \title{Parse a formula (and possibly subformulas)}
 \usage{
 find_modfr_glmm(formula, subformula = NULL, data = NULL,
-  family = gaussian, weights = NULL, offset = NULL)
+  family = gaussian, weights = NULL, offset = NULL,
+  lme4_control = set_lme4_control())
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -35,6 +36,9 @@ variables named in \code{formula}, and in any of the subformulas.}
     equal to the number of cases.  One or more \code{\link{offset}}
     terms can be included in the formula instead or as well, and if more
     than one is specified their sum is used.  See \code{\link{model.offset}}.}
+
+\item{lme4_control}{the result of a call to \code{lme4_control}, containing
+control parameters passed to \code{lme4}. See \code{?lme4_control}.}
 }
 \description{
 Parse a formula (and possibly subformulas)

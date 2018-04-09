@@ -17,6 +17,8 @@
 #'  output approximately once a second during model fitting. For verbose = 2,
 #'  print out the parameter value and log-likelihood at every stage of
 #'  optimization.
+#' @param lme4_control the result of a call to \code{lme4_control}, containing
+#'  control parameters passed to \code{lme4}. See \code{?lme4_control}.
 #' @inheritParams lme4::glmer
 #' @details The \code{control} argument is a list, used to specify further
 #'  arguments controlling the approximation to the likelihood:
@@ -43,7 +45,7 @@
 #' @export
 glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                  method = NULL, control = list(), weights = NULL, offset = NULL,
-                 prev_fit = NULL, verbose = 1L)
+                 prev_fit = NULL, verbose = 1L, lme4_control = set_lme4_control())
 {
   check_weights(weights)
   con <- find_control_with_defaults(control, method)
@@ -52,7 +54,7 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
                            family = family, weights = weights, offset = offset)
 
   if(has_reTrms(modfr)) {
-    devfun_laplace_1 <- find_devfun_laplace_1(modfr)
+    devfun_laplace_1 <- find_devfun_laplace_1(modfr, lme4_control)
     lfun <- find_lfun_glmm_internal(modfr, method = method, control = con,
                                     devfun_laplace_1 = devfun_laplace_1)
 

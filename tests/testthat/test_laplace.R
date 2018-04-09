@@ -40,7 +40,7 @@ test_that("First step of approx Fisher scoring with Laplace-2 moves in right dir
   # approximate error-in-score for first-order Laplace
   devfun_laplace_1 <- lme4::mkGlmerDevfun(fr = modfr$fr, X = modfr$X,
                                           reTrms = modfr$reTrms, family = modfr$family,
-                                          control = lme4_control())
+                                          control = set_lme4_control())
   devfun_laplace_1 <- lme4::updateGlmerDevfun(devfun_laplace_1, modfr$reTrms, nAGQ = 1)
   delta_1 <- find_delta_1(estim_1, modfr, devfun_laplace_1)
 

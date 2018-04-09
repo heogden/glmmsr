@@ -6,7 +6,7 @@
 \usage{
 glmm(formula, subformula = NULL, data = NULL, family = gaussian,
   method = NULL, control = list(), weights = NULL, offset = NULL,
-  prev_fit = NULL, verbose = 1L)
+  prev_fit = NULL, verbose = 1L, lme4_control = set_lme4_control())
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -52,6 +52,9 @@ For verbose = 0, print nothing. For verbose = 1 (the default), print
 output approximately once a second during model fitting. For verbose = 2,
 print out the parameter value and log-likelihood at every stage of
 optimization.}
+
+\item{lme4_control}{the result of a call to \code{lme4_control}, containing
+control parameters passed to \code{lme4}. See \code{?lme4_control}.}
 }
 \value{
 An object of the class \code{glmmFit}

@@ -2,17 +2,18 @@
 #' @param modfr a model frame, the output of \code{find_modfr_glmm}
 #' @inheritParams glmm
 #' @export
-find_lfun_glmm <- function(modfr, method, control = NULL)
+find_lfun_glmm <- function(modfr, method, control = NULL,
+                           lme4_control = set_lme4_control())
 {
-  devfun_laplace_1 <- find_devfun_laplace_1(modfr)
+  devfun_laplace_1 <- find_devfun_laplace_1(modfr, lme4_control)
   con <- find_control_with_defaults(control, method)
   find_lfun_glmm_internal(modfr, method, con, devfun_laplace_1)
 }
 
-find_devfun_laplace_1 <- function(modfr) {
+find_devfun_laplace_1 <- function(modfr, lme4_control) {
   devfun_lme4 <- lme4::mkGlmerDevfun(fr = modfr$fr, X = modfr$X,
                                      reTrms = modfr$reTrms, family = modfr$family,
-                                     control = lme4_control())
+                                     control = lme4_control)
   lme4::updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = 1)
 }
 

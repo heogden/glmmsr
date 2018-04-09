@@ -1,6 +1,7 @@
 # convert formula to a model frame, using glFormula if there are random
 # effects, and manually, using model.matrix, if not
-parse_formula <- function(formula, data, family, weights, off) {
+parse_formula <- function(formula, data, family, weights, off,
+                          lme4_control) {
   formula_vars <- all.vars(formula)
   data_vars <- data[formula_vars]
   if (is.character(family))
@@ -12,19 +13,21 @@ parse_formula <- function(formula, data, family, weights, off) {
       stop("glmmsr can't yet handle family = gaussian", call. = FALSE)
     if(is.null(off) && is.null(weights)) {
       modfr <- lme4::glFormula(formula, data = data_vars, family = family,
-                               na.action = na.fail)
+                               na.action = na.fail, control = lme4_control)
     } else {
       if(is.null(weights)) {
         modfr <- lme4::glFormula(formula, data = data_vars, family = family,
-                                 na.action = na.fail, offset = off)
+                                 na.action = na.fail, offset = off,
+                                 control = lme4_control)
       } else {
         if(is.null(off)) {
           modfr <- lme4::glFormula(formula, data = data_vars, family = family,
-                                   na.action = na.fail, weights = weights)
+                                   na.action = na.fail, weights = weights,
+                                   control = lme4_control)
         } else {
           modfr <- lme4::glFormula(formula, data = data_vars, family = family,
                                    na.action = na.fail, weights = weights,
-                                   offset = off)
+                                   offset = off, control = lme4_control)
         }
       }
     }
@@ -67,12 +70,12 @@ parse_formula <- function(formula, data, family, weights, off) {
 
 # convert formula to a model frame, using lFormula if there are random
 # effects, and manually, using model.matrix, if not
-parse_subformula <- function(formula, data) {
+parse_subformula <- function(formula, data, lme4_control) {
   formula_vars <- all.vars(formula)
   data_vars <- data[formula_vars]
   if(has_re(formula)) {
     modfr_tot <- lme4::lFormula(formula, data = data_vars,
-                                control = lme4_control(), na.action = na.fail)
+                                control = lme4_control, na.action = na.fail)
     modfr <- list(X = modfr_tot$X, reTrms = modfr_tot$reTrms)
   } else {
 

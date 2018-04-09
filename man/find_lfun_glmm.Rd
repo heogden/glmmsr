@@ -4,7 +4,8 @@
 \alias{find_lfun_glmm}
 \title{Find the log-likelihood function}
 \usage{
-find_lfun_glmm(modfr, method, control = NULL)
+find_lfun_glmm(modfr, method, control = NULL,
+  lme4_control = set_lme4_control())
 }
 \arguments{
 \item{modfr}{a model frame, the output of \code{find_modfr_glmm}}
@@ -16,6 +17,9 @@ and \code{"IS"} (an importance sampling approximation).}
 
 \item{control}{a list of extra parameters controlling the approximation
 to the likelihood. See 'Details' for more information.}
+
+\item{lme4_control}{the result of a call to \code{lme4_control}, containing
+control parameters passed to \code{lme4}. See \code{?lme4_control}.}
 }
 \description{
 Find the log-likelihood function
