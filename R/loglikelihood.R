@@ -2,12 +2,14 @@
 #' @param modfr a model frame, the output of \code{find_modfr_glmm}
 #' @inheritParams glmm
 #' @export
-find_lfun_glmm <- function(modfr, method, control = NULL,
+find_lfun_glmm <- function(modfr, method, penalty = FALSE, control = NULL,
                            lme4_control = set_lme4_control())
 {
   devfun_laplace_1 <- find_devfun_laplace_1(modfr, lme4_control)
   con <- find_control_with_defaults(control, method)
-  find_lfun_glmm_internal(modfr, method, con, devfun_laplace_1)
+  lfun <- find_lfun_glmm_internal(modfr, method, penalty, con, devfun_laplace_1)
+
+
 }
 
 find_devfun_laplace_1 <- function(modfr, lme4_control) {
@@ -17,9 +19,9 @@ find_devfun_laplace_1 <- function(modfr, lme4_control) {
   lme4::updateGlmerDevfun(devfun_lme4, modfr$reTrms, nAGQ = 1)
 }
 
-find_lfun_glmm_internal <- function(modfr, method, control, devfun_laplace_1)
+find_lfun_glmm_internal <- function(modfr, method, penalty, control, devfun_laplace_1)
 {
-  switch(method,
+  lfun <- switch(method,
          Laplace = find_lfun_Laplace(modfr, devfun_laplace_1, order = control$order),
          AGQ = find_lfun_AGQ(modfr, devfun_laplace_1, nAGQ = control$nAGQ),
          SR = find_lfun_SR(modfr, devfun_laplace_1,
@@ -28,6 +30,32 @@ find_lfun_glmm_internal <- function(modfr, method, control, devfun_laplace_1)
          IS = find_lfun_IS(modfr, devfun_laplace_1, nIS = control$nIS),
          stop(cat("method", method, "not available"))
   )
+  if(penalty) {
+
+    pen_ext <- function(pars, u) {
+      X_glm <- cbind(Matrix::crossprod(modfr$reTrms$Zt, u), modfr$X)
+      eta <- as.numeric(Matrix::tcrossprod(pars, X_glm))
+      mu <- modfr$family$linkinv(eta)
+      w <- (modfr$family$mu.eta(eta)^2)/modfr$family$variance(mu)
+      info <- as.matrix(Matrix::t(X_glm) %*% diag(w) %*% X_glm)
+      -0.5 * determinant(info, logarithm = TRUE)$modulus
+    }
+    pen <- function(pars) {
+      if(length(modfr$reTrms$theta) > 1L)
+        stop("penalty only implemented for a single variance component")
+      normal_approx <- compute_normal_approx(pars, devfun_laplace_1)
+      u_hat <- normal_approx$mean
+      pars_zero <- pars
+      pars_zero[1] <- 0
+      pen_ext(pars, u_hat) - pen_ext(pars_zero, u_hat)
+    }
+    lfun_pen <- function(pars) {
+      lfun(pars) - pen(pars)
+    }
+    return(lfun_pen)
+  } else {
+    return(lfun)
+  }
 }
 
 find_lfun_AGQ <- function(modfr, devfun_laplace_1, nAGQ) {

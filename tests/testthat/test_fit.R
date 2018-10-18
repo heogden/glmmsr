@@ -219,3 +219,13 @@ test_that("get finite estimators", {
                                 method = "Laplace", control = list(order = 2), verbose = 0,
                                 data = problem_two_level)
 })
+
+test_that("penalty shrinks estimates", {
+  fit_Laplace <- glmmsr::glmm(response ~ covariate + (1 | cluster), family = binomial,
+                              method = "Laplace", verbose = 0,
+                              data = two_level)
+  fit_Laplace_pen <- glmmsr::glmm(response ~ covariate + (1 | cluster), family = binomial,
+                              method = "Laplace", penalty = TRUE, verbose = 0,
+                              data = two_level)
+  expect_true(all(abs(coef(fit_Laplace_pen)) <=  abs(coef(fit_Laplace))))
+})

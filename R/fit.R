@@ -9,6 +9,8 @@
 #'  are \code{"Laplace"}, \code{"AGQ"} (the adaptive Gaussian quadrature approximation,
 #'  from \code{lme4}), \code{"SR"} (the sequential reduction approximation)
 #'  and \code{"IS"} (an importance sampling approximation).
+#' @param penalty should the likelihood be penalized to attempt to reduce bias?
+#'  Defaults to FALSE.
 #' @param control a list of extra parameters controlling the approximation
 #'  to the likelihood. See 'Details' for more information.
 #' @param prev_fit a \code{glmmFit} object, the result of a previous model fit.
@@ -44,7 +46,7 @@
 #' @example inst/examples/three_level.R
 #' @export
 glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
-                 method = NULL, control = list(), weights = NULL, offset = NULL,
+                 method = NULL, penalty = FALSE, control = list(), weights = NULL, offset = NULL,
                  prev_fit = NULL, verbose = 1L, lme4_control = set_lme4_control())
 {
   check_weights(weights)
@@ -55,7 +57,7 @@ glmm <- function(formula, subformula = NULL, data = NULL, family = gaussian,
 
   if(has_reTrms(modfr)) {
     devfun_laplace_1 <- find_devfun_laplace_1(modfr, lme4_control)
-    lfun <- find_lfun_glmm_internal(modfr, method = method, control = con,
+    lfun <- find_lfun_glmm_internal(modfr, method = method, penalty = penalty, control = con,
                                     devfun_laplace_1 = devfun_laplace_1)
 
     p_beta <- ncol(modfr$X)
