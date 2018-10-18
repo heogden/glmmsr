@@ -4,7 +4,7 @@
 \alias{find_lfun_glmm}
 \title{Find the log-likelihood function}
 \usage{
-find_lfun_glmm(modfr, method, control = NULL,
+find_lfun_glmm(modfr, method, penalty = FALSE, control = NULL,
   lme4_control = set_lme4_control())
 }
 \arguments{
@@ -14,6 +14,9 @@ find_lfun_glmm(modfr, method, control = NULL,
 are \code{"Laplace"}, \code{"AGQ"} (the adaptive Gaussian quadrature approximation,
 from \code{lme4}), \code{"SR"} (the sequential reduction approximation)
 and \code{"IS"} (an importance sampling approximation).}
+
+\item{penalty}{should the likelihood be penalized to attempt to reduce bias?
+Defaults to FALSE.}
 
 \item{control}{a list of extra parameters controlling the approximation
 to the likelihood. See 'Details' for more information.}

@@ -5,8 +5,9 @@
 \title{Fit a GLMM}
 \usage{
 glmm(formula, subformula = NULL, data = NULL, family = gaussian,
-  method = NULL, control = list(), weights = NULL, offset = NULL,
-  prev_fit = NULL, verbose = 1L, lme4_control = set_lme4_control())
+  method = NULL, penalty = FALSE, control = list(), weights = NULL,
+  offset = NULL, prev_fit = NULL, verbose = 1L,
+  lme4_control = set_lme4_control())
 }
 \arguments{
 \item{formula}{a two-sided linear formula object describing both the
@@ -30,6 +31,9 @@ variables named in \code{formula}, and in any of the subformulas.}
 are \code{"Laplace"}, \code{"AGQ"} (the adaptive Gaussian quadrature approximation,
 from \code{lme4}), \code{"SR"} (the sequential reduction approximation)
 and \code{"IS"} (an importance sampling approximation).}
+
+\item{penalty}{should the likelihood be penalized to attempt to reduce bias?
+Defaults to FALSE.}
 
 \item{control}{a list of extra parameters controlling the approximation
 to the likelihood. See 'Details' for more information.}
