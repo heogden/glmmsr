@@ -92,3 +92,8 @@ check_modfr_SR <- function(modfr) {
     stop("Only logit and probit links currently implemented for sequential reduction approximation",
          call. = FALSE)
 }
+
+is_canonical <- function(family) {
+  canonical_link <- eval(parse(text = paste(family$family, "()", sep = "")))$link
+  family$link == canonical_link
+}

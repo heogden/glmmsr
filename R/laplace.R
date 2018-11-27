@@ -3,6 +3,9 @@ check_if_order_implemented <- function(family, order) {
     stop("order-", order, " Laplace approximation not yet implemented",
          call. = FALSE)
   }
+  if(order > 1L & !is_canonical(family)) {
+    stop("order-", order, " Laplace approximation not yet implemented for non-canonical link functions")
+  }
 }
 
 find_lfun_Laplace <- function(modfr, devfun_laplace_1, order) {

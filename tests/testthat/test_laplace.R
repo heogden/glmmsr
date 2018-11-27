@@ -21,6 +21,12 @@ test_that("Laplace order handled correctly", {
                     verbose = 0),
                "order-3 Laplace approximation not yet implemented")
 
+  expect_error(glmm(response ~ covariate + (1 | cluster) + (1 | group),
+                    data = three_level, family = binomial("probit"),
+                    method = "Laplace",
+                    control = list(order = 2),
+                    verbose = 0),
+               "order-2 Laplace approximation not yet implemented for non-canonical link functions")
 })
 
 test_that("First step of approx Fisher scoring with Laplace-2 moves in right direction", {
@@ -85,16 +91,3 @@ test_that("Laplace divergence is always positive", {
   expect_true(mod_Laplace$laplace_divergence > 0)
 }
 )
-
-test_that("Second-order Laplace works with probit link", {
-  modfr <- find_modfr_glmm(response ~ covariate + (1 | cluster),
-                           data = two_level, family = binomial(link = "probit"))
-  lfun_Laplace1 <- find_lfun_glmm(modfr, method = "Laplace")
-  lfun_Laplace2 <- find_lfun_glmm(modfr, method = "Laplace", control = list(order = 2))
-  lfun_exact <- find_lfun_glmm(modfr, method = "AGQ", control = list(nAGQ = 20))
-
-  pars <- c(1, 0.5, -0.5)
-  epsilon_1 <- abs(lfun_exact(pars) - lfun_Laplace1(pars))
-  epsilon_2 <- abs(lfun_exact(pars) - lfun_Laplace2(pars))
-  expect_true(epsilon_2 < epsilon_1 / 2)
-})
