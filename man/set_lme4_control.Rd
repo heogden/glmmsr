@@ -7,9 +7,10 @@
 set_lme4_control(check.nobs.vs.rankZ = "ignore",
   check.nobs.vs.nlev = "ignore", check.nlev.gtreq.5 = "ignore",
   check.nlev.gtr.1 = "ignore", check.nobs.vs.nRE = "ignore",
-  check.rankX = c("message+drop.cols", "silent.drop.cols", "warn+drop.cols",
-  "stop.deficient", "ignore"), check.scaleX = "warning",
-  check.formula.LHS = "stop", check.response.not.const = "ignore", ...)
+  check.rankX = c("message+drop.cols", "silent.drop.cols",
+  "warn+drop.cols", "stop.deficient", "ignore"),
+  check.scaleX = "warning", check.formula.LHS = "stop",
+  check.response.not.const = "ignore", ...)
 }
 \arguments{
 \item{check.nobs.vs.rankZ}{character - rules for
