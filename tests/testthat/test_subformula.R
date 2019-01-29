@@ -136,3 +136,12 @@ test_that("random effects at observation level work OK", {
                      control = list(check_Laplace = FALSE), verbose = 0)
 })
 
+test_that("split_formula correctly identifies subformula", {
+  formula1 <- Mate ~ 0 + TypeM:TypeF + Sub(propen[female_id] + propen[male_id])
+  formula2 <- Mate ~ 0 + Cross + Sub(propen[female_id] + propen[male_id])
+
+  fsplit1 <- split_formula(formula1)
+  fsplit2 <- split_formula(formula2)
+
+  expect_equal(fsplit1$subexprs, fsplit2$subexprs)
+})

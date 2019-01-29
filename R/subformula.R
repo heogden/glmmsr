@@ -3,6 +3,9 @@ find_subexpr <- function(subvar) {
 }
 
 
+find_var_rhs <- function(var, fac) {
+  which(fac[var, ] > 0L)
+}
 
 split_formula <- function(formula) {
   tf <- terms(formula, specials = "Sub")
@@ -11,9 +14,9 @@ split_formula <- function(formula) {
     # variables numbered starting at LHS.
     # assuming that there is exactly one LHS variable
     # could make this more general
-    var_sub_rhs <- var_sub - 1L
     fac <- attr(tf, "factors")
     rhs_vars <- attr(fac, "dimnames")[[2]]
+    var_sub_rhs <- sapply(var_sub, find_var_rhs, fac = fac)
     if(length(rhs_vars) > length(var_sub_rhs)){
       attr(tf, "intercept") <- 1
       tf_no_sub <- drop.terms(tf, var_sub_rhs, keep.response = TRUE)
