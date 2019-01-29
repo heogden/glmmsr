@@ -1,3 +1,9 @@
+# glmmsr 0.2.3
+* use `mhdglm` rather than archived package `hglm.data` for `salamander`
+  data in vignette.
+* disable use of a second-order Laplace approximation with a 
+  non-canonical link function, which is not yet working correctly.
+
 # glmmsr 0.2.2
 * remove deprecated use of `rBind`
 * allow passing of controls to `lme4` via `lme4_control` argument
