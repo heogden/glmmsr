@@ -195,10 +195,10 @@ estimates are probably close to the exact maximum likelihood estimates.
 @McCullagh1989 discuss an experiment designed to study
 whether salamanders from two different populations would
 breed with one another. This well-known salamander mating data set 
-is available in the `hglm.data` package. 
+is available in the `mdhglm` package. 
 
 ```{r salamander_data}
-data(salamander, package = "hglm.data")
+data(salamander, package = "mdhglm")
 ```
 
 Here, we fit the model used by @Booth1999, and many other authors.
@@ -208,14 +208,15 @@ where
 \[  \log\left(\frac{p_{ij}}{1 - p_{ij}}\right) = \beta^T \mathbf{x}_{ij} + b_i + c_j, \]
 and $b_i \sim N(0, \sigma_f^2)$, $c_j \sim N(0, \sigma_m^2)$. 
 Here $\mathbf{x}_{ij}$ tells us which population each of the pair of
-salamanders belongs to, given by the variable `Cross` in the
+salamanders belongs to, given by the interaction of the variables 
+`TypeM` and `TypeF` in the
 `salamander` data. The latent variables $b_i$ and $c_j$ represent
 the differences in propensity to mate between individual animals,
 not explained by the population effects.
 
 We can fit the model using the Laplace approximation:
 ```{r salamander_Laplace}
-mod_sal_Laplace <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+mod_sal_Laplace <- glmm(Mate ~ 0 + TypeM:TypeF + (1 | Male) + (1 | Female),
                         family = binomial, data = salamander, method = "Laplace")
 mod_sal_Laplace
 ```
@@ -224,13 +225,13 @@ We can fit the model using the sequential
 reduction approximation with $2$ sparse levels, although
 this is quite time-consuming:
 ```{r salamander_SR_2, eval = FALSE}
-mod_sal_SR_2 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+mod_sal_SR_2 <- glmm(Mate ~ 0 + TypeM:TypeF + (1 | Male) + (1 | Female),
                      family = binomial, data = salamander, method = "SR", 
                      control = list(nSL = 2), prev_fit = mod_sal_Laplace)
 ```
 If we try to use $3$ sparse levels, we get an error:
 ```{r salamander_SR_3, error = TRUE}
-mod_sal_SR_3 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+mod_sal_SR_3 <- glmm(Mate ~ 0 + TypeM:TypeF + (1 | Male) + (1 | Female),
                      family = binomial, data = salamander, method = "SR", 
                      control = list(nSL = 3))
 ```
@@ -255,7 +256,7 @@ fits with different random seeds. We fit our model for the
 `salamander` data using importance sampling with $1000$ samples:
 ```{r salamander_IS_1000}
 set.seed(1)
-mod_sal_IS_1000 <- glmm(Mate ~ 0 + Cross + (1 | Male) + (1 | Female),
+mod_sal_IS_1000 <- glmm(Mate ~ 0 + TypeM:TypeF + (1 | Male) + (1 | Female),
                           family = binomial, data = salamander,
                           method = "IS", control = list(nIS = 1000),
                           prev_fit = mod_sal_Laplace)
@@ -435,7 +436,7 @@ salamander$male_id <- factor(male_id, levels = ids)
 
 We may then fit the model, using a Laplace approximation to the likelihood:
 ```{r salamander_equal}
-mod_sal_equal <- glmm(Mate ~ 0 + Cross + Sub(propen[female_id] + propen[male_id]),
+mod_sal_equal <- glmm(Mate ~ 0 + TypeM:TypeF + Sub(propen[female_id] + propen[male_id]),
                       propen[sal] ~ 0 + (1 | sal), family = binomial, 
                       data = salamander, method = "Laplace")
 mod_sal_equal
