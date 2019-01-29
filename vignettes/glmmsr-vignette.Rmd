@@ -197,7 +197,11 @@ whether salamanders from two different populations would
 breed with one another. This well-known salamander mating data set 
 is available in the `mdhglm` package. 
 
-```{r salamander_data}
+```{r check_mdhglm, echo = FALSE}
+mdhglm_avail <- requireNamespace("mdhglm", quietly = TRUE)
+```
+
+```{r salamander_data, eval = mdhglm_avail}
 data(salamander, package = "mdhglm")
 ```
 
@@ -215,7 +219,7 @@ the differences in propensity to mate between individual animals,
 not explained by the population effects.
 
 We can fit the model using the Laplace approximation:
-```{r salamander_Laplace}
+```{r salamander_Laplace, eval = mdhglm_avail}
 mod_sal_Laplace <- glmm(Mate ~ 0 + TypeM:TypeF + (1 | Male) + (1 | Female),
                         family = binomial, data = salamander, method = "Laplace")
 mod_sal_Laplace
@@ -230,7 +234,7 @@ mod_sal_SR_2 <- glmm(Mate ~ 0 + TypeM:TypeF + (1 | Male) + (1 | Female),
                      control = list(nSL = 2), prev_fit = mod_sal_Laplace)
 ```
 If we try to use $3$ sparse levels, we get an error:
-```{r salamander_SR_3, error = TRUE}
+```{r salamander_SR_3, eval = mdhglm_avail, error = TRUE}
 mod_sal_SR_3 <- glmm(Mate ~ 0 + TypeM:TypeF + (1 | Male) + (1 | Female),
                      family = binomial, data = salamander, method = "SR", 
                      control = list(nSL = 3))
@@ -254,7 +258,7 @@ set of standard normal samples.
 Since this is a stochastic approximation, we will obtain different
 fits with different random seeds. We fit our model for the
 `salamander` data using importance sampling with $1000$ samples:
-```{r salamander_IS_1000}
+```{r salamander_IS_1000, eval = mdhglm_avail}
 set.seed(1)
 mod_sal_IS_1000 <- glmm(Mate ~ 0 + TypeM:TypeF + (1 | Male) + (1 | Female),
                           family = binomial, data = salamander,
@@ -426,7 +430,7 @@ First, we must construct identifiers for the female and
 the male salamander involved in each match. These identifiers should
 be factors with common levels, where the levels are the identifiers
 of all the salamanders involved in the experiment:
-```{r salamander_equal_ids}
+```{r salamander_equal_ids, eval = mdhglm_avail}
 female_id <- paste("F", salamander$Female, sep = "")
 male_id <- paste("M", salamander$Male, sep = "")
 ids <- unique(c(female_id, male_id))
@@ -435,7 +439,7 @@ salamander$male_id <- factor(male_id, levels = ids)
 ```
 
 We may then fit the model, using a Laplace approximation to the likelihood:
-```{r salamander_equal}
+```{r salamander_equal, eval = mdhglm_avail}
 mod_sal_equal <- glmm(Mate ~ 0 + TypeM:TypeF + Sub(propen[female_id] + propen[male_id]),
                       propen[sal] ~ 0 + (1 | sal), family = binomial, 
                       data = salamander, method = "Laplace")
