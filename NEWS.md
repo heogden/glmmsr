@@ -1,3 +1,5 @@
+# glmmsr 0.2.3.9000
+
 # glmmsr 0.2.3
 * use `mhdglm` rather than archived package `hglm.data` for `salamander`
   data in vignette.
