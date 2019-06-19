@@ -62,7 +62,7 @@ void MultiNormal::setVariance(const Eigen::MatrixXd& variance)
   variance_ = variance;
   precision_.resize(variance.rows(), variance.cols());
   precision_ = variance.inverse();
-  
+
   initializeNormalizer();
 }
 
@@ -127,8 +127,9 @@ MultiNormal MultiNormal::computeMarginal(const std::vector<int>& items) const
   auto varianceMarginal = getMatrixSubset(variance_, items);
   auto meanMarginal = getVectorSubset(mean_, items);
   MultiNormal marginal(items.size());
-  marginal.setMean(meanMarginal);
-  marginal.setVariance(varianceMarginal);
+  if(items.size() > 0)
+    marginal.setMean(meanMarginal);
+    marginal.setVariance(varianceMarginal);
   return marginal;
 }
 
@@ -137,8 +138,9 @@ MultiNormal MultiNormal::integrate(int item) const
   auto varianceMarginal = getMatrixWithout(item, variance_);
   auto meanMarginal = getVectorWithout(item, mean_);
   MultiNormal marginal(meanMarginal.size());
-  marginal.setMean(meanMarginal);
-  marginal.setVariance(varianceMarginal);
+  if(meanMarginal.size() > 0)
+    marginal.setMean(meanMarginal);
+    marginal.setVariance(varianceMarginal);
   return marginal;
 }
 
@@ -158,7 +160,7 @@ void MultiNormal::multiplySubsetInternal
   if(divide)
     normalPrecision *= -1;
 
-  Eigen::MatrixXd newPrecisionSubset 
+  Eigen::MatrixXd newPrecisionSubset
     = precisionSubset + normalPrecision;
 
   auto meanSubset = getVectorSubset(mean_, subset);
@@ -169,5 +171,5 @@ void MultiNormal::multiplySubsetInternal
 
   variance_ = precision_.inverse();
   initializeNormalizer();
-  
+
 }
