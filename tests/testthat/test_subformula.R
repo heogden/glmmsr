@@ -131,9 +131,11 @@ test_that("random effects at observation level work OK", {
   gr <- as.factor(gr)
   data_re_obs$gr <- gr
   formula_re_obs <- y ~ 0 + (1 | gr) + Sub(ability[player1] - ability[player2])
+  expect_error(
   fit_re_obs <- glmm(formula_re_obs, subform, data = data_re_obs,
                      family = binomial, method = "Laplace",
-                     control = list(check_Laplace = FALSE), verbose = 0)
+                     control = list(check_Laplace = FALSE), verbose = 0),
+  NA)
 })
 
 test_that("split_formula correctly identifies subformula", {

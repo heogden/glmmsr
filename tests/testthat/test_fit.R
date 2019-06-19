@@ -215,7 +215,9 @@ problem_two_level$X <- matrix(c(-1.902157, -0.06429479, -1.331167, -1.819992, 0.
                               ncol = 1)
 
 test_that("get finite estimators", {
-  fit_Laplace_2 <- glmmsr::glmm(response ~ X + (1 | cluster), family = binomial,
+  expect_error(
+    fit_Laplace_2 <- glmmsr::glmm(response ~ X + (1 | cluster), family = binomial,
                                 method = "Laplace", control = list(order = 2), verbose = 0,
-                                data = problem_two_level)
+                                data = problem_two_level),
+    NA)
 })

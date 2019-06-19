@@ -16,7 +16,7 @@ test_that("can compute SR log-likelihood for three-level model", {
   modfr <- find_modfr_glmm(response ~ covariate + (1 | cluster) + (1 | group),
                            data = three_level, family = binomial)
   lfun_SR <- find_lfun_glmm(modfr, method = "SR")
-  lfun_SR(c(0.5, 0.5, 0 , 0))
+  expect_error(lfun_SR(c(0.5, 0.5, 0 , 0)), NA)
 })
 
 test_that("log-likelihoods match for two-level model", {
@@ -50,11 +50,11 @@ test_that("All methods work with a single random effect",{
   i <- rep(1, 20)
   modfr <- find_modfr_glmm(y ~ (1 | i), family = "binomial")
   lfun_L_2 <- find_lfun_glmm(modfr, method = "Laplace", control = list(order = 2))
-  lfun_L_2(c(1, 1))
+  expect_error(lfun_L_2(c(1, 1)), NA)
   lfun_AGQ_5 <- find_lfun_glmm(modfr, method = "AGQ", control = list(nAGQ = 5))
-  lfun_AGQ_5(c(1, 1))
+  expect_error(lfun_AGQ_5(c(1, 1)), NA)
   lfun_SR_3 <- find_lfun_glmm(modfr, method = "SR", control = list(nSL = 3))
-  lfun_SR_3(c(1, 1))
+  expect_error(lfun_SR_3(c(1, 1)), NA)
   lfun_IS_100 <- find_lfun_glmm(modfr, method = "IS", control = list(nIS = 100))
-  lfun_IS_100(c(1, 1))
+  expect_error(lfun_IS_100(c(1, 1)), NA)
 })
