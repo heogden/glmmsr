@@ -213,3 +213,42 @@ vcov.glmmFit <- function(object, ...) {
   colnames(covmat) <- par_names
   covmat
 }
+
+# (copied from stats:::format.perc)
+format_perc <- function(probs, digits) {
+  paste(format(100 * probs, trim = TRUE, scientific = FALSE, digits = digits), "%")
+}
+
+
+confint.glmmFit <- function(object, parm, level = 0.95, ...) {
+  est <- coef(object)
+  pnames <- names(est)
+  if(missing(parm))
+    parm <- pnames
+  else if(is.numeric(parm))
+    parm <- pnames[parm]
+  qlower <- (1 - level)/2
+  qupper <- 1 - qlower
+  se <- sqrt(diag(vcov(object)))
+  eps <- 1e-5
+  p_beta <- ncol(object$modfr$X)
+  lower <- c(object$modfr$reTrms$lower, rep(-Inf, p_beta))
+
+  # which parameters are forced to be >=0?
+  non_neg <- which(lower > -eps)
+
+  # usual Wald-type CI
+  cilower <- qnorm(qlower, est, se)
+  names(cilower) <- pnames
+  ciupper <- qnorm(qupper, est, se)
+  names(ciupper) <- pnames
+  # standard error for non_neg pars
+  # In that case, find se for log(theta), via delta method:
+  l_se <- se[non_neg] / est[non_neg]
+  cilower[non_neg] <- qlnorm(qlower, log(est[non_neg]), l_se)
+  ciupper[non_neg] <- qlnorm(qupper, log(est[non_neg]), l_se)
+
+  ci <- cbind(cilower[parm], ciupper[parm])
+  colnames(ci) <- c(format_perc(qlower, 3), format_perc(qupper, 3))
+  ci
+}
