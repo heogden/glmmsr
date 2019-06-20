@@ -52,7 +52,8 @@ void MultiNormal::setPrecision(const Eigen::MatrixXd& precision)
   precision_.resize(precision.rows(), precision.cols());
   precision_ = precision;
   variance_.resize(precision.rows(), precision.cols());
-  variance_ = precision.inverse();
+  if(variance_.rows() > 0)
+    variance_ = precision.inverse();
   initializeNormalizer();
 }
 
@@ -61,7 +62,8 @@ void MultiNormal::setVariance(const Eigen::MatrixXd& variance)
   variance_.resize(variance.rows(), variance.cols());
   variance_ = variance;
   precision_.resize(variance.rows(), variance.cols());
-  precision_ = variance.inverse();
+  if(variance.rows() > 0)
+    precision_ = variance.inverse();
 
   initializeNormalizer();
 }
@@ -164,12 +166,14 @@ void MultiNormal::multiplySubsetInternal
     = precisionSubset + normalPrecision;
 
   auto meanSubset = getVectorSubset(mean_, subset);
-  meanSubset = newPrecisionSubset.inverse() * (precisionSubset * meanSubset + normalPrecision * normal.mean_) ;
+  if(newPrecisionSubset.rows() > 0)
+    meanSubset = newPrecisionSubset.inverse() * (precisionSubset * meanSubset + normalPrecision * normal.mean_) ;
 
   setMatrixSubset(precision_, newPrecisionSubset, subset);
   setVectorSubset(mean_, meanSubset, subset);
 
-  variance_ = precision_.inverse();
+  if(precision_.rows() > 0)
+    variance_ = precision_.inverse();
   initializeNormalizer();
 
 }
